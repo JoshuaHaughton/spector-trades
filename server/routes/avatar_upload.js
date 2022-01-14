@@ -1,3 +1,10 @@
+/*
+To trigger error
+  curl --form "fileupload=@my-file.txt" http://localhost:3001
+proper upload of image - Ensure image.png is in the same directory terminal 
+working in
+  curl --form 'avatar=@image.png' http://localhost:3001/api/avatars/upload
+*/
 let express = require('express');
 let app = express.Router();
 const multer = require("multer");
