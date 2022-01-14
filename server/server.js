@@ -8,8 +8,8 @@ const app = express();
 const db = require('./db')
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 app.use(morgan("dev"))
-
 
 app.get('/', function (req, res) {
   res.send('Welcome To Home Page')
@@ -36,7 +36,9 @@ app.use("/api/posts", postRoutes(db));
 const commentRoutes = require("./routes/comments")
 app.use("/api/comments", commentRoutes(db));
 
-
+// Post avatar upload
+const avatarRoutes = require("./routes/avatar_upload")
+app.use("/api/avatars", avatarRoutes(db));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
