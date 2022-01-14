@@ -3,6 +3,7 @@ let app = express.Router();
 
 //Default route is /api/users
 
+
 module.exports = (db) => {
 app.get('/', async (req, res) => {
   try {
@@ -23,6 +24,8 @@ app.get('/', async (req, res) => {
     res.status(500).send;
   }
 })
+
+
 return app;
 }
 
