@@ -49,16 +49,6 @@ const Register = () => {
           'Password is required'),
       avatar: Yup
         .mixed(),
-      //   .test(
-      //   "fileSize",
-      //   "File is too large",
-      //   value => !value || (value && value.size <= FILE_SIZE)
-      //   )
-      //   .test(
-      //   "fileFormat",
-      //   "Unsupported Format",
-      //   value => !value || (value => value && SUPPORTED_FORMATS.includes(value.type))
-      // ),
       policy: Yup
         .boolean()
         .oneOf(
@@ -68,36 +58,27 @@ const Register = () => {
     }),
     onSubmit: async (values) => {
       console.log(values)
-   
-      const config = {     
-        headers: { 'Content-Type': 'multipart/form-data' }
-
-    }
-    
-
-      // const response = await api.post("/register", {
-      //   username: values.username,
-      //   email: values.email,
-      //   password: values.password,
-      //   avatar: values.avatar
 
 
-      // })
-      const response = await api({
-        url: '/register',
-        method: 'POST',
-        Headers: {
-          "content-type": "multipart/form-data",
-        },
-        data: values.avatar,
-        params: {
-          username: values.username, 
-          email: values.email, 
-          password: values.password
-        }
-      });
-      console.log(response)
-      // router.push('/');
+      var bodyFormData = new FormData();
+      bodyFormData.append('username', values.username);
+      bodyFormData.append('email', values.email);
+      bodyFormData.append('password', values.password);
+      bodyFormData.append('avatar', values.avatar);
+      api({
+        method: "post",
+        url: "/register",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+        .then(function (response) {
+          //handle success
+          console.log("success in axios register", response);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log("Error is axios post of register -", response);
+        });
     }
   });
 
@@ -184,24 +165,9 @@ const Register = () => {
               variant="outlined"
             />
               <Stack direction="row" alignItems="center" spacing={2}>
-                {/* <Button
-                  variant="contained"
-                  component="label"
-                  name="avatar"
-                >
-                  Upload File
-                  <input
-                    type="file"
-                    hidden
-                  />
-                </Button> */}
-              {/* <label htmlFor="contained-button-file">
-                <Input id="contained-button-file" type="file" name="avatar" onChange={formik.handleChange}/>
-              </label> */}
               <input id="file" name="avatar" type="file" onChange={(event) => {
                 formik.setFieldValue("avatar", event.currentTarget.files[0]);
               }} />
-              {/* <input id="file" name="avatar" type="file" onChange={formik.handleChange} /> */}
 
             </Stack>
             {/* <Box
