@@ -4,6 +4,7 @@ import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -24,8 +25,8 @@ const Register = () => {
     initialValues: {
       email: '',
       username: '',
-      password: ''
-      // avatar: '',
+      password: '',
+      avatar: {},
       // policy: false
     },
     validationSchema: Yup.object({
@@ -45,27 +46,35 @@ const Register = () => {
         .string()
         .max(255)
         .required(
-          'Password is required')
-      // avatar: Yup
-      //     .object()
-      //     .shape({
-      //       file: yup
-      //       .mixed()
-      //       .required()
-      //     }),
-      // policy: Yup
-      //   .boolean()
-      //   .oneOf(
-      //     [true],
-      //     'This field must be checked'
+          'Password is required'),
+      avatar: Yup
+        .mixed(),
+      //   .test(
+      //   "fileSize",
+      //   "File is too large",
+      //   value => !value || (value && value.size <= FILE_SIZE)
       //   )
+      //   .test(
+      //   "fileFormat",
+      //   "Unsupported Format",
+      //   value => !value || (value => value && SUPPORTED_FORMATS.includes(value.type))
+      // ),
+      policy: Yup
+        .boolean()
+        .oneOf(
+          [true],
+          'This field must be checked'
+        )
     }),
     onSubmit: async (values) => {
       console.log(values)
-      const response = await api.post("/users", {
+   
+
+      const response = await api.post("/register", {
         username: values.username,
         email: values.email,
-        password: values.password
+        password: values.password,
+        avatar: values.avatar.name
 
 
       })
@@ -157,9 +166,25 @@ const Register = () => {
               variant="outlined"
             />
               <Stack direction="row" alignItems="center" spacing={2}>
+                {/* <Button
+                  variant="contained"
+                  component="label"
+                  name="avatar"
+                >
+                  Upload File
+                  <input
+                    type="file"
+                    hidden
+                  />
+                </Button> */}
               {/* <label htmlFor="contained-button-file">
-                <Input  containerElement='label' id="contained-button-file" multiple type="file" name="avatar"/>
+                <Input id="contained-button-file" type="file" name="avatar" onChange={formik.handleChange}/>
               </label> */}
+              <input id="file" name="avatar" type="file" onChange={(event) => {
+                formik.setFieldValue("avatar", event.currentTarget.files[0]);
+              }} />
+              {/* <input id="file" name="avatar" type="file" onChange={formik.handleChange} /> */}
+
             </Stack>
             {/* <Box
               sx={{

@@ -5,11 +5,7 @@ CREATE TABLE asset_orders(
   type VARCHAR(250) NOT NULL,
   units INTEGER NOT NULL,
   price_at_purchase INTEGER NOT NULL,
-<<<<<<< HEAD
-  created_at DATE NOT NULL,
-=======
   created_at DATE NOT NULL DEFAULT NOW(),
->>>>>>> feature/register-user
   user_id INTEGER REFERENCES users(id),
   portfolio_id INTEGER REFERENCES portfolios(id)
 );
