@@ -4,6 +4,9 @@
 // user_id is the id of the new entry
 // ON FAILURE sends 422 (Unprocessable Entity) see below
 // https://stackoverflow.com/questions/3050518/what-http-status-response-code-should-i-use-if-the-request-is-missing-a-required
+
+// CHECK ERROR HANDLING
+
 const express = require('express');
 const app = express.Router();
 const bcrypt = require('bcrypt');
@@ -17,6 +20,7 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage});
+
 //Default route is /api/register
 // form fields are username, email, password, avatar
 // curl -X POST -F 'username=linuxize' -F 'email=linuxize@example.com' -F 'password=password' -F 'avatar=@image.png' http://localhost:3001/api/register
