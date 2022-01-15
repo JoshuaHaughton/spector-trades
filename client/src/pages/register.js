@@ -69,15 +69,33 @@ const Register = () => {
     onSubmit: async (values) => {
       console.log(values)
    
+      const config = {     
+        headers: { 'Content-Type': 'multipart/form-data' }
 
-      const response = await api.post("/register", {
-        username: values.username,
-        email: values.email,
-        password: values.password,
-        avatar: values.avatar.name
+    }
+    
+
+      // const response = await api.post("/register", {
+      //   username: values.username,
+      //   email: values.email,
+      //   password: values.password,
+      //   avatar: values.avatar
 
 
-      })
+      // })
+      const response = await api({
+        url: '/register',
+        method: 'POST',
+        Headers: {
+          "content-type": "multipart/form-data",
+        },
+        data: values.avatar,
+        params: {
+          username: values.username, 
+          email: values.email, 
+          password: values.password
+        }
+      });
       console.log(response)
       // router.push('/');
     }

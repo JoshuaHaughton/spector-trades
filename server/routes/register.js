@@ -22,11 +22,12 @@ const upload = multer({ storage: storage});
 // curl -X POST -F 'username=linuxize' -F 'email=linuxize@example.com' -F 'password=password' -F 'avatar=@image.png' http://localhost:3001/api/register
 module.exports = (db) => {
   app.post('/', upload.single('avatar'), (req, res) => {
-
+    console.log("username", req.body.username, "password", req.body.password, "email", req.body.email)
     console.log("Incoming to server...")
     console.log(req.body)
-    console.log(req.body.avatar)
-    console.log( typeof req.body.avatar)
+    // console.log(req.body)
+    // console.log(req.body.avatar)
+    // console.log( typeof req.body.avatar)
     
     if (!req.body.username || !req.body.email || !req.body.password ) {
       res.sendStatus(422);
