@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const bodyParser = require('body-parser');
 const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const morgan = require('morgan');
@@ -39,6 +40,10 @@ app.use("/api/comments", commentRoutes(db));
 // Post avatar upload
 const avatarRoutes = require("./routes/avatar_upload")
 app.use("/api/avatars", avatarRoutes(db));
+
+// Post avatar upload
+const RegisterRoutes = require("./routes/register")
+app.use("/api/register", RegisterRoutes(db));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
