@@ -22,17 +22,13 @@ const upload = multer({ storage: storage});
 // curl -X POST -F 'username=linuxize' -F 'email=linuxize@example.com' -F 'password=password' -F 'avatar=@image.png' http://localhost:3001/api/register
 module.exports = (db) => {
   app.post('/', upload.single('avatar'), (req, res) => {
-    // console.log("username", req.body.username, "password", req.body.password, "email", req.body.email)
     console.log("Incoming to server...")
-    // console.log(req.query)
-    console.log(req.avatar)
-    // console.log(req.body.avatar)
-    // console.log( typeof req.body.avatar)
+    console.log(req.body)
     
-    if (!req.query.username || !req.query.email || !req.query.password ) {
-      res.sendStatus(422);
+    if (!req.body.username || !req.body.email || !req.body.password ) {
+      return res.sendStatus(422);
     }
-    const { username, email, password } = req.query;
+    const { username, email, password } = req.body;
     let avatar_url;
     if (req.file) {
       avatar_url = req.file.filename;
@@ -64,19 +60,9 @@ module.exports = (db) => {
         // Are we going to verify serverside or clientside if an email has been duplicated
         // in Users
         console.log('ERROR in db insert for user registration', err.message);
-        res.sendStatus(422)
       });
     })
 
-
-    // if (!req.file) {
-    //   console.log("ERROR - Failed File Upload");
-    //   console.log(req.body);
-    //   return res.sendStatus(422)
-    //   // 422 request payload is valid but
-    //   // it cannot be processed due to invalid data
-  
-    // }
   });
 
 
