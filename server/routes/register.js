@@ -2,6 +2,8 @@
 // ON SUCCESS SENDS
 // {status: 200, user_id: x}
 // user_id is the id of the new entry
+// ON FAILURE sends 422 (Unprocessable Entity) see below
+// https://stackoverflow.com/questions/3050518/what-http-status-response-code-should-i-use-if-the-request-is-missing-a-required
 const express = require('express');
 const app = express.Router();
 const bcrypt = require('bcrypt');
@@ -20,19 +22,31 @@ const upload = multer({ storage: storage});
 // curl -X POST -F 'username=linuxize' -F 'email=linuxize@example.com' -F 'password=password' -F 'avatar=@image.png' http://localhost:3001/api/register
 module.exports = (db) => {
   app.post('/', upload.single('avatar'), (req, res) => {
+    if (!req.body.username || !req.body.email || !req.body.password ) {
+      res.sendStatus(422);
+    }
     const { username, email, password } = req.body;
-    const avatar_url = req.file.filename;
+    let avatar_url;
+    if (req.file) {
+      avatar_url = req.file.filename;
+    }
+
 
     bcrypt.hash(password, saltRounds, function (err, password_digest) {
       if (err) {
         console.log("bcrypt hash err: ", err)
       }
-      addUser({
+      const user = {
         username,
         email,
-        password_digest,
-        avatar_url
-      }, db).then(resp => {
+        password_digest
+      } 
+      if (avatar_url) {
+        user["avatar_url"] = avatar_url;
+      } else {
+        user["avatar_url"] = null;
+      }
+      addUser(user, db).then(resp => {
         const responseString = { status: 200, user_id: resp.id };
         if (avatar_url) console.log('user avatar inserted in db');
         console.log("New user added");
@@ -42,19 +56,20 @@ module.exports = (db) => {
         // NOTE
         // Are we going to verify serverside or clientside if an email has been duplicated
         // in Users
-        console.log(`ERROR in db insert for user registration ${err.message}`);
+        console.log('ERROR in db insert for user registration', err.message);
+        res.sendStatus(422)
       });
     })
 
 
-    if (!req.file) {
-      console.log("ERROR - Failed File Upload");
-      console.log(req.body);
-      return res.sendStatus(422)
-      // 422 request payload is valid but
-      // it cannot be processed due to invalid data
+    // if (!req.file) {
+    //   console.log("ERROR - Failed File Upload");
+    //   console.log(req.body);
+    //   return res.sendStatus(422)
+    //   // 422 request payload is valid but
+    //   // it cannot be processed due to invalid data
   
-    }
+    // }
   });
 
 
@@ -65,31 +80,12 @@ const addUser = function(user, db) {
   let queryString = 
                     `
                     INSERT INTO 
-                    users (username, email, password_digest,
+                    users (username, email, password_digest, avatar_url)
+                    VALUES ($1, $2, $3, $4)
+                    RETURNING *;
                     `;
 
-  const queryParams = [ user.username, user.email, user.password_digest ];
-
-  if (user.avatar_url) {
-    queryString += ` avatar_url`;
-    queryParams.push(user.avatar_url);
-  }
-
-  queryString += 
-                  `
-                  )
-                  VALUES ($1, $2, $3
-                  `;
-
-  if (queryParams.length === 4) {
-    queryString += `, $4`
-  }
-
-    queryString += 
-    `
-    )
-    RETURNING *;
-    `;
+  const queryParams = [ user.username, user.email, user.password_digest, user.avatar_url ];
 
   return db.query(queryString, queryParams)
   .then((result) => {
