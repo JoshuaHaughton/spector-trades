@@ -9,7 +9,9 @@ import {
   Checkbox,
   Container,
   FormHelperText,
+  Input,
   Link,
+  Stack,
   TextField,
   Typography
 } from '@mui/material';
@@ -20,8 +22,7 @@ const Register = () => {
   const formik = useFormik({
     initialValues: {
       email: '',
-      firstName: '',
-      lastName: '',
+      username: '',
       password: '',
       policy: false
     },
@@ -33,16 +34,11 @@ const Register = () => {
         .max(255)
         .required(
           'Email is required'),
-      firstName: Yup
+      username: Yup
         .string()
         .max(255)
         .required(
-          'First name is required'),
-      lastName: Yup
-        .string()
-        .max(255)
-        .required(
-          'Last name is required'),
+          'Username is required'),
       password: Yup
         .string()
         .max(255)
@@ -56,7 +52,14 @@ const Register = () => {
         )
     }),
     onSubmit: () => {
-      router.push('/');
+      const response = api.post("/users", {
+        username: formik.values.username,
+        email: formik.values.email,
+        password: formik.values.password
+
+
+      })
+      // router.push('/');
     }
   });
 
@@ -105,27 +108,15 @@ const Register = () => {
               </Typography>
             </Box>
             <TextField
-              error={Boolean(formik.touched.firstName && formik.errors.firstName)}
+              error={Boolean(formik.touched.username && formik.errors.username)}
               fullWidth
-              helperText={formik.touched.firstName && formik.errors.firstName}
-              label="First Name"
+              helperText={formik.touched.username && formik.errors.username}
+              label="Userame"
               margin="normal"
-              name="firstName"
+              name="username"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              value={formik.values.firstName}
-              variant="outlined"
-            />
-            <TextField
-              error={Boolean(formik.touched.lastName && formik.errors.lastName)}
-              fullWidth
-              helperText={formik.touched.lastName && formik.errors.lastName}
-              label="Last Name"
-              margin="normal"
-              name="lastName"
-              onBlur={formik.handleBlur}
-              onChange={formik.handleChange}
-              value={formik.values.lastName}
+              value={formik.values.username}
               variant="outlined"
             />
             <TextField
@@ -154,6 +145,11 @@ const Register = () => {
               value={formik.values.password}
               variant="outlined"
             />
+              <Stack direction="row" alignItems="center" spacing={2}>
+              <label htmlFor="contained-button-file">
+                <Input accept="image/*" id="contained-button-file" multiple type="file" name="avatar"/>
+              </label>
+            </Stack>
             <Box
               sx={{
                 alignItems: 'center',

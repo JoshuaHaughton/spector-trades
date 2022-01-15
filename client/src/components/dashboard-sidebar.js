@@ -56,6 +56,11 @@ const items = [
     href: '/404',
     icon: (<XCircleIcon fontSize="small" />),
     title: 'Error'
+  },
+  {
+    href: '/newsfeed',
+    icon: (<XCircleIcon fontSize="small" />),
+    title: 'Newsfeed'
   }
 ];
 

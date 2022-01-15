@@ -1,5 +1,7 @@
 import Head from 'next/head';
 import NextLink from 'next/link';
+import axios from 'axios';
+import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -8,11 +10,14 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Facebook as FacebookIcon } from '../icons/facebook';
 import { Google as GoogleIcon } from '../icons/google';
 
+
+
+
 const Login = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
-      email: 'demo@devias.io',
+      email: 'email@email.com',
       password: 'Password123'
     },
     validationSchema: Yup.object({
@@ -29,15 +34,28 @@ const Login = () => {
         .required(
           'Password is required')
     }),
-    onSubmit: () => {
-      router.push('/');
+    onSubmit: (e) => {
+      try {
+        const response = api.get("/users")
+
+
+
+        console.log(response.data);
+      } catch {
+        console.log("error login")
+        res.status(500)
+
+      }
+
+
+      // router.push('/');
     }
   });
 
   return (
     <>
       <Head>
-        <title>Login | Material Kit</title>
+        <title>Login | Spector Trades</title>
       </Head>
       <Box
         component="main"
@@ -80,7 +98,7 @@ const Login = () => {
               container
               spacing={3}
             >
-              <Grid
+              {/* <Grid
                 item
                 xs={12}
                 md={6}
@@ -95,8 +113,8 @@ const Login = () => {
                 >
                   Login with Facebook
                 </Button>
-              </Grid>
-              <Grid
+              </Grid> */}
+              {/* <Grid
                 item
                 xs={12}
                 md={6}
@@ -111,7 +129,7 @@ const Login = () => {
                 >
                   Login with Google
                 </Button>
-              </Grid>
+              </Grid> */}
             </Grid>
             <Box
               sx={{
@@ -124,7 +142,7 @@ const Login = () => {
                 color="textSecondary"
                 variant="body1"
               >
-                or login with email address
+                Login with email address
               </Typography>
             </Box>
             <TextField
