@@ -1,5 +1,6 @@
 import Head from 'next/head';
 import NextLink from 'next/link';
+import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -23,8 +24,9 @@ const Register = () => {
     initialValues: {
       email: '',
       username: '',
-      password: '',
-      policy: false
+      password: ''
+      // avatar: '',
+      // policy: false
     },
     validationSchema: Yup.object({
       email: Yup
@@ -43,22 +45,31 @@ const Register = () => {
         .string()
         .max(255)
         .required(
-          'Password is required'),
-      policy: Yup
-        .boolean()
-        .oneOf(
-          [true],
-          'This field must be checked'
-        )
+          'Password is required')
+      // avatar: Yup
+      //     .object()
+      //     .shape({
+      //       file: yup
+      //       .mixed()
+      //       .required()
+      //     }),
+      // policy: Yup
+      //   .boolean()
+      //   .oneOf(
+      //     [true],
+      //     'This field must be checked'
+      //   )
     }),
-    onSubmit: () => {
-      const response = api.post("/users", {
-        username: formik.values.username,
-        email: formik.values.email,
-        password: formik.values.password
+    onSubmit: async (values) => {
+      console.log(values)
+      const response = await api.post("/users", {
+        username: values.username,
+        email: values.email,
+        password: values.password
 
 
       })
+      console.log(response)
       // router.push('/');
     }
   });
@@ -146,11 +157,11 @@ const Register = () => {
               variant="outlined"
             />
               <Stack direction="row" alignItems="center" spacing={2}>
-              <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" name="avatar"/>
-              </label>
+              {/* <label htmlFor="contained-button-file">
+                <Input  containerElement='label' id="contained-button-file" multiple type="file" name="avatar"/>
+              </label> */}
             </Stack>
-            <Box
+            {/* <Box
               sx={{
                 alignItems: 'center',
                 display: 'flex',
@@ -181,12 +192,12 @@ const Register = () => {
                   </Link>
                 </NextLink>
               </Typography>
-            </Box>
-            {Boolean(formik.touched.policy && formik.errors.policy) && (
+            </Box> */}
+            {/* {Boolean(formik.touched.policy && formik.errors.policy) && (
               <FormHelperText error>
                 {formik.errors.policy}
-              </FormHelperText>
-            )}
+              </FormHelperText> */}
+            {/* )} */}
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
