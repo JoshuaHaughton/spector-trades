@@ -10,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { AddCommentModal } from "../../components/newsfeed/comment/add-comment-modal";
+import { CommentFeedModal } from "../../components/newsfeed/comment/comment-feed-modal";
 import { useState } from "react";
 import { Clock as ClockIcon } from "../../icons/clock";
 
@@ -27,9 +28,12 @@ const style = {
 };
 
 export const NewsfeedCard = ({ product, ...rest }) => {
-  const [open, setOpen] = useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const [addCommentOpen, setAddCommentOpen] = useState(false);
+  const handleAddCommentOpen = () => setAddCommentOpen(true);
+  const handleAddCommentClose = () => setAddCommentOpen(false);
+  const [commentFeedOpen, setCommentFeedOpen] = useState(false);
+  const handleCommentFeedOpen = () => setCommentFeedOpen(true);
+  const handleCommentFeedClose = () => setCommentFeedOpen(false);
 
   return (
     <Card
@@ -108,7 +112,13 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              <Button variant="text">All comments</Button>
+              <Button onClick={handleCommentFeedOpen} variant="text">
+                All comments
+              </Button>
+              <CommentFeedModal
+                open={commentFeedOpen}
+                handleClose={handleCommentFeedClose}
+              />
             </Typography>
           </Grid>
           <Grid
@@ -124,10 +134,13 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              <Button onClick={handleOpen} variant="text">
+              <Button onClick={handleAddCommentOpen} variant="text">
                 Add comment
               </Button>
-              <AddCommentModal open={open} handleClose={handleClose} />
+              <AddCommentModal
+                open={addCommentOpen}
+                handleClose={handleAddCommentClose}
+              />
             </Typography>
           </Grid>
         </Grid>
