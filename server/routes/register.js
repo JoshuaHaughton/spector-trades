@@ -85,6 +85,20 @@ const addUser = function(user, db) {
     return result.rows[0];
   })
   .catch((err) => {
-    console.log(err.message);
+    console.log("Error in addUser", err.message);
   });
 };
+
+const checkEmail = function(email, db) {
+  return db.query(
+    `
+    SELECT email FROM users
+    WHERE email = $1
+    RETURNING *;
+    `, [ email ])
+    .then(response => {
+    return response.rows[0];
+  }).catch(err => {
+    console.log("ERROR in checkEmail", err.message);
+  });
+}
