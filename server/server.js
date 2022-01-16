@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(morgan("dev"))
-
+app.use(bodyParser.text({ type: 'text/html' }))
 app.get('/', function (req, res) {
   res.send('Welcome To Home Page')
 })
@@ -41,9 +41,13 @@ app.use("/api/comments", commentRoutes(db));
 const avatarRoutes = require("./routes/avatar_upload")
 app.use("/api/avatars", avatarRoutes(db));
 
-// Post avatar upload
+// Post register route
 const RegisterRoutes = require("./routes/register")
 app.use("/api/register", RegisterRoutes(db));
+
+// Post login route
+const loginRoutes = require("./routes/login")
+app.use("/api/login", loginRoutes(db));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
