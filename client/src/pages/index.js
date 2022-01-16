@@ -24,12 +24,16 @@ const Dashboard = () => {
     //originally async
     const fetchData = async () => {
       try {
-        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt})
+        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+          if (response.data['success']) {
+            setIsAuthorized(true);
+          }
+        })
         // set(response.data.data.restaurants)
 
         console.log(response.data)
 
-        setIsAuthorized(true);
+        
       } catch(err) {
   
       }
