@@ -34,18 +34,63 @@ const Login = () => {
         .required(
           'Password is required')
     }),
-    onSubmit: (e) => {
-      try {
-        const response = api.get("/users")
+    onSubmit: async (values) => {
 
 
 
-        console.log(response.data);
-      } catch {
-        console.log("error login")
-        res.status(500)
+      console.log(values)
 
+      
+
+
+      var bodyFormData = new FormData();
+      // bodyFormData.append('username', values.username);
+      bodyFormData.append('email', values.email);
+      bodyFormData.append('password', values.password);
+
+      const loginData = {
+        email: values.email,
+        password: values.password
       }
+      try {
+      const response = await api.post('/login', loginData)
+
+      console.log(response);
+
+
+
+      } catch(err) {
+        console.log(err)
+        //response.status(500);
+      }
+      /*
+      api({
+        method: "post",
+        url: "/login",
+        data: loginData,
+        headers: { "Content-Type": "application/json" },
+      })
+        .then(function (response) {
+          //handle success
+          console.log("success in axios login", response);
+        })
+        .catch(function (response) {
+          //handle error
+          console.log("Error is axios post of login -", response);
+        });
+        */
+
+      // try {
+      //   const response = api.get("/users")
+
+
+
+      //   console.log(response.data);
+      // } catch {
+      //   console.log("error login")
+      //   res.status(500)
+
+      // }
 
 
       // router.push('/');

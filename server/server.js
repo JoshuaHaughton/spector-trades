@@ -45,6 +45,12 @@ app.use("/api/avatars", avatarRoutes(db));
 const RegisterRoutes = require("./routes/register")
 app.use("/api/register", RegisterRoutes(db));
 
+// Post avatar upload
+const loginRoutes = require("./routes/login")
+app.use("/api/login", loginRoutes(db));
+
+
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
