@@ -1,14 +1,24 @@
-const getUserByEmail = function(email, db) {
+// Helpers for Users interactions
+
+const getUserByColumn = function(column, value, db) {
   return db.query(
     `
     SELECT * FROM users
-    WHERE email = $1;
-    `, [ email ])
+    WHERE ${column} = $1;
+    `, [ value ])
     .then(response => {
     return response.rows[0];
   }).catch(err => {
-    console.log("ERROR in checkEmail", err.message);
+    console.log(`ERROR in getUserByColumn with column: ${column} and value: ${value}`);
+    console.log(err.message)
   });
+};
+
+const verifyUniqueColumn = function(column, value, db) {
+  if (!getUserByColumn(column, value, db)) {
+    return true;
+  }
+  return false;
 };
 
 
@@ -17,6 +27,4 @@ const getUserByEmail = function(email, db) {
 
 
 
-
-
-module.exports = { getUserByEmail };
+module.exports = { getUserByColumn, verifyUniqueColumn };
