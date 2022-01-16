@@ -9,12 +9,53 @@ import { TotalCustomers } from '../components/dashboard/total-customers';
 import { TotalProfit } from '../components/dashboard/total-profit';
 import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
+import { useCookies } from 'react-cookie';
+import { useEffect, useState } from 'react';
+import api from "../apis/api";
 
-const Dashboard = () => (
+const Dashboard = () => {
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+
+  // /auth endpoint returns {success: true, token}
+  useEffect(() => {
+
+    //originally async
+    const fetchData = async () => {
+      try {
+        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+          if (response.data['success']) {
+            setIsAuthorized(true);
+          }
+        })
+        // set(response.data.data.restaurants)
+
+        console.log(response.data)
+
+        
+      } catch(err) {
+  
+      }
+    };
+
+    fetchData();
+    
+  }, []);
+
+  // useEffect, use axios to call the auth endpoint using our jwt token
+  // auth endpoint validates the token, if returns true.. setIsAuthorized to true
+  // 
+    if (!isAuthorized) {
+      console.log("has authorized token");
+      return <div>Unauthorized user</div>
+    }
+
+  return (
   <>
     <Head>
       <title>
-        Dashboard | Material Kit
+        Dashboard | Spector Trades
       </title>
     </Head>
     <Box
@@ -105,7 +146,7 @@ const Dashboard = () => (
       </Container>
     </Box>
   </>
-);
+);};
 
 Dashboard.getLayout = (page) => (
   <DashboardLayout>

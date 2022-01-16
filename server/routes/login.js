@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express.Router();
 const bcrypt = require('bcrypt');
-const { getUserByColumn } = require('./helpers/user-helpers');
+const jwt = require('jsonwebtoken');
 // curl -X POST -d 'password=password' -d 'email=test@example.com' http://localhost:3002/api/login
 
 //Default route is /api/login
@@ -13,24 +13,19 @@ module.exports = (db) => {
     // }
 
     const { password, email } = req.body;
-    getUserByColumn( 'email', email, db)
-      .then(async (resp) => {
-        await bcrypt.compare(
-          password,
-          resp.password_digest,
-          function (err, result) {
-            if (result) {
-              console.log("successful login from: ", resp.username);
+    checkEmail(email, db)
+    .then(async resp => {
 
-              // req.session['user_id'] = resp.user_id;  // SEND COOKIE TO CLIENT
-
-              return res.send({ status: 200, user_id: resp.user_id });
-            }
-              console.log("password is incorrect");
-              console.log(err)
-              return res.status(401).send("password is incorrect");
-          }
-        );
+      await bcrypt.compare(password, resp.password_digest, function (err, result) {
+        if (result) {
+          console.log("success!")
+          // Generate an access token
+          const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
+          return res.send({status: 200, user_id: resp.id, spector_jwt: accessToken})
+        }
+        else {
+          return res.status(401).send("incorrect");
+        }
       })
       .catch((err) => {
         console.log(err);

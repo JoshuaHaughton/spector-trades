@@ -9,12 +9,16 @@ import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Facebook as FacebookIcon } from '../icons/facebook';
 import { Google as GoogleIcon } from '../icons/google';
+import { useCookies } from 'react-cookie';
 
 
 
 
 const Login = () => {
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
+
+  
   const formik = useFormik({
     initialValues: {
       email: 'email@email.com',
@@ -44,7 +48,6 @@ const Login = () => {
 
 
       var bodyFormData = new FormData();
-      // bodyFormData.append('username', values.username);
       bodyFormData.append('email', values.email);
       bodyFormData.append('password', values.password);
 
@@ -55,8 +58,10 @@ const Login = () => {
       try {
       const response = await api.post('/login', loginData)
 
-      console.log(response);
+      console.log(response.data);
 
+      //document.cookie = `spector_jwt=${response.data.spector_jwt}`;
+      setCookie('spector_jwt', response.data.spector_jwt);
 
 
       } catch(err) {
@@ -226,6 +231,15 @@ const Login = () => {
                 variant="contained"
               >
                 Sign In Now
+              </Button>
+              <Button onClick={() => {
+                
+                console.log(cookies.spector_jwt)
+
+                api.post('/auth', {jwt_token: cookies.spector_jwt})
+                
+                }}>
+                test /auth endpoint
               </Button>
             </Box>
             <Typography

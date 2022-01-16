@@ -49,7 +49,9 @@ app.use("/api/register", RegisterRoutes(db));
 const loginRoutes = require("./routes/login")
 app.use("/api/login", loginRoutes(db));
 
-
+// Auth jwt testing
+const authRoutes = require("./routes/auth")
+app.use("/api/auth", authRoutes(db));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
