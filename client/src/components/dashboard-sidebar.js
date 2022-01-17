@@ -18,6 +18,11 @@ import { NavItem } from './nav-item';
 
 const items = [
   {
+    href: '/spector-dashboard',
+    icon: (<ChartBarIcon fontSize="small" />),
+    title: 'Spector Dashboard'
+  },
+  {
     href: '/',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
