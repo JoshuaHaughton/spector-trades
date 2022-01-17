@@ -1,10 +1,49 @@
 import Head from 'next/head';
-import { Box, Container, Grid, Tabs, Tab} from '@mui/material';
+import { Box, Card, CardContent, Container, Grid, Tabs, Tab} from '@mui/material';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import api from "../apis/api";
 
+const PortfolioStats = () => (
+  <Card
+    sx={{ height: '100%' }}
+  >
+    <CardContent>
+      PortFolio Stats
+    </CardContent>
+  </Card>
+);
+
+const HeroGraph = () => (
+  <Card
+    sx={{ height: '100%' }}
+  >
+    <CardContent>
+      Hero Graph
+    </CardContent>
+  </Card>
+);
+
+const GroupedAssets = () => (
+  <Card
+    sx={{ height: '100%' }}
+  >
+    <CardContent>
+      Grouped Assets
+    </CardContent>
+  </Card>
+);
+
+const IndividualAssets = () => (
+  <Card
+    sx={{ height: '100%' }}
+  >
+    <CardContent>
+      Individual Assets
+    </CardContent>
+  </Card>
+);
 
 const SpectorDashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
@@ -90,6 +129,7 @@ const SpectorDashboard = () => {
             md={6}
             xl={3}
             xs={12}>
+              <PortfolioStats />
           </Grid>
 
           {/* THIS IS THE HERO GRAPH COMPONENT */}
@@ -98,6 +138,7 @@ const SpectorDashboard = () => {
             md={6}
             xl={9}
             xs={12}>
+              <HeroGraph />
           </Grid>
 
           {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
@@ -106,6 +147,7 @@ const SpectorDashboard = () => {
             md={6}
             xl={3}
             xs={12}>
+              <GroupedAssets />
           </Grid>
 
           {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
@@ -114,6 +156,7 @@ const SpectorDashboard = () => {
             md={6}
             xl={9}
             xs={12}>
+              <IndividualAssets />
           </Grid>
         </Grid>
       </Container>
