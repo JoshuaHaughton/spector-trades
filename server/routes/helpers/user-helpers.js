@@ -13,17 +13,28 @@ const getUserByColumn = function(column, value, db) {
     console.log(err.message)
   });
 };
-
-const verifyUniqueColumn = function(data, db) {
-  return getUserByColumn(column, value, db)
-  .then(resp => {
-    return resp ? false : true
-  })
-  .catch(err => {
-    console.log("ERROR in verifyUniqueColumn")
-    console.log(`getUserByColumn(column = ${column}, value = ${value}, db)`)
-
-  }) 
+/**
+ * 
+ * @param {object} columnData containing columns to be checked for uniqueness
+ * 
+ * data = { email: email@gmail.com, username: someusername}
+ * @param {database pool} db pool connection setup in db/index
+ * @returns true if both are unique false otherwise
+ */
+const verifyUniqueColumns = function(columnData, db) {
+  return db.query(
+    `
+    SELECT * FROM users
+    WHERE email = $1
+    OR
+    username = $2;
+    `, [ columnData.email, columnData.username ])
+    .then(response => {
+    return response.rows[0] ? false : true;
+  }).catch(err => {
+    console.log(`ERROR in verifyUniqueColumns with email: ${columnData.email} and username: ${columnData.username}`);
+    console.log(err.message)
+  });
 };
 
 
@@ -32,4 +43,4 @@ const verifyUniqueColumn = function(data, db) {
 
 
 
-module.exports = { getUserByColumn, verifyUniqueColumn };
+module.exports = { getUserByColumn, verifyUniqueColumns };
