@@ -14,7 +14,8 @@ const messageObj = {
   DUPLICATE_USERNAME: "DUPLICATE_USERNAME",
   DUPLICATE_BOTH: "DUPLICATE_BOTH",
   OK: "OK",
-  BAD_LOGIN: "BAD_LOGIN"
+  BAD_LOGIN: "BAD_LOGIN",
+  SERVER_UNREACHABLE: "SERVER_UNREACHABLE"
 }
 const severityObj = {
   error: 'error',
@@ -35,6 +36,7 @@ function ErrorSnackbar(props) {
           {message === "DUPLICATE_EMAIL" && "The email provided is already in use, please pick a different one"}
           {message === "DUPLICATE_USERNAME" && "The username provided is already in use, please choose again"}
           {message === "BAD_LOGIN" && "The username or password is incorrect, please try again"}
+          {message === "SERVER_UNREACHABLE" && "The server was unreachable"}
         </Alert>
       </Snackbar>
     </Stack>

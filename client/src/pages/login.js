@@ -61,52 +61,27 @@ const Login = () => {
       try {
       const response = await api.post('/login', loginData)
 
-      console.log(response.data);
-
       if (response.data.status === 200) {
         setCookie('spector_jwt', response.data.spector_jwt);
         router.push('/')
       }
 
-      } catch(err) {
+
+      if (response.data.status === 401) {
         setSeverity(severityObj.error);
         setMessage(messageObj.BAD_LOGIN);
+        setOpen(true);
+        return;
+      }
+
+      } catch(err) {
+        setSeverity(severityObj.error);
+        setMessage(messageObj.SERVER_UNREACHABLE);
         setOpen(true);
         return;
         console.log(err)
         //response.status(500);
       }
-      /*
-      api({
-        method: "post",
-        url: "/login",
-        data: loginData,
-        headers: { "Content-Type": "application/json" },
-      })
-        .then(function (response) {
-          //handle success
-          console.log("success in axios login", response);
-        })
-        .catch(function (response) {
-          //handle error
-          console.log("Error is axios post of login -", response);
-        });
-        */
-
-      // try {
-      //   const response = api.get("/users")
-
-
-
-      //   console.log(response.data);
-      // } catch {
-      //   console.log("error login")
-      //   res.status(500)
-
-      // }
-
-
-      // router.push('/');
     }
   });
   const handleSnackClose = (event, reason) => {
