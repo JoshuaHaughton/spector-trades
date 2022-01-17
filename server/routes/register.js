@@ -8,7 +8,7 @@
 
 const express = require('express');
 const app = express.Router();
-
+const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const saltRounds = 8; // SaltRounds should be over 10 in production
 
@@ -44,17 +44,17 @@ module.exports = (db) => {
       if (result.unique === false) {
         if (result.dup_username && result.dup_email) {
           console.log("DUPLICATE EMAIL AND USERNAME")
-          return res.status(409).send({message: "username AND email already in use"})
+          return res.send({status: 409, message: "username AND email already in use"})
         }
 
         if (result.dup_username) {
           console.log("DUPLICATE USERNAME")
-          return res.status(409).send({message: "username already in use"})
+          return res.send({status: 409, message: "username already in use"})
         }
 
         if (result.dup_email) {
           console.log("DUPLICATE EMAIL")
-          return res.status(409).send({message: "email already in use"})
+          return res.send({status: 409, message: "email already in use"})
         }
       }
       bcrypt
@@ -72,12 +72,12 @@ module.exports = (db) => {
           };
     
           addUser(user, db).then(resp => {
-            const responseString = { status: 200, user_id: resp.id };
+            const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
+            const responseString = { status: 200, spector_jwt: accessToken };
 
             console.log("New user added");
             if (avatar_url) console.log('user avatar inserted in db');
             console.log("response sent to client: ", responseString)
-
             return res.send(responseString);
           }).catch(err => {
             console.log('ERROR in db insert for user registration', err.message);
