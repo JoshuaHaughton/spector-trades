@@ -14,7 +14,6 @@ export default function ErrorSnackbar(props) {
   const { open, message, handleClose, severity } = props;
 
 
-  console.log(message)
   return (
     <Stack spacing={2} sx={{ width: '100%' }}>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
