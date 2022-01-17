@@ -2,7 +2,9 @@
 // ON SUCCESS SENDS
 // {status: 200, user_id: x}
 // user_id is the id of the new entry
-// ON FAILURE sends 422 (Unprocessable Entity)
+// ON ERROR sends 422 (Unprocessable Entity) if missing fields (username, email, password are req'd)
+// ON ERROR sends 500 (Internal server error) Internal process error)
+// ON ERROR sends 409 (conflict server error) username or email is not unique
 
 const express = require('express');
 const app = express.Router();
@@ -59,17 +61,21 @@ module.exports = (db) => {
     
           addUser(user, db).then(resp => {
             const responseString = { status: 200, user_id: resp.id };
-            if (avatar_url) console.log('user avatar inserted in db');
+
             console.log("New user added");
+            if (avatar_url) console.log('user avatar inserted in db');
             console.log("response sent to client: ", responseString)
+
             return res.send(responseString);
           }).catch(err => {
             console.log('ERROR in db insert for user registration', err.message);
+            return res.send({status: 500, message: "Error in adding User to table"})
           });
         })
     })
     .catch(resp => {
     console.log("ERROR in verifyUniqueColumn: ", resp);
+    return res.send({status: 500, message: "Error in verifying unique columns"})
     });
 
     
