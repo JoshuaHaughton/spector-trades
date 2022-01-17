@@ -14,11 +14,16 @@ const getUserByColumn = function(column, value, db) {
   });
 };
 
-const verifyUniqueColumn = function(column, value, db) {
-  if (!getUserByColumn(column, value, db)) {
-    return true;
-  }
-  return false;
+const verifyUniqueColumn = function(data, db) {
+  return getUserByColumn(column, value, db)
+  .then(resp => {
+    return resp ? false : true
+  })
+  .catch(err => {
+    console.log("ERROR in verifyUniqueColumn")
+    console.log(`getUserByColumn(column = ${column}, value = ${value}, db)`)
+
+  }) 
 };
 
 

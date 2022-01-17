@@ -36,7 +36,14 @@ module.exports = (db) => {
     const { username, email, password } = req.body;
     const avatar_url = req.file ? req.file.filename : null;
     
-    console.log(verifyUniqueColumn())
+    verifyUniqueColumn('email', email, db)
+    .then(resp => {
+    console.log("verifyUniqueColumn: ", resp);
+
+    })
+    .catch(resp => {
+    console.log("verifyUniqueColumn: ", resp);
+    });
 
     bcrypt.hash(password, saltRounds, function (err, password_digest) {
       if (err) {
