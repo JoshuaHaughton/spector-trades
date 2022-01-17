@@ -14,13 +14,6 @@ const getUserByColumn = function(column, value, db) {
   });
 };
 
-const verifyUniqueColumn = function(column, value, db) {
-  if (!getUserByColumn(column, value, db)) {
-    return true;
-  }
-  return false;
-};
-
 
 
 
