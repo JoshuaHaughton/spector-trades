@@ -35,6 +35,8 @@ export const NewsfeedCard = ({ product, ...rest }) => {
   const handleCommentFeedOpen = () => setCommentFeedOpen(true);
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
 
+  // console.log(product)
+
   return (
     <Card
       sx={{
@@ -53,14 +55,14 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               display: "flex",
             }}
           >
-            <Avatar alt="Product" src={product.media} variant="square" />
+            {/* <Avatar alt="Product" src={product.media} variant="square" /> */}
             <Typography
               color="textSecondary"
               display="inline"
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {product.title}
+              {product.author}
             </Typography>
           </Grid>
           <Grid
@@ -92,7 +94,7 @@ export const NewsfeedCard = ({ product, ...rest }) => {
           }}
         ></Box>
         <Typography align="center" color="textPrimary" variant="body1">
-          {product.description}
+          {product.summary}
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
