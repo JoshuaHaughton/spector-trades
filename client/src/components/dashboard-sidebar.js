@@ -20,6 +20,11 @@ import api from "../apis/api";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 let items = [
   {
+    href: '/spector-dashboard',
+    icon: (<ChartBarIcon fontSize="small" />),
+    title: 'Spector Dashboard'
+  },
+  {
     href: '/',
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
