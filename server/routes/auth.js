@@ -7,7 +7,9 @@ const jwt = require('jsonwebtoken');
 //Default route is /api/auth
 module.exports = (db) => {
   app.post('/', (req, res) => {
-
+    if (!req.body.jwt_token) {
+      return res.sendStatus(403);
+    }
     console.log(req.body);
     const token = req.body.jwt_token
     jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
