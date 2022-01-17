@@ -4,7 +4,8 @@ import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useState } from "react";
+import ErrorSnackbar from '../components/error-snackbar/error-snack';
+import * as React from 'react';
 import {
   Box,
   Button,
@@ -13,6 +14,7 @@ import {
   FormHelperText,
   Input,
   Link,
+  Snackbar,
   Stack,
   TextField,
   Typography
@@ -20,6 +22,12 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Register = () => {
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState('');
+  const DUPLICATE_EMAIL = "DUPLICATE_EMAIL";
+  const OK = "OK";
+  const ERROR = "ERROR";
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -73,6 +81,11 @@ const Register = () => {
       })
         .then(function (response) {
           //handle success
+          if (response.status === 200) {
+            setSeverity("success")
+            setMessage(OK)
+            setOpen(true);
+          }
           console.log("success in axios register", response);
         })
         .catch(function (response) {
@@ -81,7 +94,12 @@ const Register = () => {
         });
     }
   });
-
+    const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
   return (
     <>
       <Head>
@@ -240,7 +258,9 @@ const Register = () => {
           </form>
         </Container>
       </Box>
+      <ErrorSnackbar severity={severity} message={message} open={open} handleClose={handleSnackClose} />
     </>
+
   );
 };
 
