@@ -1,3 +1,4 @@
+import * as React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import axios from 'axios';
@@ -10,6 +11,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Facebook as FacebookIcon } from '../icons/facebook';
 import { Google as GoogleIcon } from '../icons/google';
 import { useCookies } from 'react-cookie';
+import { ErrorSnackbar, severityObj, messageObj} from '../components/error-snackbar/error-snack';
 
 
 
@@ -17,8 +19,9 @@ import { useCookies } from 'react-cookie';
 const Login = () => {
   const router = useRouter();
   const [cookies, setCookie] = useCookies(['spector_jwt']);
-
-  
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState(severityObj.OK);
   const formik = useFormik({
     initialValues: {
       email: 'email@email.com',
@@ -44,7 +47,7 @@ const Login = () => {
 
       console.log(values)
 
-      
+
 
 
       var bodyFormData = new FormData();
@@ -60,11 +63,16 @@ const Login = () => {
 
       console.log(response.data);
 
-      //document.cookie = `spector_jwt=${response.data.spector_jwt}`;
-      setCookie('spector_jwt', response.data.spector_jwt);
-
+      if (response.data.status === 200) {
+        setCookie('spector_jwt', response.data.spector_jwt);
+        router.push('/')
+      }
 
       } catch(err) {
+        setSeverity(severityObj.error);
+        setMessage(messageObj.BAD_LOGIN);
+        setOpen(true);
+        return;
         console.log(err)
         //response.status(500);
       }
@@ -101,7 +109,12 @@ const Login = () => {
       // router.push('/');
     }
   });
-
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
   return (
     <>
       <Head>
@@ -205,7 +218,8 @@ const Login = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="email"
-              value={formik.values.email}
+
+              placeholder="alex@example.com"
               variant="outlined"
             />
             <TextField
@@ -218,7 +232,6 @@ const Login = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="password"
-              value={formik.values.password}
               variant="outlined"
             />
             <Box sx={{ py: 2 }}>
@@ -233,13 +246,12 @@ const Login = () => {
                 Sign In Now
               </Button>
               <Button onClick={() => {
-                
+
                 console.log(cookies.spector_jwt)
 
                 api.post('/auth', {jwt_token: cookies.spector_jwt})
-                
+
                 }}>
-                test /auth endpoint
               </Button>
             </Box>
             <Typography
@@ -266,6 +278,7 @@ const Login = () => {
           </form>
         </Container>
       </Box>
+      <ErrorSnackbar severity={severity} message={message} open={open} handleClose={handleSnackClose} />
     </>
   );
 };
