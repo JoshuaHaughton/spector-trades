@@ -10,7 +10,7 @@ const app = express.Router();
 const bcrypt = require('bcrypt');
 const saltRounds = 8; // SaltRounds should be over 10 in production
 
-const { verifyUniqueColumn } = require('./helpers/user-helpers');
+const { verifyUniqueColumns } = require('./helpers/user-helpers');
 
 // File upload dependencies
 const multer = require("multer");
@@ -36,7 +36,7 @@ module.exports = (db) => {
     const { username, email, password } = req.body;
     const avatar_url = req.file ? req.file.filename : null;
     
-    verifyUniqueColumn('email', email, db)
+    verifyUniqueColumns({email, username}, db)
     .then(resp => {
     console.log("verifyUniqueColumn: ", resp);
 
