@@ -23,13 +23,12 @@ module.exports = (db) => {
           // Generate an access token
           const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
           return res.send({status: 200, spector_jwt: accessToken})
-        }
-        else {
-          return res.status(401).send("incorrect");
+        } else {
+          return res.send({status: 401, message: "bad password"})
         }
       })
       } else {
-        return res.sendStatus(404);
+        return res.send({status: 401, message: "user not found"})
       }
     }).catch(err => {
       console.log("HERE")
