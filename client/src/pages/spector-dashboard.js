@@ -84,7 +84,37 @@ const SpectorDashboard = () => {
           container
           spacing={3}
         >
+          {/* THIS IS THE PORTFOLIO STATS COMPONENT */}
+          <Grid item
+            lg={4}
+            md={6}
+            xl={3}
+            xs={12}>
+          </Grid>
 
+          {/* THIS IS THE HERO GRAPH COMPONENT */}
+          <Grid item
+            lg={8}
+            md={6}
+            xl={9}
+            xs={12}>
+          </Grid>
+
+          {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
+          <Grid item
+            lg={4}
+            md={6}
+            xl={3}
+            xs={12}>
+          </Grid>
+
+          {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
+          <Grid item
+            lg={8}
+            md={6}
+            xl={9}
+            xs={12}>
+          </Grid>
         </Grid>
       </Container>
     </Box>
