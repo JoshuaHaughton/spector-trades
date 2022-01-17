@@ -5,7 +5,7 @@
  * @param {string} column name to be searched 
  * @param {string} value value to be checked in given column
  * @param {pool} db pool connection setup in db/index.js
- * @returns 
+ * @returns object containing user info if found user
  */
 const getUserByColumn = function(column, value, db) {
   return db.query(
