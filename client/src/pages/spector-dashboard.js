@@ -1,59 +1,18 @@
 import Head from 'next/head';
-import { Box, Card, CardContent, Container, Grid, Tabs, Tab} from '@mui/material';
+import { Box, Card, CardContent, Container, Grid} from '@mui/material';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import api from "../apis/api";
-
-const PortfolioStats = () => (
-  <Card
-    sx={{ height: '100%' }}
-  >
-    <CardContent>
-      PortFolio Stats
-    </CardContent>
-  </Card>
-);
-
-const HeroGraph = () => (
-  <Card
-    sx={{ height: '100%' }}
-  >
-    <CardContent>
-      Hero Graph
-    </CardContent>
-  </Card>
-);
-
-const GroupedAssets = () => (
-  <Card
-    sx={{ height: '100%' }}
-  >
-    <CardContent>
-      Grouped Assets
-    </CardContent>
-  </Card>
-);
-
-const IndividualAssets = () => (
-  <Card
-    sx={{ height: '100%' }}
-  >
-    <CardContent>
-      Individual Assets
-    </CardContent>
-  </Card>
-);
+import { PortfolioTabs } from '../components/spector-dashboard/portfolio-tabs';
+import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats';
+import { HeroGraph } from '../components/spector-dashboard/hero-graph';
+import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
+import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
 
 const SpectorDashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  const [value, setValue] = useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -99,22 +58,7 @@ const SpectorDashboard = () => {
     >
       {/* THIS IS THE PORTFOLIO TAB */}
       <Container maxWidth={false}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          aria-label="scrollable auto tabs example"
-          centered
-        >
-          <Tab label="Item One" />
-          <Tab label="Item Two" />
-          <Tab label="Item Three" />
-          <Tab label="Item Four" />
-          <Tab label="Item Five" />
-          <Tab label="Item Six" />
-          <Tab label="Item Seven" />
-        </Tabs>
+        <PortfolioTabs />
       </Container>
 
     
