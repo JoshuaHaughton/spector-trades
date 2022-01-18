@@ -52,7 +52,11 @@ app.use("/api/login", loginRoutes(db));
 
 // Auth jwt testing
 const authRoutes = require("./routes/auth")
-app.use("/api/auth", authenticateToken, authRoutes(db));
+app.use("/api/auth", authenticateToken, authRoutes());
+
+// Dashboard routes import
+const dashboardRoutes = require("./routes/dashboard");
+app.use("/api/dashboard", authenticateToken, dashboardRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

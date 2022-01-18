@@ -24,7 +24,7 @@ const Dashboard = () => {
     //originally async
     const fetchData = async () => {
       try {
-        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+        const response = await api.post('/dashboard', {jwt_token: cookies.spector_jwt}).then(response => {
           // console.log("auth data", response.data)
 
           if (response.data['success']) {
