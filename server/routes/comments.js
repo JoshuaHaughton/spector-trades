@@ -59,6 +59,31 @@ app.get('/post_id/:post_id', (req, res) => {
   });
 });
 
+app.post('/', async (req, res) => {
+  try {
+    const newComment = await db.query(`
+    INSERT INTO comments (user_id, post_id, body, created_at) 
+    VALUES (2, 2, $1, NOW())
+    RETURNING *;
+    `, [ASD]);
+
+    res.status(200).json({
+      status: "success",
+      results: newComment.rows.length,
+      data: {
+        newComment: newComment.rows
+      }
+    })
+    res.send(newComment.rows);
+    console.log(newComment.rows)
+
+  } catch(err) {
+
+    res.status(500).send;
+    console.log(res)
+  }
+})
+
 return app;
 
 }

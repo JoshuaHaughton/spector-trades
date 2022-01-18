@@ -29,7 +29,7 @@ const style = {
   p: 4,
 };
 
-export const NewsfeedCard = ({ product, ...rest }) => {
+export const NewsfeedCard = ({ article, ...rest }) => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
   const handleAddCommentOpen = () => setAddCommentOpen(true);
   const handleAddCommentClose = () => setAddCommentOpen(false);
@@ -38,7 +38,7 @@ export const NewsfeedCard = ({ product, ...rest }) => {
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
 
 
-  console.log(Date.parse(product.published_date))
+  console.log(Date.parse(article.published_date))
 75
 
   return (
@@ -59,15 +59,15 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               display: "flex",
             }}
           >
-            <Avatar alt="Article Image" src={product.media} variant="rounded" />
+            <Avatar alt="Article Image" src={article.media} variant="rounded" />
             <Typography
               color="textSecondary"
               display="inline"
               sx={{ pl: 1 }}
               variant="body2"
             >
-              <strong>{product.author || product.clean_url}</strong> - {
-                product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title
+              <strong>{article.author || article.clean_url}</strong> - {
+                article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title
               }
               {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
             </Typography>
@@ -87,7 +87,7 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               variant="body2"
             >
               {/* 2 days ago */}
-              <TimeAgo datetime={product.published_date} locale='en'/>
+              <TimeAgo datetime={article.published_date} locale='en'/>
             </Typography>
           </Grid>
         </Grid>
@@ -103,12 +103,12 @@ export const NewsfeedCard = ({ product, ...rest }) => {
         ></Box>
         <Typography align="center" color="textPrimary" variant="body1">
           {
-            product.summary.length > 150 ? product.summary.substring(0, 150) + '...' : product.summary
+            article.summary.length > 150 ? article.summary.substring(0, 150) + '...' : article.summary
           }
           <br/>
           <br/>
-          {/* <a href={product.link}>Click here to learn more</a> */}
-          <Link href={product.link} color="inherit">
+          {/* <a href={article.link}>Click here to learn more</a> */}
+          <Link href={article.link} color="inherit">
             Click here to learn more
           </Link>
         </Typography>
@@ -158,6 +158,8 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               <AddCommentModal
                 open={addCommentOpen}
                 handleClose={handleAddCommentClose}
+                //PASSES ARTICLE TO ADD COMMENT MODAL
+                parentPost={article}
               />
             </Typography>
           </Grid>
@@ -168,5 +170,5 @@ export const NewsfeedCard = ({ product, ...rest }) => {
 };
 
 NewsfeedCard.propTypes = {
-  product: PropTypes.object.isRequired,
+  article: PropTypes.object.isRequired,
 };

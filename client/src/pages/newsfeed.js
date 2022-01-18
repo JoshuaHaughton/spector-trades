@@ -31,10 +31,17 @@ const Newsfeed = () => {
           //shows array in order of most recent, excluding those that have yet to be posted (future dates)
           const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(b.published_date) - Date.parse(a.published_date))
           const today = new Date();
+
+          //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
           const filteredArticles = sortedNewsArrays.filter(article => Date.parse(article.published_date) < Date.parse(today))
 
-          setNewsArrays(filteredArticles);
-          console.log(filteredArticles);
+          //There were duplicate articles from multiple news sources, this fixed that
+          const noDuplicateArticles = filteredArticles.filter((thing, index, self) => {
+            return self.findIndex(t => t.title === thing.title) === index
+          });
+
+          setNewsArrays(noDuplicateArticles);
+          console.log(noDuplicateArticles);
         })
       } catch (error) {
         //fail
@@ -76,8 +83,8 @@ const Newsfeed = () => {
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3}>
               {newsArrays.map((article) => (
-                <Grid item key={article.uuid} lg={12} md={12} xs={12}>
-                  <NewsfeedCard key={article._id} product={article} />
+                <Grid item key={article._id} lg={12} md={12} xs={12}>
+                  <NewsfeedCard key={article._id} article={article} />
                 </Grid>
               ))}
             </Grid>

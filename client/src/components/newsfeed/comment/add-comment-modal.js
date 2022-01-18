@@ -9,6 +9,10 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
+import { useCookies } from 'react-cookie';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
 
 const style = {
   position: "absolute",
@@ -23,7 +27,59 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddCommentModal = ({ open, handleClose }) => (
+export const AddCommentModal = ({ open, handleClose, parentPost }) => {
+  const [cookies, setCookie] = useCookies();
+
+
+  const formik = useFormik({
+    initialValues: {
+      body: ''
+    },
+    validationSchema: Yup.object({
+      body: Yup
+        .string()
+        .max(140)
+        .required(
+          "Your post can't be empty!")
+    }),
+    onSubmit: async (values) => {
+
+
+
+      console.log(values)
+
+
+
+
+      var bodyFormData = new FormData();
+      bodyFormData.append('form-body', values.body);
+      bodyFormData.append('jwt', cookies.jwt_token);
+      // bodyFormData.append('user_id', values.password);
+
+      //CREATING NEW ARTICLE IN DB FROM PARENT POST (THIS ARTICLE)
+      api({
+        method: "post",
+        url: "/articles",
+        data: parentPost,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+
+      api({
+        method: "post",
+        url: "/comments",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+        .then(function (response) {
+          const respData = response.data;
+        });
+
+      }
+
+  });
+
+
+  return (
   <Modal
     open={open}
     onClose={handleClose}
@@ -53,7 +109,7 @@ export const AddCommentModal = ({ open, handleClose }) => (
                 sx={{ pl: 1 }}
                 variant="body2"
               >
-                Author Name
+                You
               </Typography>
             </Grid>
           </Grid>
@@ -70,14 +126,25 @@ export const AddCommentModal = ({ open, handleClose }) => (
                 display: "flex",
               }}
             >
+              <form onSubmit={formik.handleSubmit}>
               <Typography
                 color="textSecondary"
                 display="inline"
                 sx={{ pl: 1 }}
                 variant="body2"
               >
-                <Button variant="outlined">Post Comment</Button>
+                <Button
+                variant="outlined"
+                onClick={() => {
+
+                  console.log(cookies)
+
+                  api.post('/auth', {jwt_token: cookies.spector_jwt})
+
+                  }}
+                  >Post Comment</Button>
               </Typography>
+              </form>
             </Grid>
             <Grid
               item
@@ -100,4 +167,4 @@ export const AddCommentModal = ({ open, handleClose }) => (
       </Box>
     </Card>
   </Modal>
-);
+  )};
