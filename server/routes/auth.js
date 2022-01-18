@@ -8,7 +8,7 @@ const jwt = require('jsonwebtoken');
 module.exports = (db) => {
   app.post('/', (req, res) => {
     if (!req.body.jwt_token) {
-      return res.sendStatus(403);
+      return res.send({status: 403, message: "missing jwt token"});
     }
     console.log(req.body);
     const token = req.body.jwt_token
