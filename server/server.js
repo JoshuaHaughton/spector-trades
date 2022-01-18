@@ -49,6 +49,10 @@ app.use("/api/register", RegisterRoutes(db));
 const loginRoutes = require("./routes/login")
 app.use("/api/login", loginRoutes(db));
 
+// Post avatar upload
+const articleRoutes = require("./routes/articles")
+app.use("/api/articles", articleRoutes(db));
+
 // Auth jwt testing
 const authRoutes = require("./routes/auth")
 app.use("/api/auth", authRoutes(db));
