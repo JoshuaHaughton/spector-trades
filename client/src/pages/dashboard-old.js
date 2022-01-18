@@ -1,16 +1,18 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { PortfolioTabs } from '../components/spector-dashboard/portfolio-tabs';
-import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats';
-import { HeroGraph } from '../components/spector-dashboard/hero-graph';
-import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
-import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
+import { Budget } from '../components/dashboard/budget';
+import { LatestOrders } from '../components/dashboard/latest-orders';
+import { LatestProducts } from '../components/dashboard/latest-products';
+import { Sales } from '../components/dashboard/sales';
+import { TasksProgress } from '../components/dashboard/tasks-progress';
+import { TotalCustomers } from '../components/dashboard/total-customers';
+import { TotalProfit } from '../components/dashboard/total-profit';
+import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
-
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -72,56 +74,85 @@ const Dashboard = () => {
     }
     if (isAuthorized) {
       return (
-        <>
-          {/* THIS IS THE PORTFOLIO TAB */}
-          <Container maxWidth={false}>
-            <PortfolioTabs />
-          </Container>
-
-        
-          <Container maxWidth={false}>
-            <Grid
+        <Container maxWidth={false}>
+          <Grid
               container
               spacing={3}
             >
-              {/* THIS IS THE PORTFOLIO STATS COMPONENT */}
-              <Grid item
+              <Grid
+                item
+                lg={3}
+                sm={6}
+                xl={3}
+                xs={12}
+              >
+                <Budget />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TotalCustomers />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TasksProgress />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TotalProfit sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
+                lg={8}
+                md={12}
+                xl={9}
+                xs={12}
+              >
+                <Sales />
+              </Grid>
+              <Grid
+                item
                 lg={4}
                 md={6}
                 xl={3}
-                xs={12}>
-                  <PortfolioStats />
+                xs={12}
+              >
+                <TrafficByDevice sx={{ height: '100%' }} />
               </Grid>
-
-              {/* THIS IS THE HERO GRAPH COMPONENT */}
-              <Grid item
+              <Grid
+                item
+                lg={4}
+                md={6}
+                xl={3}
+                xs={12}
+              >
+                <LatestProducts sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
                 lg={8}
-                md={6}
+                md={12}
                 xl={9}
-                xs={12}>
-                  <HeroGraph />
-              </Grid>
-
-              {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
-              <Grid item
-                lg={5}
-                md={6}
-                xl={4}
-                xs={12}>
-                  <GroupedAssets />
-              </Grid>
-
-              {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
-              <Grid item
-                lg={7}
-                md={6}
-                xl={8}
-                xs={12}>
-                  <IndividualAssets />
+                xs={12}
+              >
+                <LatestOrders />
               </Grid>
             </Grid>
-          </Container>        
-        </>
+          </Container>
       );
     }
 
