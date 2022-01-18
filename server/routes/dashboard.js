@@ -3,7 +3,7 @@ const app = express.Router();
 
 //Default route is /api/dashboard
 module.exports = () => {
-  app.post('/', (req, res) => {
+  app.get('/', (req, res) => {
     const user = req.body.user; // { id, email }
     // TODO: Some function to get the dashboard data for a user.
     const dashboardData = {};

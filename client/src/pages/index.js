@@ -24,23 +24,21 @@ const Dashboard = () => {
     //originally async
     const fetchData = async () => {
       try {
-        const response = await api.post('/dashboard', {jwt_token: cookies.spector_jwt}).then(response => {
+        const token = cookies.spector_jwt;
+        const config = {
+          headers: { Authorization: `Bearer ${token}`}
+        };
+        const response = await api.get('/dashboard', config).then(response => {
           // console.log("auth data", response.data)
 
           if (response.data['success']) {
             setIsAuthorized(true);
             setLoading(false);
-            // console.log("is authed: ", isAuthorized)
-            // console.log("has authorized token");
-          } else {
-            setTimeout(() => {setLoading(false)}, 1000);
-
           }
-        })
-        // set(response.data.data.restaurants)
-
-        console.log(response.data)
-
+        }).catch(() => {
+          // Response rejected
+          setTimeout(() => {setLoading(false)}, 1000);
+        });
 
       } catch(err) {
 
