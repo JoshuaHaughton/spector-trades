@@ -18,28 +18,20 @@ const Dashboard = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-
-
-  // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
-    //originally async
     const fetchData = async () => {
       try {
         const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
-          // console.log("auth data", response.data)
 
           if (response.data['success']) {
             setIsAuthorized(true);
             setLoading(false);
-            // console.log("is authed: ", isAuthorized)
-            // console.log("has authorized token");
           } else {
             setTimeout(() => {setLoading(false)}, 1000);
 
           }
         })
-        // set(response.data.data.restaurants)
 
         console.log(response.data)
 
@@ -52,15 +44,6 @@ const Dashboard = () => {
     fetchData();
 
   }, []);
-
-  // useEffect, use axios to call the auth endpoint using our jwt token
-  // auth endpoint validates the token, if returns true.. setIsAuthorized to true
-  //
-    // if (!isAuthorized) {
-    //   console.log("is authed: ", isAuthorized)
-    //   console.log("has authorized token");
-    //   return <div>Unauthorized user</div>
-    // }
 
   const authorizedDashboard = () => {
     if (loading) {
