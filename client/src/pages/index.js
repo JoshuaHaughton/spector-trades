@@ -34,6 +34,9 @@ const Dashboard = () => {
             setLoading(false);
             // console.log("is authed: ", isAuthorized)
             // console.log("has authorized token");
+          } else {
+            setTimeout(() => {setLoading(false)}, 1000);
+
           }
         })
         // set(response.data.data.restaurants)
