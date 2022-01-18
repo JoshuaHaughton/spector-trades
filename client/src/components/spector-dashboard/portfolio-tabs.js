@@ -14,7 +14,6 @@ export const PortfolioTabs = () => {
       variant="scrollable"
       scrollButtons="auto"
       aria-label="scrollable auto tabs example"
-      centered
     >
         <Tab label="Item One" />
         <Tab label="Item Two" />

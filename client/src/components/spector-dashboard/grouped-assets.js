@@ -85,9 +85,9 @@ export const GroupedAssets = () => {
           </TableHead>
           <TableBody>
             {rows
-              .map((row) => {
+              .map((row, idx) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={idx}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
@@ -110,7 +110,6 @@ export const GroupedAssets = () => {
         variant="scrollable"
         scrollButtons="auto"
         aria-label="scrollable auto tabs example"
-        centered
       >
           <Tab label="Item One" />
           <Tab label="Item Two" />
