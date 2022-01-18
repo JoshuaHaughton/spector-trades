@@ -28,6 +28,7 @@ const Dashboard = () => {
         const config = {
           headers: { Authorization: `Bearer ${token}`}
         };
+        console.log( config )
         const response = await api.get('/dashboard', config).then(response => {
           // console.log("auth data", response.data)
 
@@ -76,7 +77,7 @@ const Dashboard = () => {
             <PortfolioTabs />
           </Container>
 
-        
+
           <Container maxWidth={false}>
             <Grid
               container
@@ -118,7 +119,7 @@ const Dashboard = () => {
                   <IndividualAssets />
               </Grid>
             </Grid>
-          </Container>        
+          </Container>
         </>
       );
     }

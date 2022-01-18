@@ -43,5 +43,31 @@ const getCommentsByPost = (id, db) => {
     console.log(err.message)
   });
 }; 
+/**
+ * 
+ * @param {*} values {user_id, post_id, user_id}
+ * @param {*} db POOL connection to pg
+ * @returns rows from query
+ */
+const addComment = (values, db) => {
+  let queryString = 
+                    `
+                    INSERT INTO 
+                    comments (user_id, post_id, body)
+                    VALUES ($1, $2, $3)
+                    RETURNING *;
+                    `;
 
-module.exports = { getCommentsByUser, getCommentsByPost };
+  const queryParams = [ values.user_id, values.post_id, values.body ];
+
+  return db.query(queryString, queryParams)
+  .then((result) => {
+    return result.rows[0];
+  })
+  .catch((err) => {
+    return err.message
+  });
+};
+
+
+module.exports = { getCommentsByUser, getCommentsByPost, addComment };
