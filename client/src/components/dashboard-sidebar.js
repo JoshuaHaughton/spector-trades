@@ -66,12 +66,7 @@ const itemsAuthorized = [
     href: '/newsfeed',
     icon: (<XCircleIcon fontSize="small" />),
     title: 'Newsfeed'
-  },
-  {
-    href: '/copy',
-    icon: (<UserAddIcon fontSize="small" />),
-    title: 'copy'
-  },
+  }
 ];
 
 export const DashboardSidebar = (props) => {
@@ -217,7 +212,7 @@ export const DashboardSidebar = (props) => {
             onClick={handleClick}
             icon={<ExitToAppIcon fontSize="small" />}
           >
-            WHOAH
+            Logout
           </NavItem>}
         </Box>
       </Box>
