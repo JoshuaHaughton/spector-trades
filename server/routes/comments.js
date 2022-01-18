@@ -26,7 +26,15 @@ app.get('/', async (req, res) => {
     console.log(res)
   }
 })
+
+app.get('/:user_id', (req, res) => {
+  const { user_id } = req.params;
+});
+
 return app;
 
 }
 
+const getCommentsByUser = (user_id, db) => {
+  
+}; 
