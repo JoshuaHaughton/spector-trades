@@ -99,7 +99,11 @@ export const DashboardSidebar = (props) => {
 
     //originally async
     const fetchData = async () => {
-        api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+      const token = cookies.spector_jwt;
+      const config = {
+        headers: { Authorization: `Bearer ${token}`}
+      };
+        api.get('/auth', config).then(response => {
           if (response.data['success']) {
             setIsAuthorized(true);
           }
