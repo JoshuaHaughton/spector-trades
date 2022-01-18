@@ -11,8 +11,8 @@ import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
+import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
-
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -61,87 +61,95 @@ const Dashboard = () => {
 
   const authorizedDashboard = () => {
     if (loading) {
-      return(<div>Loading...</div>)
+      return(
+      <Container
+        t="2"
+      >
+        <LinearProgress />
+      </Container>
+      )
     }
     if (isAuthorized) {
       return (
-        <Grid
-            container
-            spacing={3}
-          >
-            <Grid
-              item
-              lg={3}
-              sm={6}
-              xl={3}
-              xs={12}
+        <Container maxWidth={false}>
+          <Grid
+              container
+              spacing={3}
             >
-              <Budget />
+              <Grid
+                item
+                lg={3}
+                sm={6}
+                xl={3}
+                xs={12}
+              >
+                <Budget />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TotalCustomers />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TasksProgress />
+              </Grid>
+              <Grid
+                item
+                xl={3}
+                lg={3}
+                sm={6}
+                xs={12}
+              >
+                <TotalProfit sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
+                lg={8}
+                md={12}
+                xl={9}
+                xs={12}
+              >
+                <Sales />
+              </Grid>
+              <Grid
+                item
+                lg={4}
+                md={6}
+                xl={3}
+                xs={12}
+              >
+                <TrafficByDevice sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
+                lg={4}
+                md={6}
+                xl={3}
+                xs={12}
+              >
+                <LatestProducts sx={{ height: '100%' }} />
+              </Grid>
+              <Grid
+                item
+                lg={8}
+                md={12}
+                xl={9}
+                xs={12}
+              >
+                <LatestOrders />
+              </Grid>
             </Grid>
-            <Grid
-              item
-              xl={3}
-              lg={3}
-              sm={6}
-              xs={12}
-            >
-              <TotalCustomers />
-            </Grid>
-            <Grid
-              item
-              xl={3}
-              lg={3}
-              sm={6}
-              xs={12}
-            >
-              <TasksProgress />
-            </Grid>
-            <Grid
-              item
-              xl={3}
-              lg={3}
-              sm={6}
-              xs={12}
-            >
-              <TotalProfit sx={{ height: '100%' }} />
-            </Grid>
-            <Grid
-              item
-              lg={8}
-              md={12}
-              xl={9}
-              xs={12}
-            >
-              <Sales />
-            </Grid>
-            <Grid
-              item
-              lg={4}
-              md={6}
-              xl={3}
-              xs={12}
-            >
-              <TrafficByDevice sx={{ height: '100%' }} />
-            </Grid>
-            <Grid
-              item
-              lg={4}
-              md={6}
-              xl={3}
-              xs={12}
-            >
-              <LatestProducts sx={{ height: '100%' }} />
-            </Grid>
-            <Grid
-              item
-              lg={8}
-              md={12}
-              xl={9}
-              xs={12}
-            >
-              <LatestOrders />
-            </Grid>
-          </Grid>
+          </Container>
       );
     }
 
@@ -163,9 +171,9 @@ const Dashboard = () => {
         py: 8
       }}
     >
-      <Container maxWidth={false}>
+
+
         {authorizedDashboard()}
-      </Container>
     </Box>
   </>
 );};
