@@ -1,8 +1,12 @@
+import * as React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
+import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { ErrorSnackbar, severityObj, messageObj} from '../components/error-snackbar/error-snack';
+import { useCookies } from 'react-cookie';
 import {
   Box,
   Button,
@@ -11,6 +15,7 @@ import {
   FormHelperText,
   Input,
   Link,
+  Snackbar,
   Stack,
   TextField,
   Typography
@@ -18,13 +23,18 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Register = () => {
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState(severityObj.OK);
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
       email: '',
       username: '',
       password: '',
-      policy: false
+      avatar: {},
+      // policy: false
     },
     validationSchema: Yup.object({
       email: Yup
@@ -44,6 +54,8 @@ const Register = () => {
         .max(255)
         .required(
           'Password is required'),
+      avatar: Yup
+        .mixed(),
       policy: Yup
         .boolean()
         .oneOf(
@@ -51,17 +63,69 @@ const Register = () => {
           'This field must be checked'
         )
     }),
-    onSubmit: () => {
-      const response = api.post("/users", {
-        username: formik.values.username,
-        email: formik.values.email,
-        password: formik.values.password
+    onSubmit: async (values) => {
+      console.log(values)
 
 
+      var bodyFormData = new FormData();
+      bodyFormData.append('username', values.username);
+      bodyFormData.append('email', values.email);
+      bodyFormData.append('password', values.password);
+      bodyFormData.append('avatar', values.avatar);
+      api({
+        method: "post",
+        url: "/register",
+        data: bodyFormData,
+        headers: { "Content-Type": "multipart/form-data" },
       })
-      // router.push('/');
+        .then(function (response) {
+          const respData = response.data;
+          switch(true) {
+            case (respData.status === 409) && (respData.message === "username AND email already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_BOTH);
+              break;
+            case (respData.status === 409) && (respData.message === "username already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_USERNAME);
+              break;
+            case (respData.status === 409) && (respData.message === "email already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_EMAIL);
+              break;
+            case (respData.status === 200):
+              setSeverity(severityObj.success)
+              setMessage(messageObj.OK)
+              setOpen(true);
+              console.log(response.data.spector_jwt)
+              setCookie('spector_jwt', respData.spector_jwt);
+              setTimeout(() => {router.push('/')}, 2000)
+              return;
+          }
+
+            setOpen(true);
+          console.log("success in axios register", response);
+        })
+        .catch(function (response) {
+          setSeverity(severityObj.error)
+          setMessage('Internal server error, please try again')
+
+          setOpen(true);
+        });
     }
   });
+    const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+React.useEffect(() => {
+  if(cookies.spector_jwt) {
+    router.push('/');
+  }
+}, [])
 
   return (
     <>
@@ -146,11 +210,12 @@ const Register = () => {
               variant="outlined"
             />
               <Stack direction="row" alignItems="center" spacing={2}>
-              <label htmlFor="contained-button-file">
-                <Input accept="image/*" id="contained-button-file" multiple type="file" name="avatar"/>
-              </label>
+              <input id="file" name="avatar" type="file" onChange={(event) => {
+                formik.setFieldValue("avatar", event.currentTarget.files[0]);
+              }} />
+
             </Stack>
-            <Box
+            {/* <Box
               sx={{
                 alignItems: 'center',
                 display: 'flex',
@@ -181,12 +246,12 @@ const Register = () => {
                   </Link>
                 </NextLink>
               </Typography>
-            </Box>
-            {Boolean(formik.touched.policy && formik.errors.policy) && (
+            </Box> */}
+            {/* {Boolean(formik.touched.policy && formik.errors.policy) && (
               <FormHelperText error>
                 {formik.errors.policy}
-              </FormHelperText>
-            )}
+              </FormHelperText> */}
+            {/* )} */}
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"
@@ -220,7 +285,9 @@ const Register = () => {
           </form>
         </Container>
       </Box>
+      <ErrorSnackbar severity={severity} message={message} open={open} handleClose={handleSnackClose} />
     </>
+
   );
 };
 

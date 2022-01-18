@@ -1,3 +1,4 @@
+import * as React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import axios from 'axios';
@@ -9,12 +10,18 @@ import { Box, Button, Container, Grid, Link, TextField, Typography } from '@mui/
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Facebook as FacebookIcon } from '../icons/facebook';
 import { Google as GoogleIcon } from '../icons/google';
+import { useCookies } from 'react-cookie';
+import { ErrorSnackbar, severityObj, messageObj} from '../components/error-snackbar/error-snack';
 
 
 
 
 const Login = () => {
   const router = useRouter();
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState(severityObj.OK);
   const formik = useFormik({
     initialValues: {
       email: 'email@email.com',
@@ -34,23 +41,61 @@ const Login = () => {
         .required(
           'Password is required')
     }),
-    onSubmit: (e) => {
+    onSubmit: async (values) => {
+
+
+
+      console.log(values)
+
+
+
+
+      var bodyFormData = new FormData();
+      bodyFormData.append('email', values.email);
+      bodyFormData.append('password', values.password);
+
+      const loginData = {
+        email: values.email,
+        password: values.password
+      }
       try {
-        const response = api.get("/users")
+      const response = await api.post('/login', loginData)
 
-
-
-        console.log(response.data);
-      } catch {
-        console.log("error login")
-        res.status(500)
-
+      if (response.data.status === 200) {
+        setCookie('spector_jwt', response.data.spector_jwt);
+        router.push('/')
       }
 
 
-      // router.push('/');
+      if (response.data.status === 401) {
+        setSeverity(severityObj.error);
+        setMessage(messageObj.BAD_LOGIN);
+        setOpen(true);
+        return;
+      }
+
+      } catch(err) {
+        setSeverity(severityObj.error);
+        setMessage(messageObj.SERVER_UNREACHABLE);
+        setOpen(true);
+        return;
+        console.log(err)
+        //response.status(500);
+      }
     }
   });
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+  React.useEffect(() => {
+    if(cookies.spector_jwt) {
+      router.push('/');
+    }
+  }, [])
 
   return (
     <>
@@ -155,7 +200,8 @@ const Login = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="email"
-              value={formik.values.email}
+
+              placeholder="alex@example.com"
               variant="outlined"
             />
             <TextField
@@ -168,7 +214,6 @@ const Login = () => {
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               type="password"
-              value={formik.values.password}
               variant="outlined"
             />
             <Box sx={{ py: 2 }}>
@@ -181,6 +226,14 @@ const Login = () => {
                 variant="contained"
               >
                 Sign In Now
+              </Button>
+              <Button onClick={() => {
+
+                console.log(cookies.spector_jwt)
+
+                api.post('/auth', {jwt_token: cookies.spector_jwt})
+
+                }}>
               </Button>
             </Box>
             <Typography
@@ -207,6 +260,7 @@ const Login = () => {
           </form>
         </Container>
       </Box>
+      <ErrorSnackbar severity={severity} message={message} open={open} handleClose={handleSnackClose} />
     </>
   );
 };
