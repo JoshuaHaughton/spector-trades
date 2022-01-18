@@ -27,10 +27,14 @@ const Newsfeed = () => {
       try {
         await axios.request(options).then(function (response) {
           //success
-          const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(a.published_date) < Date.parse(b.published_date))
-          setNewsArrays(sortedNewsArrays);
-          console.log(sortedNewsArrays);
-          // console.log(response.data.articles[0].getSeconds());
+
+          //shows array in order of most recent, excluding those that have yet to be posted (future dates)
+          const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(b.published_date) - Date.parse(a.published_date))
+          const today = new Date();
+          const filteredArticles = sortedNewsArrays.filter(article => Date.parse(article.published_date) < Date.parse(today))
+
+          setNewsArrays(filteredArticles);
+          console.log(filteredArticles);
         })
       } catch (error) {
         //fail
@@ -85,7 +89,7 @@ const Newsfeed = () => {
               pt: 3,
             }}
           >
-            <Pagination color="primary" count={3} size="small" />
+            {/* <Pagination color="primary" count={3} size="small" /> */}
           </Box>
         </Container>
       </Box>

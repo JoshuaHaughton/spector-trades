@@ -39,7 +39,7 @@ export const NewsfeedCard = ({ product, ...rest }) => {
 
 
   console.log(Date.parse(product.published_date))
-
+75
 
   return (
     <Card
@@ -66,7 +66,9 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              <strong>{product.author || product.clean_url}</strong> - {product.title}
+              <strong>{product.author || product.clean_url}</strong> - {
+                product.title.length > 100 ? product.title.substring(0, 100) + '...' : product.title
+              }
               {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
             </Typography>
           </Grid>
