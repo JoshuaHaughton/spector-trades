@@ -56,18 +56,16 @@ const Dashboard = () => {
     if (isAuthorized) {
       return (
         <>
-          {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
             <PortfolioTabs />
           </Container>
 
-        
+
           <Container maxWidth={false}>
             <Grid
               container
               spacing={3}
             >
-              {/* THIS IS THE PORTFOLIO STATS COMPONENT */}
               <Grid item
                 lg={4}
                 md={6}
@@ -76,7 +74,6 @@ const Dashboard = () => {
                   <PortfolioStats />
               </Grid>
 
-              {/* THIS IS THE HERO GRAPH COMPONENT */}
               <Grid item
                 lg={8}
                 md={6}
@@ -85,7 +82,6 @@ const Dashboard = () => {
                   <HeroGraph />
               </Grid>
 
-              {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
               <Grid item
                 lg={5}
                 md={6}
@@ -94,7 +90,6 @@ const Dashboard = () => {
                   <GroupedAssets />
               </Grid>
 
-              {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
               <Grid item
                 lg={7}
                 md={6}
@@ -103,7 +98,7 @@ const Dashboard = () => {
                   <IndividualAssets />
               </Grid>
             </Grid>
-          </Container>        
+          </Container>
         </>
       );
     }

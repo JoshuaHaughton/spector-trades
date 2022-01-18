@@ -2,9 +2,7 @@ const express = require('express');
 const app = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-// curl -X POST -d 'password=password' -d 'email=test@example.com' http://localhost:3002/api/login
 
-//Default route is /api/auth
 module.exports = (db) => {
   app.post('/', (req, res) => {
     if (!req.body.jwt_token) {

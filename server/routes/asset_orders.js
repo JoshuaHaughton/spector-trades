@@ -1,7 +1,5 @@
-let express = require('express');
-let app = express.Router();
-
-//Default route is /api/asset_orders
+const express = require('express');
+const app = express.Router();
 
 module.exports = (db) => {
 

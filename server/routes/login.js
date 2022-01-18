@@ -3,9 +3,7 @@ const app = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {getUserByColumn} = require('./helpers/user-helpers');
-// curl -X POST -d 'password=password' -d 'email=test@example.com' http://localhost:3002/api/login
 
-//Default route is /api/login
 module.exports = (db) => {
   app.post('/', (req, res) => {
 
@@ -20,7 +18,6 @@ module.exports = (db) => {
         if (result) {
           console.log("success!")
 
-          // Generate an access token
           const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
           return res.send({status: 200, spector_jwt: accessToken})
         } else {

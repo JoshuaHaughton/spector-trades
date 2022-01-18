@@ -17,39 +17,30 @@ app.get('/', function (req, res) {
 })
 
 
-// user routes import
 const userRoutes = require("./routes/users")
 app.use("/api/users", userRoutes(db));
 
-// post routes import
 const portfolioRoutes = require("./routes/portfolios")
 app.use("/api/portfolios", portfolioRoutes(db));
 
-// post routes import
 const assetOrderRoutes = require("./routes/asset_orders")
 app.use("/api/orders", assetOrderRoutes(db));
 
-// post routes import
 const postRoutes = require("./routes/posts")
 app.use("/api/posts", postRoutes(db));
 
-// post routes import
 const commentRoutes = require("./routes/comments")
 app.use("/api/comments", commentRoutes(db));
 
-// Post avatar upload
 const avatarRoutes = require("./routes/avatar_upload")
 app.use("/api/avatars", avatarRoutes(db));
 
-// Post avatar upload
 const RegisterRoutes = require("./routes/register")
 app.use("/api/register", RegisterRoutes(db));
 
-// Post avatar upload
 const loginRoutes = require("./routes/login")
 app.use("/api/login", loginRoutes(db));
 
-// Auth jwt testing
 const authRoutes = require("./routes/auth")
 app.use("/api/auth", authRoutes(db));
 
