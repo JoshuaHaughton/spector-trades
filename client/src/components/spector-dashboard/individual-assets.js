@@ -89,9 +89,9 @@ export const IndividualAssets = () => {
           </TableHead>
           <TableBody>
             {rows
-              .map((row) => {
+              .map((row, idx) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={idx}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
