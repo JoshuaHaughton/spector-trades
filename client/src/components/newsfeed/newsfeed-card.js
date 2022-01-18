@@ -8,11 +8,13 @@ import {
   Divider,
   Grid,
   Typography,
+  Link
 } from "@mui/material";
 import { AddCommentModal } from "../../components/newsfeed/comment/add-comment-modal";
 import { CommentFeedModal } from "../../components/newsfeed/comment/comment-feed-modal";
 import { useState } from "react";
 import { Clock as ClockIcon } from "../../icons/clock";
+import TimeAgo from 'timeago-react';
 
 const style = {
   position: "absolute",
@@ -35,7 +37,9 @@ export const NewsfeedCard = ({ product, ...rest }) => {
   const handleCommentFeedOpen = () => setCommentFeedOpen(true);
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
 
-  // console.log(product)
+
+  console.log(Date.parse(product.published_date))
+
 
   return (
     <Card
@@ -55,14 +59,15 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               display: "flex",
             }}
           >
-            {/* <Avatar alt="Product" src={product.media} variant="square" /> */}
+            <Avatar alt="Article Image" src={product.media} variant="rounded" />
             <Typography
               color="textSecondary"
               display="inline"
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {product.author}
+              <strong>{product.author || product.clean_url}</strong> - {product.title}
+              {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
             </Typography>
           </Grid>
           <Grid
@@ -79,7 +84,8 @@ export const NewsfeedCard = ({ product, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              2 days ago
+              {/* 2 days ago */}
+              <TimeAgo datetime={product.published_date} locale='en'/>
             </Typography>
           </Grid>
         </Grid>
@@ -94,7 +100,15 @@ export const NewsfeedCard = ({ product, ...rest }) => {
           }}
         ></Box>
         <Typography align="center" color="textPrimary" variant="body1">
-          {product.summary}
+          {
+            product.summary.length > 150 ? product.summary.substring(0, 150) + '...' : product.summary
+          }
+          <br/>
+          <br/>
+          {/* <a href={product.link}>Click here to learn more</a> */}
+          <Link href={product.link} color="inherit">
+            Click here to learn more
+          </Link>
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />

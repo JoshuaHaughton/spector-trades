@@ -15,7 +15,7 @@ const Newsfeed = () => {
   const options = {
     method: 'GET',
     url: 'https://free-news.p.rapidapi.com/v1/search',
-    params: {q: 'Elon Musk', lang: 'en'},
+    params: {q: 'Crypto', lang: 'en'},
     headers: {
       'x-rapidapi-host': 'free-news.p.rapidapi.com',
       'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
@@ -23,14 +23,15 @@ const Newsfeed = () => {
   };
 
   useEffect(() => {
-    const fetchNews = () => {
+    const fetchNews = async () => {
       try {
-        axios.request(options).then(function (response) {
+        await axios.request(options).then(function (response) {
           //success
-
-          setNewsArrays(response.data.articles);
-          console.log(response.data.articles);
-        });
+          const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(a.published_date) < Date.parse(b.published_date))
+          setNewsArrays(sortedNewsArrays);
+          console.log(sortedNewsArrays);
+          // console.log(response.data.articles[0].getSeconds());
+        })
       } catch (error) {
         //fail
         console.error(error);
@@ -72,7 +73,7 @@ const Newsfeed = () => {
             <Grid container spacing={3}>
               {newsArrays.map((article) => (
                 <Grid item key={article.uuid} lg={12} md={12} xs={12}>
-                  <NewsfeedCard product={article} />
+                  <NewsfeedCard key={article._id} product={article} />
                 </Grid>
               ))}
             </Grid>
