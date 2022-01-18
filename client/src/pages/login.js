@@ -90,6 +90,13 @@ const Login = () => {
     }
     setOpen(false);
   };
+
+  React.useEffect(() => {
+    if(cookies.spector_jwt) {
+      router.push('/');
+    }
+  }, [])
+
   return (
     <>
       <Head>
