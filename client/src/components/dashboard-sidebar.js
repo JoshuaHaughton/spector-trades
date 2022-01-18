@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
@@ -15,8 +15,10 @@ import { Users as UsersIcon } from '../icons/users';
 import { XCircle as XCircleIcon } from '../icons/x-circle';
 import { Logo } from './logo';
 import { NavItem } from './nav-item';
-
-const items = [
+import { useCookies } from 'react-cookie';
+import api from "../apis/api";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+let items = [
   {
     href: '/spector-dashboard',
     icon: (<ChartBarIcon fontSize="small" />),
@@ -27,26 +29,16 @@ const items = [
     icon: (<ChartBarIcon fontSize="small" />),
     title: 'Dashboard'
   },
-  {
-    href: '/customers',
-    icon: (<UsersIcon fontSize="small" />),
-    title: 'Customers'
-  },
-  {
-    href: '/products',
-    icon: (<ShoppingBagIcon fontSize="small" />),
-    title: 'Products'
-  },
-  {
-    href: '/account',
-    icon: (<UserIcon fontSize="small" />),
-    title: 'Account'
-  },
-  {
-    href: '/settings',
-    icon: (<CogIcon fontSize="small" />),
-    title: 'Settings'
-  },
+  // {
+  //   href: '/account',
+  //   icon: (<UserIcon fontSize="small" />),
+  //   title: 'Account'
+  // },
+  // {
+  //   href: '/settings',
+  //   icon: (<CogIcon fontSize="small" />),
+  //   title: 'Settings'
+  // },
   {
     href: '/login',
     icon: (<LockIcon fontSize="small" />),
@@ -57,10 +49,23 @@ const items = [
     icon: (<UserAddIcon fontSize="small" />),
     title: 'Register'
   },
+  // {
+  //   href: '/404',
+  //   icon: (<XCircleIcon fontSize="small" />),
+  //   title: 'Error'
+  // },
   {
-    href: '/404',
+    href: '/newsfeed',
     icon: (<XCircleIcon fontSize="small" />),
-    title: 'Error'
+    title: 'Newsfeed'
+  }
+];
+
+const itemsAuthorized = [
+  {
+    href: '/',
+    icon: (<ChartBarIcon fontSize="small" />),
+    title: 'Dashboard'
   },
   {
     href: '/newsfeed',
@@ -70,6 +75,9 @@ const items = [
 ];
 
 export const DashboardSidebar = (props) => {
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [cookies, setCookie, removeCookie] = useCookies(['spector_jwt']);
+
   const { open, onClose } = props;
   const router = useRouter();
   const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'), {
@@ -86,11 +94,34 @@ export const DashboardSidebar = (props) => {
       if (open) {
         onClose?.();
       }
+
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [router.asPath]
   );
 
+  useEffect(() => {
+
+    //originally async
+    const fetchData = async () => {
+        api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+          if (response.data['success']) {
+            setIsAuthorized(true);
+          }
+        }).catch(err => {
+          console.log(err);
+        });
+    };
+
+    fetchData();
+
+  }, []);
+  function handleClick(e) {
+    e.preventDefault();
+    console.log('The link was clicked.');
+    removeCookie(["spector_jwt"]);
+    setTimeout(() => {router.push('/login')}, 1000)
+  }
   const content = (
     <>
       <Box
@@ -162,7 +193,7 @@ export const DashboardSidebar = (props) => {
           }}
         />
         <Box sx={{ flexGrow: 1 }}>
-          {items.map((item) => (
+          {!isAuthorized && items.map((item) => (
             <NavItem
               key={item.title}
               icon={item.icon}
@@ -170,57 +201,24 @@ export const DashboardSidebar = (props) => {
               title={item.title}
             />
           ))}
-        </Box>
-        <Divider sx={{ borderColor: '#2D3748' }} />
-        <Box
-          sx={{
-            px: 2,
-            py: 3
-          }}
-        >
-          <Typography
-            color="neutral.100"
-            variant="subtitle2"
-          >
-            Need more features?
-          </Typography>
-          <Typography
-            color="neutral.500"
-            variant="body2"
-          >
-            Check out our Pro solution template.
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': {
-                width: '100%'
-              }
-            }}
-          >
-            <img
-              alt="Go to pro"
-              src="/static/images/sidebar_pro.png"
+          {isAuthorized && itemsAuthorized.map((item) => (
+            <NavItem
+              key={item.title}
+              icon={item.icon}
+              href={item.href}
+              title={item.title}
             />
-          </Box>
-          <NextLink
-            href="https://material-kit-pro-react.devias.io/"
-            passHref
+          ))}
+
+          {isAuthorized &&
+          <NavItem
+            href=""
+            title="Logout"
+            onClick={handleClick}
+            icon={<ExitToAppIcon fontSize="small" />}
           >
-            <Button
-              color="secondary"
-              component="a"
-              endIcon={(<OpenInNewIcon />)}
-              fullWidth
-              sx={{ mt: 2 }}
-              variant="contained"
-            >
-              Pro Live Preview
-            </Button>
-          </NextLink>
+            Logout
+          </NavItem>}
         </Box>
       </Box>
     </>

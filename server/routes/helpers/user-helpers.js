@@ -5,7 +5,7 @@
  * @param {string} column name to be searched 
  * @param {string} value value to be checked in given column
  * @param {pool} db pool connection setup in db/index.js
- * @returns 
+ * @returns object containing user info if found user
  */
 const getUserByColumn = function(column, value, db) {
   return db.query(
@@ -26,9 +26,10 @@ const getUserByColumn = function(column, value, db) {
  * 
  * data = { email: email@gmail.com, username: someusername}
  * @param {database pool} db pool connection setup in db/index
- * @returns true if both are unique false otherwise
+ * @returns object { unique: false, dup_username: true, dup_email: true }
  */
 const verifyUniqueColumns = function(columnData, db) {
+  console.log(columnData.email)
   return db.query(
     `
     SELECT * FROM users
@@ -37,7 +38,32 @@ const verifyUniqueColumns = function(columnData, db) {
     username = $2;
     `, [ columnData.email, columnData.username ])
     .then(response => {
-    return response.rows[0] ? false : true;
+      let colValues = [];
+
+      let set = new Set()
+      response.rows.forEach(item => set.add(item.username).add(item.email));
+      set.forEach((item) => colValues.push(item))
+
+      const respObj = {
+        unique: true,
+        dup_username: null,
+        dup_email: null
+      };
+
+      if (response.rows[0]) {
+
+        if (colValues.includes(columnData.email)) {
+          respObj.dup_email = true;
+        };
+        
+        if (colValues.includes(columnData.username)) {
+          respObj.dup_username = true;
+        };
+
+        respObj.unique = false;
+      }
+
+      return respObj;
   }).catch(err => {
     console.log(`ERROR in verifyUniqueColumns with email: ${columnData.email} and username: ${columnData.username}`);
     console.log(err.message)

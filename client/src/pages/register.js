@@ -1,10 +1,12 @@
+import * as React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { useState } from "react";
+import { ErrorSnackbar, severityObj, messageObj} from '../components/error-snackbar/error-snack';
+import { useCookies } from 'react-cookie';
 import {
   Box,
   Button,
@@ -13,6 +15,7 @@ import {
   FormHelperText,
   Input,
   Link,
+  Snackbar,
   Stack,
   TextField,
   Typography
@@ -20,6 +23,10 @@ import {
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 const Register = () => {
+  const [open, setOpen] = React.useState(false);
+  const [message, setMessage] = React.useState('');
+  const [severity, setSeverity] = React.useState(severityObj.OK);
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -72,15 +79,53 @@ const Register = () => {
         headers: { "Content-Type": "multipart/form-data" },
       })
         .then(function (response) {
-          //handle success
+          const respData = response.data;
+          switch(true) {
+            case (respData.status === 409) && (respData.message === "username AND email already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_BOTH);
+              break;
+            case (respData.status === 409) && (respData.message === "username already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_USERNAME);
+              break;
+            case (respData.status === 409) && (respData.message === "email already in use"):
+              setSeverity(severityObj.error);
+              setMessage(messageObj.DUPLICATE_EMAIL);
+              break;
+            case (respData.status === 200):
+              setSeverity(severityObj.success)
+              setMessage(messageObj.OK)
+              setOpen(true);
+              console.log(response.data.spector_jwt)
+              setCookie('spector_jwt', respData.spector_jwt);
+              setTimeout(() => {router.push('/')}, 2000)
+              return;
+          }
+
+            setOpen(true);
           console.log("success in axios register", response);
         })
         .catch(function (response) {
-          //handle error
-          console.log("Error is axios post of register -", response);
+          setSeverity(severityObj.error)
+          setMessage('Internal server error, please try again')
+
+          setOpen(true);
         });
     }
   });
+    const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
+React.useEffect(() => {
+  if(cookies.spector_jwt) {
+    router.push('/');
+  }
+}, [])
 
   return (
     <>
@@ -240,7 +285,9 @@ const Register = () => {
           </form>
         </Container>
       </Box>
+      <ErrorSnackbar severity={severity} message={message} open={open} handleClose={handleSnackClose} />
     </>
+
   );
 };
 
