@@ -59,29 +59,34 @@ app.get('/post_id/:post_id', (req, res) => {
   });
 });
 
-app.post('/', async (req, res) => {
-  try {
-    const newComment = await db.query(`
-    INSERT INTO comments (user_id, post_id, body, created_at) 
-    VALUES (2, 2, $1, NOW())
-    RETURNING *;
-    `, [ASD]);
+app.post('/', (req, res) => {
+  console.log('COMMENTS')
 
-    res.status(200).json({
-      status: "success",
-      results: newComment.rows.length,
-      data: {
-        newComment: newComment.rows
-      }
-    })
-    res.send(newComment.rows);
-    console.log(newComment.rows)
+  
+  const { articleId, body } = req.body;
+  console.log(req.body)
+  // try {
+  //   const newComment = await db.query(`
+  //   INSERT INTO comments (user_id, post_id, body, created_at) 
+  //   VALUES ($1, $2, $3, NOW())
+  //   RETURNING *;
+  //   `, [???, req.body.articleId, req.body.body]);
 
-  } catch(err) {
+  //   res.status(200).json({
+  //     status: "success",
+  //     results: newComment.rows.length,
+  //     data: {
+  //       newComment: newComment.rows
+  //     }
+  //   })
+  //   res.send(newComment.rows);
+  //   console.log(newComment.rows)
 
-    res.status(500).send;
-    console.log(res)
-  }
+  // } catch(err) {
+
+  //   res.status(500).send;
+  //   console.log(res)
+  // }
 })
 
 return app;

@@ -39,9 +39,13 @@ const Newsfeed = () => {
           const noDuplicateArticles = filteredArticles.filter((thing, index, self) => {
             return self.findIndex(t => t.title === thing.title) === index
           });
+          //returns articles published on the same day
+          const sameDayArticles = noDuplicateArticles.filter(article => Date.parse(article.published_date) > (Date.parse(today) - 86400000))
 
-          setNewsArrays(noDuplicateArticles);
-          console.log(noDuplicateArticles);
+
+
+          setNewsArrays(sameDayArticles);
+          console.log(sameDayArticles);
         })
       } catch (error) {
         //fail

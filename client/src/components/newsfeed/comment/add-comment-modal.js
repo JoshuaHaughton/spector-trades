@@ -9,10 +9,10 @@ import {
   Modal,
   TextField,
 } from "@mui/material";
-import { useCookies } from 'react-cookie';
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-
+import { useCookies } from "react-cookie";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import api from "src/apis/api";
 
 const style = {
   position: "absolute",
@@ -30,141 +30,144 @@ const style = {
 export const AddCommentModal = ({ open, handleClose, parentPost }) => {
   const [cookies, setCookie] = useCookies();
 
-
   const formik = useFormik({
     initialValues: {
-      body: ''
+      body: "",
     },
     validationSchema: Yup.object({
-      body: Yup
-        .string()
-        .max(140)
-        .required(
-          "Your post can't be empty!")
+      body: Yup.string().max(140).required("Your post can't be empty!"),
     }),
     onSubmit: async (values) => {
+      console.log(values);
 
+      try {
+        // let bodyFormData = new FormData();
+        // bodyFormData.append("form-body", values.body);
 
+        let resp = await api.post("/articles", parentPost);
 
-      console.log(values)
+        const savedArticle = resp.data.data.article[0];
+        console.log(savedArticle)
 
+        // bodyFormData.append("article-id", savedArticle.id);
 
+        const formData = {
+          body: values.body,
+          articleId: savedArticle.id
+        };
 
+        console.log(formData)
 
-      var bodyFormData = new FormData();
-      bodyFormData.append('form-body', values.body);
-      bodyFormData.append('jwt', cookies.jwt_token);
-      // bodyFormData.append('user_id', values.password);
+        let cookieResp = await api.post("/comments", formData);
 
-      //CREATING NEW ARTICLE IN DB FROM PARENT POST (THIS ARTICLE)
-      api({
-        method: "post",
-        url: "/articles",
-        data: parentPost,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
+        console.log(cookieResp);
 
-      api({
-        method: "post",
-        url: "/comments",
-        data: bodyFormData,
-        headers: { "Content-Type": "multipart/form-data" },
-      })
-        .then(function (response) {
-          const respData = response.data;
-        });
+      } catch (err) {
+        console.log(err);
 
       }
 
+      // return resp
+
+      // bodyFormData.append('article-id', response.id);
+
+      // console.log('response', response)
+
+      // const formData = {
+      //   body: values.body,
+      //   articleId: response.id
+      // }
+
+      // try {
+
+      // //CREATING NEW ARTICLE IN DB FROM PARENT POST (THIS ARTICLE)
+
+      // await api.post("/comments", formData)
+
+      // console.log('formdata', formData)
+
+      // } catch(err) {
+      //   console.log(err)
+
+      // }
+
+      // api({
+      //   method: "post",
+      //   url: "/comments",
+      //   data: bodyFormData,
+      //   headers: { "Content-Type": "multipart/form-data" },
+      // })
+      //   .then(function (response) {
+      //     const respData = response.data;
+      //   });
+    },
   });
 
-
   return (
-  <Modal
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-      }}
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
     >
-      <Box sx={style}>
-        <Box sx={{ p: 2 }}>
-          <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-            <Grid
-              item
-              sx={{
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <Avatar alt="Product" variant="square" />
-              <Typography
-                color="textSecondary"
-                display="inline"
-                sx={{ pl: 1 }}
-                variant="body2"
-              >
-                You
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-        <Divider />
-        <TextField sx={{ p: 2 }} fullWidth={true} />
-        <Divider />
-        <Box sx={{ p: 2 }}>
-          <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-            <Grid
-              item
-              sx={{
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <form onSubmit={formik.handleSubmit}>
-              <Typography
-                color="textSecondary"
-                display="inline"
-                sx={{ pl: 1 }}
-                variant="body2"
-              >
-                <Button
-                variant="outlined"
-                onClick={() => {
-
-                  console.log(cookies)
-
-                  api.post('/auth', {jwt_token: cookies.spector_jwt})
-
+      <Card
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <form onSubmit={formik.handleSubmit}>
+          <Box sx={style}>
+            <Box sx={{ p: 2 }}>
+              <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
+                <Grid
+                  item
+                  sx={{
+                    alignItems: "center",
+                    display: "flex",
                   }}
-                  >Post Comment</Button>
-              </Typography>
-              </form>
-            </Grid>
-            <Grid
-              item
-              sx={{
-                alignItems: "center",
-                display: "flex",
-              }}
-            >
-              <Typography
-                color="textSecondary"
-                display="inline"
-                sx={{ pl: 1 }}
-                variant="body2"
-              >
-                123
-              </Typography>
-            </Grid>
-          </Grid>
-        </Box>
-      </Box>
-    </Card>
-  </Modal>
-  )};
+                >
+                  <Avatar alt="Product" variant="square" />
+                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    You
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+            <Divider />
+            <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={formik.handleChange} />
+            <Divider />
+            <Box sx={{ p: 2 }}>
+              <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
+                <Grid
+                  item
+                  sx={{
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <Button variant="outlined" type="submit">
+                      Post Comment
+                    </Button>
+                  </Typography>
+                </Grid>
+                <Grid
+                  item
+                  sx={{
+                    alignItems: "center",
+                    display: "flex",
+                  }}
+                >
+                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    140
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </form>
+      </Card>
+    </Modal>
+  );
+};
