@@ -60,7 +60,7 @@ app.use("/api/auth", authenticateToken, authRoutes());
 
 // Dashboard routes import
 const dashboardRoutes = require("./routes/dashboard");
-app.use("/api/dashboard", authenticateToken, dashboardRoutes());
+app.use("/api/dashboard", authenticateToken, dashboardRoutes(db));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

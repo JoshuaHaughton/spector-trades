@@ -5,11 +5,13 @@ import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats'
 import { HeroGraph } from '../components/spector-dashboard/hero-graph';
 import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
 import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
+
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
+import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
@@ -72,11 +74,13 @@ const Dashboard = () => {
     if (isAuthorized) {
       return (
         <>
+          {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
+          <SpectorSpeedDial />
+
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
             <PortfolioTabs />
           </Container>
-
 
           <Container maxWidth={false}>
             <Grid
