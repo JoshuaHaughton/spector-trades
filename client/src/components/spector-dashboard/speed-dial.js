@@ -9,30 +9,24 @@ import SaveIcon from '@mui/icons-material/Save';
 import PrintIcon from '@mui/icons-material/Print';
 import ShareIcon from '@mui/icons-material/Share';
 import { AddPortfolioModal } from './speed-dial/add-portfolio-modal';
-
-
-
+import { AddInvestmentModal } from './speed-dial/add-investment-modal';
 
 export const SpectorSpeedDial = () => {
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [addCommentOpen, setAddCommentOpen] = useState(false);
-  const handleAddCommentOpen = () => setAddCommentOpen(true);
-  const handleAddCommentClose = () =>  setAddCommentOpen(false);
+  const [addPortfolioOpen, setAddPortfolioOpen] = useState(false);
+  const handleAddPortfolioOpen = () => setAddPortfolioOpen(true);
+  const handleAddPortfolioClose = () =>  setAddPortfolioOpen(false);
 
-  const handlePortfolioModal = () => {
-    handleClose();
-    handleAddCommentOpen();
-  };
-
-  const handleInvestmentModal = () => console.log('handling modal');
+  const [addInvestmentOpen, setAddInvestmentOpen] = useState(false);
+  const handleAddInvestmentOpen = () => setAddInvestmentOpen(true);
+  const handleAddInvestmentClose = () =>  setAddInvestmentOpen(false);
   
   const actions = [
-    { icon: <SaveIcon />, name: 'Add Investment', handle: handleInvestmentModal },
-    { icon: <FileCopyIcon />, name: 'Add Portfolio', handle: handlePortfolioModal },
+    { icon: <SaveIcon />, name: 'Add Investment', handle: handleAddInvestmentOpen },
+    { icon: <FileCopyIcon />, name: 'Add Portfolio', handle: handleAddPortfolioOpen },
   ];
 
   return (
@@ -56,8 +50,12 @@ export const SpectorSpeedDial = () => {
         ))}
       </SpeedDial>
       <AddPortfolioModal
-        open={addCommentOpen}
-        handleClose={handleAddCommentClose}
+        open={addPortfolioOpen}
+        handleClose={handleAddPortfolioClose}
+      />
+      <AddInvestmentModal
+        open={addInvestmentOpen}
+        handleClose={handleAddInvestmentClose}
       />
     </>
   );
