@@ -105,8 +105,8 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
             </ToggleButtonGroup>
           </Box>
 
+        <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
           <TextField
-            sx={{ p:2  }}
             id="portfolio-name"
             label="Portfolio Name"
             placeholder="My Portfolio"
@@ -114,17 +114,18 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
             fullWidth={true}
             onChange={(event) => setPortfolioName(() => event.target.value)}
            />
-
+        </Box>
+        <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
           <TextField
             disabled={portfolioType !== 'spec'}
-            sx={{ p:2  }}
             id="speculative-money"
             label="Speculative Money"
             placeholder="1000"
             variant="standard"
             fullWidth={true}
             onChange={(event) => setSpecBalance(previous => Number(event.target.value))}
-           />
+          />
+        </Box>
           
           {/* THE INFOBOX */}
           <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
