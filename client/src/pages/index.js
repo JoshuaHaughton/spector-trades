@@ -17,7 +17,25 @@ const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dashboardState, setDashboardState] = useState({});
 
+
+  // TODO: REFACTOR!
+  const refreshDashboardState = () => {
+    const fetchData = async () => {
+        const token = cookies.spector_jwt;
+        const config = {
+          headers: { Authorization: `Bearer ${token}`}
+        };
+        const response = await api.get('/dashboard', config).then(response => {
+          console.log("auth data", response.data)
+          if (response.status === 200) {
+            setDashboardState(response.data);
+          }
+        })
+    };
+    fetchData();
+  };
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -30,8 +48,9 @@ const Dashboard = () => {
         };
         console.log( config )
         const response = await api.get('/dashboard', config).then(response => {
-          //console.log("auth data", response.data)
+          console.log("auth data", response.data)
           if (response.status === 200) {
+            setDashboardState(response.data);
             setIsAuthorized(true);
             setLoading(false);
           }
@@ -74,7 +93,9 @@ const Dashboard = () => {
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
-            <PortfolioTabs />
+            <PortfolioTabs portfolios={
+              Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+            } />
           </Container>
 
           <Container maxWidth={false}>

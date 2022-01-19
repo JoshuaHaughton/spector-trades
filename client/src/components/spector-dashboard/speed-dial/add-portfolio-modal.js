@@ -13,6 +13,9 @@ import {
   ToggleButtonGroup
 } from "@mui/material";
 
+import api from "../../../apis/api";
+import { useCookies } from 'react-cookie';
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -27,6 +30,7 @@ const style = {
 };
 
 export const AddPortfolioModal = ({ open, handleClose }) => {
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [portfolioType, setPortfolioType] = useState('spec');
   const handlePortfolioType = (_event, newPortfolioType) => {
     setPortfolioType(newPortfolioType);
@@ -57,8 +61,20 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
     } else if (portfolioType === 'spec' && (isNaN(specBalance) || specBalance < 1)) {
       setInfo({visibility: 'visible', severity: 'error', message: 'Must give speculative balance a valid number over 0'})
     } else {
-      console.log('portfolio submitted!');
-      resetBeforeClose();
+      
+      const data = { name: portfolioName, live: portfolioType === 'live', spec_money: specBalance ? specBalance : null };
+      const token = cookies.spector_jwt;
+      const config = {
+        headers: { Authorization: `Bearer ${token}`}
+      };
+      api.post('/portfolios', data, config).then(res => {
+        console.log("post portfolio response", res)
+        console.log('portfolio submitted!');
+        resetBeforeClose();
+      }).catch(err => {
+        console.log('error in posting portfolio: ', err)
+        resetBeforeClose();
+      });
     }
   };
 
@@ -105,8 +121,8 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
             </ToggleButtonGroup>
           </Box>
 
+        <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
           <TextField
-            sx={{ p:2  }}
             id="portfolio-name"
             label="Portfolio Name"
             placeholder="My Portfolio"
@@ -114,17 +130,18 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
             fullWidth={true}
             onChange={(event) => setPortfolioName(() => event.target.value)}
            />
-
+        </Box>
+        <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
           <TextField
             disabled={portfolioType !== 'spec'}
-            sx={{ p:2  }}
             id="speculative-money"
             label="Speculative Money"
             placeholder="1000"
             variant="standard"
             fullWidth={true}
             onChange={(event) => setSpecBalance(previous => Number(event.target.value))}
-           />
+          />
+        </Box>
           
           {/* THE INFOBOX */}
           <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
