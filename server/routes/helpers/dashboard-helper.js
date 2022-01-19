@@ -37,6 +37,10 @@ const getPortfolioDataByUser = (options, db) => {
 const parsePortfolioDataByUser = (data) => {
   const portfolioData = {};
 
+  if (!data.portfolios) {
+    return {};
+  }
+
   data.portfolios.forEach(portfolio => {
     const assets = [];
     let total_assets_value = 0;
