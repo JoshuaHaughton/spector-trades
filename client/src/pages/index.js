@@ -18,8 +18,6 @@ const Dashboard = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
 
-
-
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -32,9 +30,8 @@ const Dashboard = () => {
         };
         console.log( config )
         const response = await api.get('/dashboard', config).then(response => {
-          // console.log("auth data", response.data)
-
-          if (response.data['success']) {
+          //console.log("auth data", response.data)
+          if (response.status = 200) {
             setIsAuthorized(true);
             setLoading(false);
           }
@@ -42,9 +39,7 @@ const Dashboard = () => {
           // Response rejected
           setTimeout(() => {setLoading(false)}, 1000);
         });
-
       } catch(err) {
-
       }
     };
 
