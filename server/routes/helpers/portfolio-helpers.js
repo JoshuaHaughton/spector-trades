@@ -2,7 +2,7 @@
  * 
  * @param {*} options set options for the query
  * 
- * {user_id, portfolio_name, portfolio_id, live}
+ * {user_id :REQUIRED, portfolio_name, portfolio_id, live}
  * @param {*} db POOL connection to pg
  * @returns am array containing the results
  */
