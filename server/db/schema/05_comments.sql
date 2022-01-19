@@ -5,5 +5,5 @@ CREATE TABLE comments (
   post_id INT REFERENCES posts(id),
   article_id INT REFERENCES articles(id),
   body TEXT NOT NULL,
-  created_at DATE NOT NULL
+  created_at DATE NOT NULL DEFAULT NOW()
 );

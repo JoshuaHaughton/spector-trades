@@ -1,18 +1,16 @@
 import Head from 'next/head';
 import { Box, Container, Grid } from '@mui/material';
-import { Budget } from '../components/dashboard/budget';
-import { LatestOrders } from '../components/dashboard/latest-orders';
-import { LatestProducts } from '../components/dashboard/latest-products';
-import { Sales } from '../components/dashboard/sales';
-import { TasksProgress } from '../components/dashboard/tasks-progress';
-import { TotalCustomers } from '../components/dashboard/total-customers';
-import { TotalProfit } from '../components/dashboard/total-profit';
-import { TrafficByDevice } from '../components/dashboard/traffic-by-device';
+import { PortfolioTabs } from '../components/spector-dashboard/portfolio-tabs';
+import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats';
+import { HeroGraph } from '../components/spector-dashboard/hero-graph';
+import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
+import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
+
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -26,23 +24,22 @@ const Dashboard = () => {
     //originally async
     const fetchData = async () => {
       try {
-        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+        const token = cookies.spector_jwt;
+        const config = {
+          headers: { Authorization: `Bearer ${token}`}
+        };
+        console.log( config )
+        const response = await api.get('/dashboard', config).then(response => {
           // console.log("auth data", response.data)
 
           if (response.data['success']) {
             setIsAuthorized(true);
             setLoading(false);
-            // console.log("is authed: ", isAuthorized)
-            // console.log("has authorized token");
-          } else {
-            setTimeout(() => {setLoading(false)}, 1000);
-
           }
-        })
-        // set(response.data.data.restaurants)
-
-        console.log(response.data)
-
+        }).catch(() => {
+          // Response rejected
+          setTimeout(() => {setLoading(false)}, 1000);
+        });
 
       } catch(err) {
 
@@ -74,85 +71,56 @@ const Dashboard = () => {
     }
     if (isAuthorized) {
       return (
-        <Container maxWidth={false}>
-          <Grid
+        <>
+          {/* THIS IS THE PORTFOLIO TAB */}
+          <Container maxWidth={false}>
+            <PortfolioTabs />
+          </Container>
+
+
+          <Container maxWidth={false}>
+            <Grid
               container
               spacing={3}
             >
-              <Grid
-                item
-                lg={3}
-                sm={6}
-                xl={3}
-                xs={12}
-              >
-                <Budget />
-              </Grid>
-              <Grid
-                item
-                xl={3}
-                lg={3}
-                sm={6}
-                xs={12}
-              >
-                <TotalCustomers />
-              </Grid>
-              <Grid
-                item
-                xl={3}
-                lg={3}
-                sm={6}
-                xs={12}
-              >
-                <TasksProgress />
-              </Grid>
-              <Grid
-                item
-                xl={3}
-                lg={3}
-                sm={6}
-                xs={12}
-              >
-                <TotalProfit sx={{ height: '100%' }} />
-              </Grid>
-              <Grid
-                item
-                lg={8}
-                md={12}
-                xl={9}
-                xs={12}
-              >
-                <Sales />
-              </Grid>
-              <Grid
-                item
+              {/* THIS IS THE PORTFOLIO STATS COMPONENT */}
+              <Grid item
                 lg={4}
                 md={6}
                 xl={3}
-                xs={12}
-              >
-                <TrafficByDevice sx={{ height: '100%' }} />
+                xs={12}>
+                  <PortfolioStats />
               </Grid>
-              <Grid
-                item
-                lg={4}
-                md={6}
-                xl={3}
-                xs={12}
-              >
-                <LatestProducts sx={{ height: '100%' }} />
-              </Grid>
-              <Grid
-                item
+
+              {/* THIS IS THE HERO GRAPH COMPONENT */}
+              <Grid item
                 lg={8}
-                md={12}
+                md={6}
                 xl={9}
-                xs={12}
-              >
-                <LatestOrders />
+                xs={12}>
+                  <HeroGraph />
+              </Grid>
+
+              {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
+              <Grid item
+                lg={5}
+                md={6}
+                xl={4}
+                xs={12}>
+                  <GroupedAssets />
+              </Grid>
+
+              {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
+              <Grid item
+                lg={7}
+                md={6}
+                xl={8}
+                xs={12}>
+                  <IndividualAssets />
               </Grid>
             </Grid>
           </Container>
+        </>
       );
     }
 

@@ -5,6 +5,7 @@ const cors = require("cors");
 const PORT = process.env.PORT || 3001;
 const morgan = require('morgan');
 const app = express();
+const { authenticateToken } = require('./middleware/authenticateToken');
 // const router = express.Router();
 const db = require('./db')
 app.use(cors());
@@ -55,7 +56,11 @@ app.use("/api/articles", articleRoutes(db));
 
 // Auth jwt testing
 const authRoutes = require("./routes/auth")
-app.use("/api/auth", authRoutes(db));
+app.use("/api/auth", authenticateToken, authRoutes());
+
+// Dashboard routes import
+const dashboardRoutes = require("./routes/dashboard");
+app.use("/api/dashboard", authenticateToken, dashboardRoutes());
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
