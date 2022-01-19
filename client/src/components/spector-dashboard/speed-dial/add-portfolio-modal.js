@@ -28,10 +28,35 @@ const style = {
 
 export const AddPortfolioModal = ({ open, handleClose }) => {
   const [portfolioType, setPortfolioType] = useState('spec');
-  const handlePortfolioType = (event, newPortfolioType) => {
+  const handlePortfolioType = (_event, newPortfolioType) => {
     setPortfolioType(newPortfolioType);
   };
   const [portfolioName, setPortfolioName] = useState('');
+  const [specBalance, setSpecBalance] = useState(0);
+  const [info, setInfo] = useState({visibility: 'hidden',
+                                    severity: 'info',
+                                    message: ''});
+
+  const resetForm = () => {
+    setPortfolioType('spec');
+    setPortfolioName('');
+    setSpecBalance(0);
+    setInfo({visibility: 'hidden',
+      severity: 'info',
+      message: ''});
+  };
+  
+  const handleSubmit = () => {
+    if (!portfolioName) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Must give portfolio a name!'})
+    } else if (portfolioType === 'spec' && (isNaN(specBalance) || specBalance < 1)) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Must give speculative balance a valid number over 0'})
+    } else {
+      console.log('portfolio submitted!');
+      resetForm();
+      handleClose();
+    }
+  };
 
   return (
     <Modal
@@ -48,25 +73,14 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
         }}
       >
         <Box sx={style}>
-          <Box sx={{ p: 2 }}>
-            <Grid container spacing={2} sx={{ justifyContent: "center" }}>
-              <Grid
-                item
-                sx={{
-                  alignItems: "center",
-                  display: "flex",
-                }}
-              >
-                <Typography
-                  color="textSecondary"
-                  display="inline"
-                  sx={{ pl: 1 }}
-                  variant="h5"
-                >
-                  New Portfolio
-                </Typography>
-              </Grid>
-            </Grid>
+          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+            <Typography
+              color="textSecondary"
+              display="inline"
+              variant="h5"
+            >
+              New Portfolio
+            </Typography>
           </Box>
           <Divider />
 
@@ -105,15 +119,16 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
             placeholder="1000"
             variant="standard"
             fullWidth={true}
+            onChange={(event) => setSpecBalance(previous => Number(event.target.value))}
            />
           
           {/* THE INFOBOX */}
-          <Alert sx={{ visibility: 'hidden' }} severity="info">This is an info alert — check it out!</Alert>
+          <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
    
           <Divider />
           <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
 
-              <Button onClick={() => console.log(portfolioName)} variant="outlined">Create</Button>
+              <Button onClick={handleSubmit} variant="outlined">Create</Button>
 
           </Box>
         </Box>
