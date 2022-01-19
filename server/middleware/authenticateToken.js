@@ -2,9 +2,15 @@ const jwt = require('jsonwebtoken');
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  let token = authHeader && authHeader.split(' ')[1];
+
+  //for some reason i needed the first element in the array for the comment post, so I created the below conditional as a fallback
+  if (!token) {
+    token = (authHeader && authHeader.split(' ')[0]);
+  }
 
   if (!token) {
+    console.log("missing jwt token")
     return res.status(403).send({status: 403, message: "missing jwt token"});
   }
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {

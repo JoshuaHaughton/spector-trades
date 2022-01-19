@@ -29,6 +29,7 @@ const style = {
 
 export const AddCommentModal = ({ open, handleClose, parentPost }) => {
   const [cookies, setCookie] = useCookies();
+  console.log('cookah', cookies)
 
   const formik = useFormik({
     initialValues: {
@@ -53,14 +54,30 @@ export const AddCommentModal = ({ open, handleClose, parentPost }) => {
 
         const formData = {
           body: values.body,
-          articleId: savedArticle.id
+          article_id: savedArticle.id
         };
 
         console.log(formData)
 
-        let cookieResp = await api.post("/comments", formData);
+        // let cookieResp = await api.post("/comments/", formData);
+        api({
+            method: "post",
+            url: "/comments/article",
+            data: formData,
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": cookies.spector_jwt
+            },
+          })
 
-        console.log(cookieResp);
+          /*
+curl -X POST http://localhost:3001/api/comments -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VyX2VtYWlsIjoiZWF0ZGVtQGNvb2tpZXMuY29tIiwiaWF0IjoxNjQyNTI5NTAyfQ.I4wkKqnv9fuPCxHob8dIwOrrlzF-F_FLvT2r5bTtROs" -H "Content-Type: application/json" --data-binary @- <<DATA
+{"post_id":"1",
+"body":"I LIKE COOOKIES"}
+DATA
+*/
+
+        // console.log(cookieResp);
 
       } catch (err) {
         console.log(err);

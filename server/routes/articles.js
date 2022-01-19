@@ -8,6 +8,7 @@ const { getUserByColumn } = require("./helpers/user-helpers");
 module.exports = (db) => {
   app.post("/", (req, res) => {
     const article = req.body;
+    // console.log(req)
 
     // console.log(article)
 
@@ -25,7 +26,7 @@ module.exports = (db) => {
             [article.link],
           )
           .then((resp) => {
-            console.log("resp", resp.rows);
+            // console.log("resp", resp.rows);
 
             res.status(200).json({
               status: "success",
@@ -35,7 +36,7 @@ module.exports = (db) => {
               },
             });
 
-            console.log("responsee", response);
+            // console.log("responsee", response);
             return resp.rows;
           });
 

@@ -49,7 +49,7 @@ const getCommentsByPost = (id, db) => {
  * @param {*} db POOL connection to pg
  * @returns rows from query
  */
-const addComment = (values, db) => {
+const addPostComment = (values, db) => {
   let queryString = 
                     `
                     INSERT INTO 
@@ -68,6 +68,33 @@ const addComment = (values, db) => {
     return err.message
   });
 };
+/**
+ * 
+ * @param {*} values {user_id, article_id, user_id}
+ * @param {*} db POOL connection to pg
+ * @returns rows from query
+ */
+const addArticleComment = (values, db) => {
+  console.log("add article comment")
+  console.log(values)
+  let queryString = 
+                    `
+                    INSERT INTO 
+                    comments (user_id, article_id, body)
+                    VALUES ($1, $2, $3)
+                    RETURNING *;
+                    `;
+
+  const queryParams = [ values.user_id, values.article_id, values.body ];
+
+  return db.query(queryString, queryParams)
+  .then((result) => {
+    return result.rows[0];
+  })
+  .catch((err) => {
+    return err.message
+  });
+};
 
 
-module.exports = { getCommentsByUser, getCommentsByPost, addComment };
+module.exports = { getCommentsByUser, getCommentsByPost, addPostComment, addArticleComment };
