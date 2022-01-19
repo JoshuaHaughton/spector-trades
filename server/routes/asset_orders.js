@@ -1,9 +1,56 @@
-let express = require('express');
-let app = express.Router();
+const express = require('express');
+const app = express.Router();
+const { verifyReqParams, addAssetOrder } = require('./helpers/asset_orders-helper');
 
-//Default route is /api/asset_orders
+const { authenticateToken } = require('../middleware/authenticateToken');
+/* 
+curl -X POST http://localhost:3001/api/orders -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VyX2VtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTY0MjYyNDM1M30.zjsC1ZZxlIs-cu6pE-_lwohuHs6sXlS0ZlSjJmwzh6g" -H "Content-Type: application/json" --data-binary @- <<DATA
+{
+ "name": "MyFirstPortfolio",
+ "live": true
+ "asset": "ETH",
+ "type": "Cryptocurrency",
+ "exit_point": 150000,
+ "price_at_purchase": 1000,
+ "units": 5,
+ "sold": false
+}
+DATA
+*/
+//Default route is /api/orders
+
 
 module.exports = (db) => {
+// Add authToken when done testing
+  app.post('/', authenticateToken, (req, res) => {
+    console.log("INCOMING TO ASSET_ORDERS");
+    console.log(req.body)
+    if (!verifyReqParams(req)) {
+        console.log("INCOMING IS MISSING A FIELD")
+        return res.sendStatus(422);
+      }
+
+    const { type, user } = req.body;
+
+    if (type === 'Cryptocurrency' || type === "Stocks") {
+
+      addAssetOrder({
+        ...req.body,
+        user_id: user.id
+      }, db.promDB)
+      .then(result => {
+        console.log(result)
+        return res.send(result.newAsset).status(200)
+      })
+      .catch(err => {
+        console.log("ERROR in addAssetOrder: ", err)
+        return res.sendStatus(500)
+      })
+    } else {
+      console.log("Malformed type string");
+      return res.send({error: 'type is not an accepted format'});
+    }
+  });
 
 app.get('/', async (req, res) => {
   try {
