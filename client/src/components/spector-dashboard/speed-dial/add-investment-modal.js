@@ -5,12 +5,9 @@ import {
   Button,
   Card,
   Divider,
-  Grid,
   Typography,
   Modal,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
   Autocomplete
 } from "@mui/material";
 
@@ -35,21 +32,31 @@ const portfolioItems = [
   { label: 'Rainy Day', id: 5},
 ];
 
+const assetItems = [
+  { code: 'AAPL', label: 'AAPL - Apple Inc. Common Stock - $168.74', price: 16874},
+  { code: 'MSFT', label: 'MSFT - Microsoft Corporation Common Stock - $309.53', price: 30953},
+  { code: 'GOOG', label: 'GOOG - Alphabet Inc. Class C Capital Stock - $2760.66', price: 276066},
+  { code: 'AMZN', label: 'AMZN - Amazon.com, Inc. Common Stock - $3161.00', price: 316100},
+  { code: 'TSLA', label: 'TSLA - Tesla, Inc. Common Stock - $1016.00', price: 101600},
+];
+
 export const AddInvestmentModal = ({ open, handleClose }) => {
-  const [portfolioType, setPortfolioType] = useState('spec');
-  const handlePortfolioType = (_event, newPortfolioType) => {
-    setPortfolioType(newPortfolioType);
-  };
-  const [portfolioName, setPortfolioName] = useState('');
-  const [specBalance, setSpecBalance] = useState(0);
+  const [portfolioId, setPortfolioId] = useState('');
   const [info, setInfo] = useState({visibility: 'hidden',
                                     severity: 'info',
                                     message: ''});
+  const [totalValue, setTotalValue] = useState(0);
+  const [assetSelection, setAssetSelection] = useState(null);
+  const [assetQuantity, setAssetQuantity] = useState(0);
+  const [exitPoint, setExitPoint] = useState('');
+  
 
   const resetForm = () => {
-    setPortfolioType('spec');
-    setPortfolioName('');
-    setSpecBalance(0);
+    setPortfolioId('');
+    setTotalValue(0);
+    setAssetSelection(null);
+    setAssetQuantity(0);
+    setExitPoint(0);
     setInfo({visibility: 'hidden',
       severity: 'info',
       message: ''});
@@ -61,14 +68,8 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
   }
 
   const handleSubmit = () => {
-    if (!portfolioName) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Must give portfolio a name!'})
-    } else if (portfolioType === 'spec' && (isNaN(specBalance) || specBalance < 1)) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Must give speculative balance a valid number over 0'})
-    } else {
-      console.log('portfolio submitted!');
-      resetBeforeClose();
-    }
+    console.log('portfolio submitted!');
+    resetBeforeClose();
   };
 
   return (
@@ -103,53 +104,87 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
               disablePortal
               id="portfolio-select"
               options={portfolioItems}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Portfolio" />}
+              sx={{ width: 250 }}
+              renderInput={
+                (params) => <TextField variant="standard" {...params} label="Portfolio" />
+              }
+              onChange={(_event, value) => {
+                setPortfolioId(value.id);
+              }}
             />
+
+          </Box>
+
+          <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
+
+            <Autocomplete 
+              disablePortal
+              id="asset-select"
+              options={assetItems}
+              sx={{ width: 300 }}
+              renderInput={(params) => <TextField variant="standard" {...params} label="Asset" />}
+              onChange={(_event, value) => {
+                setAssetSelection(value);
+                if (!isNaN(assetQuantity)) {
+                  setTotalValue(value.price * assetQuantity)
+                }
+              }}
+            />
+
+            <TextField variant="standard" 
+              id="quantity"
+              placeholder="1"
+              label="Quantity"
+              onBlur={(event) => setAssetQuantity(prev => {
+                  // Ensures the input is a number
+                  if (isNaN(event.target.value)) {
+                    event.target.value = prev;
+                    return prev;
+                  }
+                  if (assetSelection) {
+                    setTotalValue(assetSelection.price * assetQuantity)
+                  }
+                  return Number(event.target.value);
+                }
+              )}
+            />  
 
           </Box>
 
           <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-
-            <Autocomplete 
-              disablePortal
-              id="portfolio-select"
-              options={portfolioItems}
-              sx={{ width: 300 }}
-              renderInput={(params) => <TextField {...params} label="Asset" />}
+            <TextField
+              id="exit-point"
+              label="Exit Point"
+              placeholder="1"
+              variant="standard"
+              onBlur={(event) => setExitPoint(prev => {
+                  // Ensures the input is a number
+                  if (isNaN(event.target.value)) {
+                    event.target.value = prev;
+                    return prev;
+                  }
+                  return Number(event.target.value);
+                }
+              )}
             />
-
           </Box>
 
-          <TextField
-            sx={{ p:2  }}
-            id="portfolio-name"
-            label="Portfolio Name"
-            placeholder="My Portfolio"
-            variant="standard"
-            fullWidth={true}
-            onChange={(event) => setPortfolioName(() => event.target.value)}
-           />
+          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+            <Typography
+              color="textSecondary"
+              display="inline"
+              variant="h5"
+            >
+              Total: ${(totalValue / 100).toFixed(2)}
+            </Typography>
+          </Box>
 
-          <TextField
-            disabled={portfolioType !== 'spec'}
-            sx={{ p:2  }}
-            id="speculative-money"
-            label="Speculative Money"
-            placeholder="1000"
-            variant="standard"
-            fullWidth={true}
-            onChange={(event) => setSpecBalance(previous => Number(event.target.value))}
-           />
-          
           {/* THE INFOBOX */}
           <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
    
           <Divider />
           <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-
               <Button onClick={handleSubmit} variant="outlined">Create</Button>
-
           </Box>
         </Box>
       </Card>
