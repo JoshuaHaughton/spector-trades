@@ -29,7 +29,6 @@ const getUserByColumn = function(column, value, db) {
  * @returns object { unique: false, dup_username: true, dup_email: true }
  */
 const verifyUniqueColumns = function(columnData, db) {
-  console.log(columnData.email)
   return db.query(
     `
     SELECT * FROM users
