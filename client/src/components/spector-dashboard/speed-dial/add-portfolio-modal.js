@@ -45,7 +45,12 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
       severity: 'info',
       message: ''});
   };
-  
+
+  const resetBeforeClose = () => {
+    resetForm();
+    handleClose();
+  }
+
   const handleSubmit = () => {
     if (!portfolioName) {
       setInfo({visibility: 'visible', severity: 'error', message: 'Must give portfolio a name!'})
@@ -53,15 +58,14 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
       setInfo({visibility: 'visible', severity: 'error', message: 'Must give speculative balance a valid number over 0'})
     } else {
       console.log('portfolio submitted!');
-      resetForm();
-      handleClose();
+      resetBeforeClose();
     }
   };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={resetBeforeClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
       disableRestoreFocus
