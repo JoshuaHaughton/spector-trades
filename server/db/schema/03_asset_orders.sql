@@ -7,5 +7,6 @@ CREATE TABLE asset_orders(
   price_at_purchase INTEGER NOT NULL,
   created_at DATE NOT NULL DEFAULT NOW(),
   user_id INTEGER REFERENCES users(id),
-  portfolio_id INTEGER REFERENCES portfolios(id)
+  portfolio_id INTEGER REFERENCES portfolios(id),
+  sold BOOLEAN NOT NULL
 );
