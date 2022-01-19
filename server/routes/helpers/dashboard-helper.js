@@ -3,6 +3,9 @@ const getPortfolioDataByUser = (options, db) => {
   return db.task(t => {
     return t.any('SELECT * FROM portfolios WHERE user_id = $1', options.user_id)
         .then(portfolios => {
+                if (portfolios.length === 0) {
+                  return false;
+                }
                 const portfolioIds = [];
 
                 portfolios.forEach((portfolio) => {
@@ -36,7 +39,9 @@ const getPortfolioDataByUser = (options, db) => {
 
 const parsePortfolioDataByUser = (data) => {
   const portfolioData = {};
-
+  if (!data.portfolios) {
+    return portfolioData;
+  }
   data.portfolios.forEach(portfolio => {
     const assets = [];
     let total_assets_value = 0;
