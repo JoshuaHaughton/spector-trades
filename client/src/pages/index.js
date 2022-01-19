@@ -31,7 +31,7 @@ const Dashboard = () => {
         console.log( config )
         const response = await api.get('/dashboard', config).then(response => {
           //console.log("auth data", response.data)
-          if (response.status = 200) {
+          if (response.status === 200) {
             setIsAuthorized(true);
             setLoading(false);
           }
