@@ -19,6 +19,23 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
 
+
+  // TODO: REFACTOR!
+  const refreshDashboardState = () => {
+    const fetchData = async () => {
+        const token = cookies.spector_jwt;
+        const config = {
+          headers: { Authorization: `Bearer ${token}`}
+        };
+        const response = await api.get('/dashboard', config).then(response => {
+          console.log("auth data", response.data)
+          if (response.status === 200) {
+            setDashboardState(response.data);
+          }
+        })
+    };
+    fetchData();
+  };
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
