@@ -1,5 +1,9 @@
 INSERT INTO asset_orders (name, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
-VALUES ('John', 'Cryptocurrency', 1.32, 1000, '2021-01-20T06:00:00.000Z', 1, 1, false);
+VALUES ('BTC', 'Cryptocurrency', 1.32, 1000, '2021-01-20T06:00:00.000Z', 1, 1, false);
+
+INSERT INTO asset_orders (name, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
+VALUES ('ETH', 'Cryptocurrency', 1.32, 1000, '2022-01-01T06:00:00.000Z', 1, 1, false);
+
 
 INSERT INTO asset_orders (name, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
 VALUES ('Leon', 'Stocks', 1.01, 11302, '2021-01-20T06:00:00.000Z', 3, 3, false);

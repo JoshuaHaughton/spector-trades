@@ -37,7 +37,7 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}`}
         };
         const response = await api.get('/dashboard', config).then(response => {
-          console.log("auth data", response.data)
+          // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
           }
@@ -67,9 +67,13 @@ const Dashboard = () => {
         }
         xData.push(item.created_at)
       });
-      console.log("data: ", data)
-      console.log("Xdata: ", xData)
-      console.log("Y max: ", yMax);
+      // console.log("data: ", data)
+      // console.log("Xdata: ", xData)
+      // console.log("Y max: ", yMax);
+    }
+
+    if (activeStat === "growth") {
+
     }
     setActiveGraphData({
       series: [{
@@ -138,13 +142,13 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val / 1000000).toFixed(0)
+              return (val.toFixed(2))
             }
           }
         }
       }
     });
-    console.log(activeGraphData)
+    // console.log(activeGraphData)
   }, [activeStat]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
@@ -157,8 +161,8 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}`}
         };
         console.log( config )
-        const response = await api.get('/dashboard', config).then(response => {
-          console.log("auth data", response.data)
+        api.get('/dashboard', config).then(response => {
+          // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
             // get id of first portfolio
