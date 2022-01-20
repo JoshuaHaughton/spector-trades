@@ -17,6 +17,7 @@ export const CommentFeedModal = ({ open, handleClose, article }) => {
       post_id: 0,
       article_id: 0,
       body: "No comments to show",
+      created_at: ""
     },
   ]);
 

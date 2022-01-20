@@ -72,10 +72,18 @@ export const CommentCard = ({ comment }) => {
                 display: "flex",
               }}
             >
-              <ClockIcon color="action" />
-              <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                <TimeAgo datetime={comment.created_at} locale="en" />
-              </Typography>
+                {
+                comment.created_at
+                ?
+                <>
+                  <ClockIcon color="action" />
+                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <TimeAgo datetime={comment.created_at} locale="en" />
+                  </Typography>
+                </>
+                :
+                ''
+                  }
             </Grid>
           </Grid>
         </Box>
