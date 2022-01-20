@@ -29,7 +29,7 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddPortfolioModal = ({ open, handleClose }) => {
+export const AddPortfolioModal = ({ open, handleClose, refreshDashboardState }) => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [portfolioType, setPortfolioType] = useState('spec');
   const handlePortfolioType = (_event, newPortfolioType) => {
@@ -70,6 +70,7 @@ export const AddPortfolioModal = ({ open, handleClose }) => {
       api.post('/portfolios', data, config).then(res => {
         console.log("post portfolio response", res)
         console.log('portfolio submitted!');
+        refreshDashboardState();
         resetBeforeClose();
       }).catch(err => {
         console.log('error in posting portfolio: ', err)

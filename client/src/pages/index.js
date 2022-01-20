@@ -18,6 +18,7 @@ const Dashboard = () => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
+  const [activePortfolio, setActivePortfolio] = useState(0);
 
 
   // TODO: REFACTOR!
@@ -51,6 +52,8 @@ const Dashboard = () => {
           console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
+            // get id of first portfolio
+            setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             setIsAuthorized(true);
             setLoading(false);
           }
@@ -89,13 +92,16 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial />
+          <SpectorSpeedDial refreshDashboardState={refreshDashboardState} />
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
-            <PortfolioTabs portfolios={
-              Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
-            } />
+            <PortfolioTabs 
+              portfolios={
+                Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+              } 
+              {...{activePortfolio, setActivePortfolio}}
+              />
           </Container>
 
           <Container maxWidth={false}>
@@ -136,7 +142,7 @@ const Dashboard = () => {
                 md={6}
                 xl={8}
                 xs={12}>
-                  <IndividualAssets />
+                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} />}
               </Grid>
             </Grid>
           </Container>

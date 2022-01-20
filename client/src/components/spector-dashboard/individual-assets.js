@@ -8,33 +8,33 @@ import TableRow from '@mui/material/TableRow';
 
 const columns = [
   {
-    id: 'symbol',
-    label: 'Symbol',
+    id: 'name',
+    label: 'Name',
     minWidth: 90,
     align: 'right',
   },
-  { id: 'shares', 
-    label: 'Shares', 
-    minWidth: 100,
-    align: 'right',
-    format: (value) => value.toLocaleString('en-US'),
-  },
-  { id: 'buyPrice', 
-    label: 'Buy\u00a0Price', 
+  { id: 'totalValue', 
+    label: 'Total\u00a0Value', 
     minWidth: 90,
     align: 'right', 
     format: (value) => (value / 100).toFixed(2),
   },
+  { id: 'quantity', 
+    label: 'Quantity', 
+    minWidth: 100,
+    align: 'right',
+    format: (value) => value.toLocaleString('en-US'),
+  },
   {
-    id: 'nowPrice',
-    label: 'Price\u00a0Now',
+    id: 'avgPrice',
+    label: 'Avg\u00a0Price',
     minWidth: 90,
     align: 'right',
     format: (value) => (value / 100).toFixed(2),
   },
   {
-    id: 'returnValue',
-    label: 'Return',
+    id: 'plusMinusToday',
+    label: '+ / -',
     minWidth: 100,
     align: 'right',
     format: (value) => (value / 100).toFixed(2),
@@ -46,33 +46,25 @@ const columns = [
   },
 ];
 
-function createData(symbol, shares, buyPrice, nowPrice, returnValue) {
-  const timestamp = (new Date()).toLocaleString();
-  return { symbol, shares, buyPrice, nowPrice, returnValue, timestamp };
+function createData(name, priceAtPurchase, quantity, createdAt) {
+  const timestamp = (Date(createdAt).toLocaleString());
+  const totalValue = priceAtPurchase * quantity;
+  const avgPrice = priceAtPurchase;
+  const plusMinusToday = 0; // Placeholder
+  return { name, totalValue, quantity, avgPrice, plusMinusToday, timestamp };
 }
 
-const rows = [
-  createData('TSLA', 3025, 391, 354, 32263),
-  createData('TSLA', 3025, 391, 354, 32263),
-  createData('TSLA', 3025, 391, 354, 32263),
-  createData('AAPL', 50, 11, 65, 95961),
-  createData('AAPL', 50, 11, 65, 95961),
-  createData('MSFT', 2599, 208, 973, 3013),
-  createData('NVDA', 120, 415, 434, 98330),
-  createData('NVDA', 120, 415, 434, 98330),
-  createData('NVDA', 120, 415, 434, 98330),
-  createData('AMD', 9, 52, 103, 99870),
-  createData('AMZN', 100, 1057, 400, 76924),
-  createData('BTC', 207, 3108, 200, 3578),
-  createData('ETH', 207, 3108, 200, 3578),
-];
+export const IndividualAssets = ({assets}) => {
 
-export const IndividualAssets = () => {
+  console.log('these are the assets: ', assets);
+
+  const rows = assets.map(a => createData(a.name, a.price_at_purchase, a.units, a.created_at));
+  
 
   return (
 
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer component={Paper} sx={{ maxHeight: 450}}>
+      <TableContainer component={Paper} sx={{ height: 450}}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
