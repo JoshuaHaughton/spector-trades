@@ -4,7 +4,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 // Required to get react-apexcharts to work
 import dynamic from 'next/dynamic'
 const Chart = dynamic(
-  () => import('react-apexcharts')
+  () => import('react-apexcharts'),
+  { ssr: false }
 );
 export const HeroGraph = (props) => {
   const theme = useTheme();

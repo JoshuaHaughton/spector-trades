@@ -27,7 +27,7 @@ const Dashboard = () => {
   console.log("activeStat: ", activeStat)
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
-  // console.log("dashboardState: ", dashboardState);
+  console.log("dashboardState: ", dashboardState);
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
@@ -45,6 +45,85 @@ const Dashboard = () => {
     };
     fetchData();
   };
+
+
+  useEffect(() => {
+    const data = [];
+    const xData = [];
+    let tmp = [];
+    if (activeStat === 'spec_money') {
+      // dashboardState[activePortfolio]
+
+      dashboardState[activePortfolio].assets.forEach(item => {
+        if (item.live)
+        tmp.push(item.)
+      });
+    }
+    setActiveGraphData({
+      series: [{
+        name: "price",
+        data,
+      }],
+      options: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Stock Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val;
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+          categories: xData
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return (val / 1000000).toFixed(0)
+            }
+          }
+        }
+      }
+    });
+  }, [activeStat]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 

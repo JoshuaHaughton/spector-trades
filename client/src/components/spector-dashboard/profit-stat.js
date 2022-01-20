@@ -3,7 +3,6 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
 
 export const ProfitStat = (props) => {
-  console.log("Pstats active portfolio in profit stats: ", props)
   const handleClick = (e) => {
     e.preventDefault();
     props.setActiveStat("profit")
