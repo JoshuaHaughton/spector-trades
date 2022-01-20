@@ -9,66 +9,64 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+import { GroupedAssetsTabs } from './grouped-assets-tabs';
+
 const columns = [
-  { id: 'shares', 
-    label: 'Shares', 
+  { id: 'quantity', 
+    label: 'Quantity', 
     minWidth: 100,
     align: 'right',
     format: (value) => value.toLocaleString('en-US'),
   },
   { id: 'buyPrice', 
-    label: 'Buy\u00a0Price', 
+    label: 'Price', 
     minWidth: 90,
     align: 'right', 
     format: (value) => (value / 100).toFixed(2),
   },
   {
-    id: 'nowPrice',
-    label: 'Price\u00a0Now',
+    id: 'date',
+    label: 'Date',
     minWidth: 90,
     align: 'right',
     format: (value) => (value / 100).toFixed(2),
   },
-  {
-    id: 'returnValue',
-    label: 'Return',
-    minWidth: 100,
-    align: 'right',
-    format: (value) => (value / 100).toFixed(2),
-  },
-  {
-    id: 'timestamp',
-    label: 'Timestamp',
-    minWidth: 190,
-  },
 ];
 
-function createData(shares, buyPrice, nowPrice, returnValue) {
+function createData(quantity, buyPrice, date) {
   const timestamp = (new Date()).toLocaleString();
-  return { shares, buyPrice, nowPrice, returnValue, timestamp };
+  return { quantity, buyPrice, date};
 }
 
 const rows = [
-  createData(3025, 391, 354, 32263),
-  createData(50, 11, 65, 95961),
-  createData(2599, 208, 973, 3013),
-  createData(120, 415, 434, 98330),
-  createData(9, 52, 103, 99870),
-  createData(100, 1057, 400, 76924),
-  createData(207, 3108, 200, 3578),
+  createData(3025, 391, 354),
+  createData(50, 11, 65),
+  createData(2599, 208, 973),
+  createData(120, 415, 434),
+  createData(9, 52, 103),
+  createData(100, 1057, 400),
+  createData(207, 3108, 200),
 ];
 
-export const GroupedAssets = () => {
-  const [value, setValue] = useState(0);
-  
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+export const GroupedAssets = ({assets}) => {
+  const grouped = {};
+  assets.forEach(a => {
+    if (!grouped[a.name]) {
+      grouped[a.name] = []
+    }
+    grouped[a.name].push(a);
+  });
 
+  // Need to handle errors if there are no assets in portfolio!
+  // Next step is make tabs a component and conditionally render it
+
+  
+  //const rows = grouped[value].map(asset => createData(asset.units, asset.price_at_purchase, asset.created_at));
+  
   return (
 
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer component={Paper} sx={{ maxHeight: 450}}>
+      <TableContainer component={Paper} sx={{ height: 450}}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -104,21 +102,7 @@ export const GroupedAssets = () => {
           </TableBody>
         </Table>
       </TableContainer>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        variant="scrollable"
-        scrollButtons="auto"
-        aria-label="scrollable auto tabs example"
-      >
-          <Tab label="Item One" />
-          <Tab label="Item Two" />
-          <Tab label="Item Three" />
-          <Tab label="Item Four" />
-          <Tab label="Item Five" />
-          <Tab label="Item Six" />
-          <Tab label="Item Seven" />
-        </Tabs>
+      <GroupedAssetsTabs assets={Object.keys(grouped)} />
       </Paper>
     );
 }
