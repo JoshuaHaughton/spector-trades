@@ -55,12 +55,8 @@ function createData(name, priceAtPurchase, quantity, createdAt) {
 }
 
 export const IndividualAssets = ({assets}) => {
-
-  console.log('these are the assets: ', assets);
-
   const rows = assets.map(a => createData(a.name, a.price_at_purchase, a.units, a.created_at));
   
-
   return (
 
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>

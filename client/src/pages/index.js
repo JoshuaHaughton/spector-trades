@@ -133,7 +133,7 @@ const Dashboard = () => {
                 md={6}
                 xl={4}
                 xs={12}>
-                  <GroupedAssets />
+                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} />}
               </Grid>
 
               {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
