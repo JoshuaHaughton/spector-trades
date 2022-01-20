@@ -2,6 +2,7 @@ const express = require("express");
 const app = express.Router();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { getArticleByOldId } = require('./helpers/article-helper')
 const { getUserByColumn } = require("./helpers/user-helpers");
 
 //Default route is /api/articles
@@ -16,17 +17,31 @@ module.exports = (db) => {
 
     try {
       insertArticle = async () => {
+        let test = await db
+          .query(
+            `
+            SELECT *
+            FROM articles
+            WHERE url = $1; 
+            `, [article.link]
+          )
+
+          if (test.rows.length > 0 ) {
+            return res.status(402).send("Already exists in database")
+          }
+
         response = await db
           .query(
             `
-          INSERT INTO articles (url) 
-          VALUES ($1)
+          INSERT INTO articles (url, original_id) 
+          VALUES ($1, $2)
           RETURNING *;
           `,
-            [article.link],
+            [article.link, article._id],
           )
           .then((resp) => {
-            // console.log("resp", resp.rows);
+            console.log("resp", resp.rows);
+
 
             res.status(200).json({
               status: "success",
@@ -36,7 +51,7 @@ module.exports = (db) => {
               },
             });
 
-            // console.log("responsee", response);
+            // console.log("responsee", resp.rows);
             return resp.rows;
           });
 
@@ -77,6 +92,27 @@ module.exports = (db) => {
     //   console.log(err);
     // })
   });
+
+
+  app.get("/:article_id", (req, res) => {
+    const { article_id } = req.params;
+    console.log("OLD ID", article_id)
+  getArticleByOldId(article_id, db)
+  .then(resp => {
+
+    
+    // console.log("RESP", resp)
+    res.status(200).json({
+      status: "success",
+      data: {
+        article: resp
+      }
+    })
+    console.log(resp)
+  }).catch(err => {
+    console.log("ERROR IN getCommentsByUser: ", err)
+  });
+  })
 
   return app;
 };

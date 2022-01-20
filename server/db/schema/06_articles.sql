@@ -2,5 +2,6 @@ DROP TABLE IF EXISTS articles CASCADE;
 CREATE TABLE articles (
   id SERIAL PRIMARY KEY NOT NULL,
   url VARCHAR(300) NOT NULL,
-   created_at DATE NOT NULL DEFAULT NOW() 
+  original_id TEXT NOT NULL,
+  created_at DATE NOT NULL DEFAULT NOW() 
 );

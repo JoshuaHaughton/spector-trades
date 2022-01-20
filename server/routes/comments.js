@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express.Router();
-const { getCommentsByUser, getCommentsByPost, addArticleComment, addPostComment} = require('./helpers/comment-helper');
+const { getCommentsByUser, getCommentsByPost, addArticleComment, addPostComment, getArticleByOldId, getCommentsByArticleId } = require('./helpers/comment-helper');
 const { authenticateToken } = require('../middleware/authenticateToken');
 //Default route is /api/comments
 //curl statement for post
@@ -66,6 +66,56 @@ app.get('/post_id/:post_id', (req, res) => {
   });
 });
 
+// Get article by the article's original id (retrieved via api request), 
+// is used for linking articles to comments
+app.get('/article/:article_oldId', (req, res) => {
+  const { article_oldId } = req.params;
+  
+  getArticleByOldId(article_oldId, db)
+  .then(resp => {
+
+    if (!resp) {
+      resp = {}
+    }
+    
+    res.status(200).json({
+      status: "success",
+      results: resp.length,
+      data: {
+        article_id: resp.id
+      }
+    })
+  }).catch(err => {
+    console.log("ERROR IN getCommentsByUser: ", err)
+  });
+});
+
+
+// Get comments by article ID
+app.get('/article_id/:article_id', (req, res) => {
+  const { article_id } = req.params;
+  console.log('ARTICLE ID', article_id)
+  
+  getCommentsByArticleId(article_id, db)
+  .then(resp => {
+
+    if (!resp) {
+      resp = {}
+    }
+
+    res.status(200).json({
+      status: "success",
+      results: resp.length,
+      data: {
+        comments: resp
+      }
+    })
+    console.log('ARRAY RESP', resp)
+  }).catch(err => {
+    console.log("ERROR IN getCommentsByUser: ", err)
+  });
+});
+
 app.post('/post', authenticateToken, (req, res) => {
   if (!req.body.user|| !req.body.post_id || !req.body.body) {
     console.log("FAILED POST TO COMMENTS, req.body: ", req.body)
@@ -109,7 +159,7 @@ app.post('/article', authenticateToken, (req, res) => {
 
   const { article_id, body, user } = req.body;
 
-  console.log(req.body)
+  console.log('TO COMMENTS', req.body)
 
   addArticleComment({
     user_id: user.id,
@@ -131,6 +181,7 @@ app.post('/article', authenticateToken, (req, res) => {
     });
     
 });
+
 
 
 

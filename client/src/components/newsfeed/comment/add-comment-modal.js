@@ -13,6 +13,7 @@ import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "src/apis/api";
+import { useState } from "react";
 
 const style = {
   position: "absolute",
@@ -29,7 +30,8 @@ const style = {
 
 export const AddCommentModal = ({ open, handleClose, parentPost }) => {
   const [cookies, setCookie] = useCookies();
-  console.log('cookah', cookies)
+  const [charLeft, setCharLeft] = useState(140);
+  const [charColour, setCharColour] = useState('textSecondary')
 
   const formik = useFormik({
     initialValues: {
@@ -41,26 +43,42 @@ export const AddCommentModal = ({ open, handleClose, parentPost }) => {
     onSubmit: async (values) => {
       console.log(values);
 
+      //set as falsey
+      let savedArticle = false;
+
       try {
-        // let bodyFormData = new FormData();
-        // bodyFormData.append("form-body", values.body);
 
-        let resp = await api.post("/articles", parentPost);
+        //check if article exists / retrieve article
+        let articles = await api.get(`/articles/${parentPost._id}`)
 
-        const savedArticle = resp.data.data.article[0];
-        console.log(savedArticle)
 
-        // bodyFormData.append("article-id", savedArticle.id);
+        //exist check
+        if (Object.keys(articles.data.data).length > 0) {
+           // //retrieve article to post
+          savedArticle = articles.data.data.article;
+          console.log("ARTICLE RETRIEVED", savedArticle)
+        }
+
+
+        //attempt to create new article if article doesn't already exist
+        if (!savedArticle) {
+          await api.post("/articles", parentPost)
+          .then((resp) => {
+            console.log("ARTICLE CREATION", resp.data.data.article[0])
+
+            savedArticle = resp.data.data.article[0];
+          })
+        }
+
 
         const formData = {
           body: values.body,
           article_id: savedArticle.id
         };
 
-        console.log(formData)
 
-        // let cookieResp = await api.post("/comments/", formData);
-        api({
+        //Post comment and link it to article, then close modal
+        await api({
             method: "post",
             url: "/comments/article",
             data: formData,
@@ -68,55 +86,16 @@ export const AddCommentModal = ({ open, handleClose, parentPost }) => {
               "Content-Type": "application/json",
               "Authorization": cookies.spector_jwt
             },
+          }).then(resp => {
+            if(resp.data.status === 200) {
+              handleClose();
+            }
           })
-
-          /*
-curl -X POST http://localhost:3001/api/comments -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo0LCJ1c2VyX2VtYWlsIjoiZWF0ZGVtQGNvb2tpZXMuY29tIiwiaWF0IjoxNjQyNTI5NTAyfQ.I4wkKqnv9fuPCxHob8dIwOrrlzF-F_FLvT2r5bTtROs" -H "Content-Type: application/json" --data-binary @- <<DATA
-{"post_id":"1",
-"body":"I LIKE COOOKIES"}
-DATA
-*/
-
-        // console.log(cookieResp);
 
       } catch (err) {
         console.log(err);
 
       }
-
-      // return resp
-
-      // bodyFormData.append('article-id', response.id);
-
-      // console.log('response', response)
-
-      // const formData = {
-      //   body: values.body,
-      //   articleId: response.id
-      // }
-
-      // try {
-
-      // //CREATING NEW ARTICLE IN DB FROM PARENT POST (THIS ARTICLE)
-
-      // await api.post("/comments", formData)
-
-      // console.log('formdata', formData)
-
-      // } catch(err) {
-      //   console.log(err)
-
-      // }
-
-      // api({
-      //   method: "post",
-      //   url: "/comments",
-      //   data: bodyFormData,
-      //   headers: { "Content-Type": "multipart/form-data" },
-      // })
-      //   .then(function (response) {
-      //     const respData = response.data;
-      //   });
     },
   });
 
@@ -152,7 +131,11 @@ DATA
               </Grid>
             </Box>
             <Divider />
-            <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={formik.handleChange} />
+            <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={(e) => {
+              formik.handleChange(e);
+              setCharLeft(140 - e.target.value.length);
+              ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
+            }} />
             <Divider />
             <Box sx={{ p: 2 }}>
               <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
@@ -176,8 +159,8 @@ DATA
                     display: "flex",
                   }}
                 >
-                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                    140
+                  <Typography color={charColour} display="inline" sx={{ pl: 1 }} variant="body2">
+                    {charLeft}
                   </Typography>
                 </Grid>
               </Grid>

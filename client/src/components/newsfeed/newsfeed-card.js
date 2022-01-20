@@ -37,10 +37,6 @@ export const NewsfeedCard = ({ article, ...rest }) => {
   const handleCommentFeedOpen = () => setCommentFeedOpen(true);
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
 
-
-  console.log(Date.parse(article.published_date))
-75
-
   return (
     <Card
       sx={{
@@ -66,10 +62,10 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
+              {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
               <strong>{article.author || article.clean_url}</strong> - {
                 article.title.length > 100 ? article.title.substring(0, 100) + '...' : article.title
               }
-              {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
             </Typography>
           </Grid>
           <Grid
@@ -86,7 +82,6 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               sx={{ pl: 1 }}
               variant="body2"
             >
-              {/* 2 days ago */}
               <TimeAgo datetime={article.published_date} locale='en'/>
             </Typography>
           </Grid>
@@ -107,7 +102,6 @@ export const NewsfeedCard = ({ article, ...rest }) => {
           }
           <br/>
           <br/>
-          {/* <a href={article.link}>Click here to learn more</a> */}
           <Link href={article.link} color="inherit">
             Click here to learn more
           </Link>
@@ -136,6 +130,7 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               <CommentFeedModal
                 open={commentFeedOpen}
                 handleClose={handleCommentFeedClose}
+                article={article}
               />
             </Typography>
           </Grid>
