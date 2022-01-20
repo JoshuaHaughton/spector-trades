@@ -47,7 +47,7 @@ const columns = [
 ];
 
 function createData(name, priceAtPurchase, quantity, createdAt) {
-  const timestamp = (Date(createdAt).toLocaleString());
+  const timestamp = new Date(createdAt).toLocaleString("en-US");
   const totalValue = priceAtPurchase * quantity;
   const avgPrice = priceAtPurchase;
   const plusMinusToday = 0; // Placeholder
