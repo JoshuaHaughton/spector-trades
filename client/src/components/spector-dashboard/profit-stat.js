@@ -2,7 +2,9 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const ProfitStat = (props) => (
+export const ProfitStat = (props) => {
+  console.log("Pstats active portfolio in profit stats: ", props)
+  return (
     <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
@@ -66,4 +68,4 @@ export const ProfitStat = (props) => (
         </Box>
       </CardContent>
     </Card>
-  );  
+  )};

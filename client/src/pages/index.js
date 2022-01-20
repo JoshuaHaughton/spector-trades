@@ -19,8 +19,9 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
-
-
+  // console.log("activePortfolio: ", activePortfolio);
+  // console.log("dashboardState: ", dashboardState);
+  // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -96,10 +97,10 @@ const Dashboard = () => {
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
-            <PortfolioTabs 
+            <PortfolioTabs
               portfolios={
                 Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
-              } 
+              }
               {...{activePortfolio, setActivePortfolio}}
               />
           </Container>
@@ -115,7 +116,7 @@ const Dashboard = () => {
                 md={6}
                 xl={3}
                 xs={12}>
-                  <PortfolioStats />
+                  <PortfolioStats {...dashboardState[activePortfolio]} />
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
