@@ -55,20 +55,6 @@ const Newsfeed = () => {
     fetchNews();
   }, []);
 
-  // const fetchNews = () => {
-  //   try {
-  //     axios.request(options).then(function (response) {
-  //       //success
-
-  //       setNewsArrays(response.data.news);
-  //       console.log(newsArrays);
-  //     });
-  //   } catch (error) {
-  //     //fail
-  //     console.error(error);
-  //   }
-  // };
-  // fetchNews();
 
   return (
     <>

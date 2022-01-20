@@ -9,14 +9,12 @@ const { getUserByColumn } = require("./helpers/user-helpers");
 module.exports = (db) => {
   app.post("/", (req, res) => {
     const article = req.body;
-    // console.log(req)
-
-    // console.log(article)
 
     let response = "";
 
     try {
       insertArticle = async () => {
+        //exist check
         let test = await db
           .query(
             `
@@ -25,7 +23,6 @@ module.exports = (db) => {
             WHERE url = $1; 
             `, [article.link]
           )
-
           if (test.rows.length > 0 ) {
             return res.status(402).send("Already exists in database")
           }
@@ -33,11 +30,11 @@ module.exports = (db) => {
         response = await db
           .query(
             `
-          INSERT INTO articles (url, original_id) 
-          VALUES ($1, $2)
+          INSERT INTO articles (url, original_id, created_at) 
+          VALUES ($1, $2, $3)
           RETURNING *;
           `,
-            [article.link, article._id],
+            [article.link, article._id, article.published_date],
           )
           .then((resp) => {
             console.log("resp", resp.rows);
@@ -50,12 +47,8 @@ module.exports = (db) => {
                 article: resp.rows,
               },
             });
-
-            // console.log("responsee", resp.rows);
             return resp.rows;
           });
-
-        // console.log('resp', resp)
       };
 
       insertArticle();
@@ -67,30 +60,6 @@ module.exports = (db) => {
       console.log("error!");
     }
 
-
-    // const { link } = req.body;
-    // getUserByColumn('email', email, db)
-    // .then(resp => {
-    //   if (resp) {
-    //   bcrypt.compare(password, resp.password_digest, function (err, result) {
-
-    //     if (result) {
-    //       console.log("success!")
-
-    //       // Generate an access token
-    //       const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
-    //       return res.send({status: 200, spector_jwt: accessToken})
-    //     } else {
-    //       return res.send({status: 401, message: "bad password"})
-    //     }
-    //   })
-    //   } else {
-    //     return res.send({status: 401, message: "user not found"})
-    //   }
-    // }).catch(err => {
-    //   console.log("HERE")
-    //   console.log(err);
-    // })
   });
 
 

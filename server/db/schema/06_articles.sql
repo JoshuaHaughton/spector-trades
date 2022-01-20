@@ -3,5 +3,5 @@ CREATE TABLE articles (
   id SERIAL PRIMARY KEY NOT NULL,
   url VARCHAR(300) NOT NULL,
   original_id TEXT NOT NULL,
-  created_at DATE NOT NULL DEFAULT NOW() 
+  created_at TIMESTAMP NOT NULL DEFAULT NOW() 
 );
