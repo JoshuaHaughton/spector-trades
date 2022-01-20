@@ -19,8 +19,13 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
-  const [activeGraph, setActiveGraph] = useState({});
-
+  const [activeGraphData, setActiveGraphData] = useState({
+    options: {},
+    series: []
+  });
+  const [activeStat, setActiveStat] = useState("");
+  console.log("activeStat: ", activeStat)
+  // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
   // console.log("dashboardState: ", dashboardState);
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
@@ -59,6 +64,7 @@ const Dashboard = () => {
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             setIsAuthorized(true);
             setLoading(false);
+            parseGraphData(activePortfolio);
           }
         }).catch(() => {
           // Response rejected
@@ -80,6 +86,73 @@ const Dashboard = () => {
     //   console.log("has authorized token");
     //   return <div>Unauthorized user</div>
     // }
+
+  const parseGraphData = (activePortfolio) => {
+    setActiveGraphData({
+      series: [{
+        name: "price",
+        data: [6629.81, 6632.01]
+      }],
+      options: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Stock Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val;
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+          categories: ['01-02-2020', '02-01-2022']
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return (val / 1000000).toFixed(0)
+            }
+          }
+        }
+      }
+    });
+  };
 
   const authorizedDashboard = () => {
     if (loading) {
@@ -118,7 +191,7 @@ const Dashboard = () => {
                 md={6}
                 xl={3}
                 xs={12}>
-                  <PortfolioStats {...dashboardState[activePortfolio]} />
+                  <PortfolioStats {...dashboardState[activePortfolio]} setActiveStat={setActiveStat}/>
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
@@ -127,7 +200,7 @@ const Dashboard = () => {
                 md={6}
                 xl={9}
                 xs={12}>
-                  <HeroGraph />
+                  <HeroGraph {...activeGraphData} />
               </Grid>
 
               {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}

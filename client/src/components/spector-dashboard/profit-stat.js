@@ -4,8 +4,13 @@ import MoneyIcon from '@mui/icons-material/Money';
 
 export const ProfitStat = (props) => {
   console.log("Pstats active portfolio in profit stats: ", props)
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("profit")
+  };
   return (
-    <Card
+    <button className="stats" onClick={handleClick}>
+      <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
     >
@@ -14,6 +19,7 @@ export const ProfitStat = (props) => {
           container
           spacing={3}
           sx={{ justifyContent: 'space-between' }}
+          onClick={handleClick}
         >
           <Grid item>
             <Typography
@@ -68,4 +74,5 @@ export const ProfitStat = (props) => {
         </Box>
       </CardContent>
     </Card>
+    </button>
   )};

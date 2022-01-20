@@ -16,5 +16,5 @@ export const PortfolioTabs = ({portfolios, activePortfolio, setActivePortfolio})
     >
         {portfolios.map(p => <Tab key={p.id} label={p.name} value={p.id} /> )}
       </Tabs>
-    ); 
+    );
   };

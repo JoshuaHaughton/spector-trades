@@ -3,10 +3,13 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
 import centsToDollars from '../../utils/toHumanDollars';
 export const SpecBalanceStat = (props) => {
-  console.log(props)
-  console.log((props.spec_money_left)/props.portfolioInfo.spec_money * 100)
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("spec_money")
+  };
   return (
-  <Card
+    <button className="stats" onClick={handleClick}>
+        <Card
     sx={{ height: '100%' }}
     {...props}
   >
@@ -15,6 +18,7 @@ export const SpecBalanceStat = (props) => {
         container
         spacing={3}
         sx={{ justifyContent: 'space-between' }}
+
       >
         <Grid item>
           <Typography
@@ -59,4 +63,5 @@ export const SpecBalanceStat = (props) => {
       </Box>
     </CardContent>
   </Card>
+    </button>
 )};
