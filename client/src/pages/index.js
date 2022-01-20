@@ -19,6 +19,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
+  const [activeGraph, setActiveGraph] = useState({});
+
   // console.log("activePortfolio: ", activePortfolio);
   // console.log("dashboardState: ", dashboardState);
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
