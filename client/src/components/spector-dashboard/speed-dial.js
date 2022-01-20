@@ -11,7 +11,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import { AddPortfolioModal } from './speed-dial/add-portfolio-modal';
 import { AddInvestmentModal } from './speed-dial/add-investment-modal';
 
-export const SpectorSpeedDial = ({refreshDashboardState}) => {
+export const SpectorSpeedDial = ({refreshDashboardState, portfolios}) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -55,8 +55,10 @@ export const SpectorSpeedDial = ({refreshDashboardState}) => {
         refreshDashboardState={refreshDashboardState}
       />
       <AddInvestmentModal
+        portfolios={portfolios}
         open={addInvestmentOpen}
         handleClose={handleAddInvestmentClose}
+        refreshDashboardState={refreshDashboardState}
       />
     </>
   );

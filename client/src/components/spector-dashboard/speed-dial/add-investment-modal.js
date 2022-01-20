@@ -1,3 +1,5 @@
+import api from "../../../apis/api";
+import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -24,24 +26,18 @@ const style = {
   borderRadius: "8px",
 };
 
-const portfolioItems = [
-  { label: 'Clean Tech', id: 1},
-  { label: 'Bio Fuel', id: 2},
-  { label: 'Stonks', id: 3},
-  { label: 'Mining', id: 4},
-  { label: 'Rainy Day', id: 5},
-];
-
+// TODO: FIND API TO GENERATE THIS DATA
 const assetItems = [
-  { code: 'AAPL', label: 'AAPL - Apple Inc. Common Stock - $168.74', price: 16874},
-  { code: 'MSFT', label: 'MSFT - Microsoft Corporation Common Stock - $309.53', price: 30953},
-  { code: 'GOOG', label: 'GOOG - Alphabet Inc. Class C Capital Stock - $2760.66', price: 276066},
-  { code: 'AMZN', label: 'AMZN - Amazon.com, Inc. Common Stock - $3161.00', price: 316100},
-  { code: 'TSLA', label: 'TSLA - Tesla, Inc. Common Stock - $1016.00', price: 101600},
+  { code: 'AAPL', type: 'Stocks', label: 'AAPL - Apple Inc. Common Stock - $168.74', price: 16874},
+  { code: 'MSFT', type: 'Stocks', label: 'MSFT - Microsoft Corporation Common Stock - $309.53', price: 30953},
+  { code: 'GOOG', type: 'Stocks', label: 'GOOG - Alphabet Inc. Class C Capital Stock - $2760.66', price: 276066},
+  { code: 'AMZN', type: 'Stocks', label: 'AMZN - Amazon.com, Inc. Common Stock - $3161.00', price: 316100},
+  { code: 'TSLA', type: 'Stocks', label: 'TSLA - Tesla, Inc. Common Stock - $1016.00', price: 101600},
 ];
 
-export const AddInvestmentModal = ({ open, handleClose }) => {
-  const [portfolioId, setPortfolioId] = useState('');
+export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState }) => {
+  const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [portfolioSelection, setPortfolioSelection] = useState(null);
   const [info, setInfo] = useState({visibility: 'hidden',
                                     severity: 'info',
                                     message: ''});
@@ -49,7 +45,9 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
   const [assetSelection, setAssetSelection] = useState({});
   const [assetQuantity, setAssetQuantity] = useState(0);
   const [exitPoint, setExitPoint] = useState('');
-  
+
+  const portfolioItems = portfolios.map(p => ({id: p.id, label: p.name, live: p.live}));
+
   useEffect(() => {
     if (assetSelection && assetSelection['price']) {
       setTotalValue(assetSelection.price * assetQuantity);
@@ -59,7 +57,7 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
   }, [assetSelection, assetQuantity]);
 
   const resetForm = () => {
-    setPortfolioId('');
+    setPortfolioSelection(null);
     setTotalValue(0);
     setAssetSelection(null);
     setAssetQuantity(0);
@@ -75,8 +73,37 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
   }
 
   const handleSubmit = () => {
-    console.log('portfolio submitted!');
-    resetBeforeClose();
+    if (!portfolioSelection) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Must select portfolio!'});
+    } else if (!assetSelection) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Must select asset!'});
+    } else if (assetQuantity < 1) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Asset quantity must be at least 1!'});
+    } else {
+      const data = {
+        name: portfolioSelection.label, 
+        live: portfolioSelection.live, 
+        asset: assetSelection.code, 
+        type: assetSelection.type,
+        exit_point: exitPoint,
+        units: assetQuantity,
+        price_at_purchase: assetSelection.price,
+        sold: false,
+      };
+      const token = cookies.spector_jwt;
+      const config = {
+        headers: { Authorization: `Bearer ${token}`}
+      };
+      api.post('/orders', data, config).then(res => {
+        console.log("post asset orders response", res)
+        console.log('asset order submitted!');
+        refreshDashboardState();
+        resetBeforeClose();
+      }).catch(err => {
+        console.log('error in posting asset order: ', err)
+        resetBeforeClose();
+      });
+    }
   };
 
   return (
@@ -112,11 +139,12 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
               id="portfolio-select"
               options={portfolioItems}
               sx={{ width: 250 }}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
               renderInput={
                 (params) => <TextField variant="standard" {...params} label="Portfolio" />
               }
               onChange={(_event, value) => {
-                setPortfolioId(value.id);
+                setPortfolioSelection(value);
               }}
             />
 
@@ -129,12 +157,10 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
               id="asset-select"
               options={assetItems}
               sx={{ width: 300 }}
+              isOptionEqualToValue={(option, value) => option.label === value.label}
               renderInput={(params) => <TextField variant="standard" {...params} label="Asset" />}
               onChange={(_event, value) => {
                 setAssetSelection(value);
-                if (!isNaN(assetQuantity)) {
-                  //setTotalValue(value.price * assetQuantity)
-                }
               }}
             />
 
