@@ -2,14 +2,17 @@ import { Tab, Tabs } from '@mui/material';
 
 import { useEffect, useState } from 'react';
 
-export const GroupedAssetsTabs = ({assets}) => {
+export const GroupedAssetsTabs = ({assets, setName}) => {
   const [value, setValue] = useState(assets[0]);
   const handleChange = (_event, newValue) => {
-    setValue(() => newValue);
+    setValue(newValue);
+    setName(() => newValue);
   };
 
   useEffect(() => {
-    setValue(() => assets[0]);
+    if (!assets.includes(value)) {
+      setValue(() => assets[0]);
+    }
   }, [assets])
 
   return (

@@ -1,6 +1,4 @@
-import { Tab, Tabs } from '@mui/material';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -29,26 +27,16 @@ const columns = [
     label: 'Date',
     minWidth: 90,
     align: 'right',
-    format: (value) => (value / 100).toFixed(2),
+    format: (value) => new Date(value),
   },
 ];
 
-function createData(quantity, buyPrice, date) {
-  const timestamp = (new Date()).toLocaleString();
+function createData(quantity, buyPrice, timestamp) {
+  const date = new Date(timestamp).toLocaleString('en-US');
   return { quantity, buyPrice, date};
 }
 
-const rows = [
-  createData(3025, 391, 354),
-  createData(50, 11, 65),
-  createData(2599, 208, 973),
-  createData(120, 415, 434),
-  createData(9, 52, 103),
-  createData(100, 1057, 400),
-  createData(207, 3108, 200),
-];
-
-export const GroupedAssets = ({assets}) => {
+const createGroupedAssets = (assets) => {
   const grouped = {};
   assets.forEach(a => {
     if (!grouped[a.name]) {
@@ -56,13 +44,30 @@ export const GroupedAssets = ({assets}) => {
     }
     grouped[a.name].push(a);
   });
+  return grouped;
+};
 
-  // Need to handle errors if there are no assets in portfolio!
-  // Next step is make tabs a component and conditionally render it
+export const GroupedAssets = ({assets}) => {
+  
+  const grouped = createGroupedAssets(assets);
+  const [name, setName] = useState(Object.keys(grouped)[0]);
+  const [rows, setRows] = useState([]);
 
-  
-  //const rows = grouped[value].map(asset => createData(asset.units, asset.price_at_purchase, asset.created_at));
-  
+  useEffect(() => {
+    const grouped = createGroupedAssets(assets);
+
+    // I suspect this is doing the flickering after switching portfolios
+    let newRows = [];
+    if (grouped[name]) {
+      newRows = grouped[name].map(asset => createData(asset.units, asset.price_at_purchase, asset.created_at));
+    }
+    setRows(() => newRows);
+    if (!Object.keys(grouped).includes(name)) {
+      setName(Object.keys(grouped)[0]);
+    }
+  }, [assets, name]);
+
+
   return (
 
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -102,7 +107,7 @@ export const GroupedAssets = ({assets}) => {
           </TableBody>
         </Table>
       </TableContainer>
-      <GroupedAssetsTabs assets={Object.keys(grouped)} />
+      <GroupedAssetsTabs assets={Object.keys(grouped)} name={name} setName={setName} />
       </Paper>
     );
 }
