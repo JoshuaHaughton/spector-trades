@@ -17,9 +17,26 @@ const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [dashboardState, setDashboardState] = useState({});
+  const [activePortfolio, setActivePortfolio] = useState(0);
 
 
-
+  // TODO: REFACTOR!
+  const refreshDashboardState = () => {
+    const fetchData = async () => {
+        const token = cookies.spector_jwt;
+        const config = {
+          headers: { Authorization: `Bearer ${token}`}
+        };
+        const response = await api.get('/dashboard', config).then(response => {
+          console.log("auth data", response.data)
+          if (response.status === 200) {
+            setDashboardState(response.data);
+          }
+        })
+    };
+    fetchData();
+  };
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -32,9 +49,11 @@ const Dashboard = () => {
         };
         console.log( config )
         const response = await api.get('/dashboard', config).then(response => {
-          // console.log("auth data", response.data)
-
-          if (response.data['success']) {
+          console.log("auth data", response.data)
+          if (response.status === 200) {
+            setDashboardState(response.data);
+            // get id of first portfolio
+            setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             setIsAuthorized(true);
             setLoading(false);
           }
@@ -42,9 +61,7 @@ const Dashboard = () => {
           // Response rejected
           setTimeout(() => {setLoading(false)}, 1000);
         });
-
       } catch(err) {
-
       }
     };
 
@@ -75,11 +92,16 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial />
+          <SpectorSpeedDial refreshDashboardState={refreshDashboardState} />
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
-            <PortfolioTabs />
+            <PortfolioTabs 
+              portfolios={
+                Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+              } 
+              {...{activePortfolio, setActivePortfolio}}
+              />
           </Container>
 
           <Container maxWidth={false}>
@@ -120,7 +142,7 @@ const Dashboard = () => {
                 md={6}
                 xl={8}
                 xs={12}>
-                  <IndividualAssets />
+                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} />}
               </Grid>
             </Grid>
           </Container>
