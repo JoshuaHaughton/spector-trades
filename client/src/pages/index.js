@@ -89,7 +89,7 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial />
+          <SpectorSpeedDial refreshDashboardState={refreshDashboardState} />
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
