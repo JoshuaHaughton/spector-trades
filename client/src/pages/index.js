@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
-
+import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -51,20 +51,40 @@ const Dashboard = () => {
     const data = [];
     const xData = [];
     let tmp = [];
+    let yMax;
     if (activeStat === 'spec_money') {
+      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
       // dashboardState[activePortfolio]
+      data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
+      xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
+      dashboardState[activePortfolio].assets.forEach((item, i) => {
+        if (!item.sold) {
+          data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
+        }
 
-      dashboardState[activePortfolio].assets.forEach(item => {
-        if (item.live)
-        tmp.push(item.)
+        if (item.sold) {
+          data.push((data[i] + ((item.price_at_purchase * item.units) / 100)))
+        }
+        xData.push(item.created_at)
       });
+      console.log("data: ", data)
+      console.log("Xdata: ", xData)
+      console.log("Y max: ", yMax);
     }
     setActiveGraphData({
       series: [{
-        name: "price",
+        name: "Spec money",
         data,
       }],
       options: {
+        stroke: {
+          show: true,
+          curve: activeStat ? 'straight' : 'smooth',
+          lineCap: 'butt',
+          colors: undefined,
+          width: 2,
+          dashArray: 0,
+        },
         chart: {
           type: 'area',
           stacked: false,
@@ -99,9 +119,10 @@ const Dashboard = () => {
           },
         },
         yaxis: {
+          max: yMax,
           labels: {
             formatter: function (val) {
-              return val;
+              return val.toFixed();
             },
           },
           title: {
@@ -123,6 +144,7 @@ const Dashboard = () => {
         }
       }
     });
+    console.log(activeGraphData)
   }, [activeStat]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
