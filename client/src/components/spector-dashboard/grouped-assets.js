@@ -27,7 +27,6 @@ const columns = [
     label: 'Date',
     minWidth: 90,
     align: 'right',
-    format: (value) => new Date(value),
   },
 ];
 
