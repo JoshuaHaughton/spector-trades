@@ -1,4 +1,4 @@
-{
+ {
   "1": {
     "portfolioInfo": {
     "id": "1",
