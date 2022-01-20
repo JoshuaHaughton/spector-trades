@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -46,10 +46,17 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
                                     severity: 'info',
                                     message: ''});
   const [totalValue, setTotalValue] = useState(0);
-  const [assetSelection, setAssetSelection] = useState(null);
+  const [assetSelection, setAssetSelection] = useState({});
   const [assetQuantity, setAssetQuantity] = useState(0);
   const [exitPoint, setExitPoint] = useState('');
   
+  useEffect(() => {
+    if (assetSelection && assetSelection['price']) {
+      setTotalValue(assetSelection.price * assetQuantity);
+    } else {
+      setTotalValue(0);
+    }
+  }, [assetSelection, assetQuantity]);
 
   const resetForm = () => {
     setPortfolioId('');
@@ -126,7 +133,7 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
               onChange={(_event, value) => {
                 setAssetSelection(value);
                 if (!isNaN(assetQuantity)) {
-                  setTotalValue(value.price * assetQuantity)
+                  //setTotalValue(value.price * assetQuantity)
                 }
               }}
             />
@@ -140,9 +147,6 @@ export const AddInvestmentModal = ({ open, handleClose }) => {
                   if (isNaN(event.target.value)) {
                     event.target.value = prev;
                     return prev;
-                  }
-                  if (assetSelection) {
-                    setTotalValue(assetSelection.price * assetQuantity)
                   }
                   return Number(event.target.value);
                 }
