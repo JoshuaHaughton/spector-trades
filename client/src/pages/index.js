@@ -11,6 +11,7 @@ import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
+import axios from 'axios';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
