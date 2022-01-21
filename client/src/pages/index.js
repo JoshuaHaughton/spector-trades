@@ -25,12 +25,13 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
-  const [assetPerformance, setAssetPerformance] = useState({});
+  const [assetPerformance, setAssetPerformance] = useState([]);
   console.log("activeStat: ", activeStat)
   console.log("asset performance: ", assetPerformance);
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
   console.log("dashboardState: ", dashboardState);
+  console.log("assetPerformance: ", assetPerformance)
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
@@ -53,6 +54,7 @@ const Dashboard = () => {
     const cryptoAssets = [];
     const stockAssets = [];
     const portfolioData = Object.values(dashboardState);
+    const portfolioCreatedAt =
     console.log(portfolioData)
     portfolioData.forEach(portfolio => {
       const assetData = Object.values(portfolio.assets);
@@ -62,7 +64,8 @@ const Dashboard = () => {
             name: asset.name,
             units: asset.units,
             price_at_purchase: asset.price_at_purchase,
-            sold: asset.sold
+            sold: asset.sold,
+            start_date: asset.created_at
           });
         }
 
@@ -79,6 +82,13 @@ const Dashboard = () => {
     console.log("STocks:", stockAssets)
     console.log("Crypto:", cryptoAssets)
 
+
+    // axios.post('/api/crypto', {id: value.id}).then(res => {
+    //   const price = Object.values(res.data)[0]['cad'];
+    //   value.price = price * 100;
+    //   setAssetSelection(value);
+    //   setPriceHelperText(price);
+    // });
 
 
   };
