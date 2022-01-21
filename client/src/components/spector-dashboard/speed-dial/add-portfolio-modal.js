@@ -63,7 +63,7 @@ export const AddPortfolioModal = ({ open, handleClose, refreshDashboardState }) 
       setInfo({visibility: 'visible', severity: 'error', message: 'Must give speculative balance a valid number over 0'})
     } else {
       
-      const data = { name: portfolioName, live: portfolioType === 'live', spec_money: specBalance ? specBalance : null };
+      const data = { name: portfolioName, live: portfolioType === 'live', spec_money: specBalance ? specBalance * 100 : null };
       const token = cookies.spector_jwt;
       const config = {
         headers: { Authorization: `Bearer ${token}`}

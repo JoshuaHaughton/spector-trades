@@ -8,7 +8,8 @@ curl -X POST http://localhost:3001/api/orders -H "Authorization: Bearer eyJhbGci
 {
  "name": "MyFirstPortfolio",
  "live": true
- "asset": "ETH",
+ "asset_name": "Ethereum",
+ "asset_symbol": "ETH",
  "type": "Cryptocurrency",
  "exit_point": 150000,
  "price_at_purchase": 1000,
@@ -36,6 +37,8 @@ module.exports = (db) => {
 
       addAssetOrder({
         ...req.body,
+        asset: req.body.asset_name,
+        symbol: req.body.asset_symbol,
         user_id: user.id
       }, db.promDB)
       .then(result => {
