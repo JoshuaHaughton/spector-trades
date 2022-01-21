@@ -10,9 +10,12 @@ import {
   Typography,
   Modal,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Autocomplete
 } from "@mui/material";
 import { CryptoAutoComplete } from "./crypto-autocomplete";
+import { StockAutoComplete } from "./stock-autocomplete";
 
 const style = {
   position: "absolute",
@@ -27,15 +30,6 @@ const style = {
   borderRadius: "8px",
 };
 
-// TODO: FIND API TO GENERATE THIS DATA
-// const assetItems = [
-//   { code: 'AAPL', type: 'Stocks', label: 'AAPL - Apple Inc. Common Stock - $168.74', price: 16874},
-//   { code: 'MSFT', type: 'Stocks', label: 'MSFT - Microsoft Corporation Common Stock - $309.53', price: 30953},
-//   { code: 'GOOG', type: 'Stocks', label: 'GOOG - Alphabet Inc. Class C Capital Stock - $2760.66', price: 276066},
-//   { code: 'AMZN', type: 'Stocks', label: 'AMZN - Amazon.com, Inc. Common Stock - $3161.00', price: 316100},
-//   { code: 'TSLA', type: 'Stocks', label: 'TSLA - Tesla, Inc. Common Stock - $1016.00', price: 101600},
-// ];
-
 export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState }) => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [portfolioSelection, setPortfolioSelection] = useState(null);
@@ -46,6 +40,13 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
   const [assetSelection, setAssetSelection] = useState({});
   const [assetQuantity, setAssetQuantity] = useState(0);
   const [exitPoint, setExitPoint] = useState('');
+  const [assetType, setAssetType] = useState('stock');
+  const handleAssetType = (_event, newAssetType) => {
+    if (newAssetType !== null) {
+      setAssetSelection({});
+      setAssetType(newAssetType);
+    }
+  };
 
   const portfolioItems = portfolios.map(p => ({id: p.id, label: p.name, live: p.live}));
 
@@ -149,9 +150,26 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
 
           </Box>
 
+          <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
+            <ToggleButtonGroup
+              exclusive
+              aria-label="asset type"
+              value={assetType}
+              onChange={handleAssetType}
+            >
+              <ToggleButton value="stock" aria-label="stock">
+                Stock
+              </ToggleButton>
+              <ToggleButton value="crypto" aria-label="srypto">
+                Crypto
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+
           <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
 
-            <CryptoAutoComplete setAssetSelection={setAssetSelection} />
+            { assetType === 'stock' && <StockAutoComplete setAssetSelection={setAssetSelection} /> }  
+            { assetType === 'crypto' && <CryptoAutoComplete setAssetSelection={setAssetSelection} /> } 
 
             <TextField variant="standard" 
               id="quantity"
