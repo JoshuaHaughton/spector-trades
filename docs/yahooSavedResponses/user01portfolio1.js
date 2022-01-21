@@ -1,21 +1,3 @@
-var axios = require("axios").default;
-
-var options = {
-  method: 'GET',
-  url: 'https://stock-data-yahoo-finance-alternative.p.rapidapi.com/v8/finance/spark',
-  params: {symbols: 'ETH,BTC', range: '1y', interval: '1m'},
-  headers: {
-    'x-rapidapi-host': 'stock-data-yahoo-finance-alternative.p.rapidapi.com',
-    'x-rapidapi-key': '70f9f776f4msh644b5439a1aa0d5p16b68cjsnb4b7c5c31c91'
-  }
-};
-
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
-});
-
 "Meta Data":{7 items
   "1. Information":"Monthly Prices and Volumes for Digital Currency"
   "2. Digital Currency Code":"ETH"
