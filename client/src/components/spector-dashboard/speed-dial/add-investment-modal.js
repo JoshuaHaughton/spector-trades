@@ -10,19 +10,9 @@ import {
   Typography,
   Modal,
   TextField,
+  Autocomplete
 } from "@mui/material";
-
-// react window optimization
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import ListSubheader from '@mui/material/ListSubheader';
-import Popper from '@mui/material/Popper';
-import { useTheme, styled } from '@mui/material/styles';
-import { VariableSizeList } from 'react-window';
-
-import {coinsList} from "../../../__mocks__/coins-list";
+import { CryptoAutoComplete } from "./crypto-autocomplete";
 
 const style = {
   position: "absolute",
@@ -45,119 +35,6 @@ const style = {
 //   { code: 'AMZN', type: 'Stocks', label: 'AMZN - Amazon.com, Inc. Common Stock - $3161.00', price: 316100},
 //   { code: 'TSLA', type: 'Stocks', label: 'TSLA - Tesla, Inc. Common Stock - $1016.00', price: 101600},
 // ];
-
-// react-window optimization
-const LISTBOX_PADDING = 8; // px
-
-function renderRow(props) {
-  const { data, index, style } = props;
-  const dataSet = data[index];
-  const inlineStyle = {
-    ...style,
-    top: style.top + LISTBOX_PADDING,
-  };
-
-  if (dataSet.hasOwnProperty('group')) {
-    return (
-      <ListSubheader key={dataSet.key} component="div" style={inlineStyle}>
-        {dataSet.group}
-      </ListSubheader>
-    );
-  }
-
-  return (
-    <Typography component="li" {...dataSet[0]} noWrap style={inlineStyle}>
-      {dataSet[1]}
-    </Typography>
-  );
-}
-
-const OuterElementContext = React.createContext({});
-
-const OuterElementType = React.forwardRef((props, ref) => {
-  const outerProps = React.useContext(OuterElementContext);
-  return <div ref={ref} {...props} {...outerProps} />;
-});
-
-function useResetCache(data) {
-  const ref = React.useRef(null);
-  React.useEffect(() => {
-    if (ref.current != null) {
-      ref.current.resetAfterIndex(0, true);
-    }
-  }, [data]);
-  return ref;
-}
-
-// Adapter for react-window
-const ListboxComponent = React.forwardRef(function ListboxComponent(props, ref) {
-  const { children, ...other } = props;
-  const itemData = [];
-  children.forEach((item) => {
-    itemData.push(item);
-    itemData.push(...(item.children || []));
-  });
-
-  const theme = useTheme();
-  const smUp = useMediaQuery(theme.breakpoints.up('sm'), {
-    noSsr: true,
-  });
-
-  const itemCount = itemData.length;
-  const itemSize = smUp ? 36 : 48;
-
-  const getChildSize = (child) => {
-    if (child.hasOwnProperty('group')) {
-      return 48;
-    }
-
-    return itemSize;
-  };
-
-  const getHeight = () => {
-    if (itemCount > 8) {
-      return 8 * itemSize;
-    }
-    return itemData.map(getChildSize).reduce((a, b) => a + b, 0);
-  };
-
-  const gridRef = useResetCache(itemCount);
-
-  return (
-    <div ref={ref}>
-      <OuterElementContext.Provider value={other}>
-        <VariableSizeList
-          itemData={itemData}
-          height={getHeight() + 2 * LISTBOX_PADDING}
-          width="100%"
-          ref={gridRef}
-          outerElementType={OuterElementType}
-          innerElementType="ul"
-          itemSize={(index) => getChildSize(itemData[index])}
-          overscanCount={5}
-          itemCount={itemCount}
-        >
-          {renderRow}
-        </VariableSizeList>
-      </OuterElementContext.Provider>
-    </div>
-  );
-});
-
-const StyledPopper = styled(Popper)({
-  [`& .${autocompleteClasses.listbox}`]: {
-    boxSizing: 'border-box',
-    '& ul': {
-      padding: 0,
-      margin: 0,
-    },
-  },
-});
-
-// react-window optimization
-
-console.log('how many coins? ', coinsList.length);
-const assetItems = coinsList.map(c => ({code: c.symbol, type: 'Cryptocurrency', label: `${c.symbol} - ${c.name}`, price: 1000}));
 
 export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState }) => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
@@ -274,22 +151,7 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
 
           <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
 
-            <Autocomplete 
-              disablePortal
-              disableListWrap
-              id="asset-select"
-              options={assetItems}
-              sx={{ width: 300 }}
-              isOptionEqualToValue={(option, value) => option.label === value.label}
-              renderInput={(params) => <TextField variant="standard" {...params} label="Asset" />}
-              PopperComponent={StyledPopper}
-              ListboxComponent={ListboxComponent}
-              renderOption={(props, option) => [props, option.label]}
-              renderGroup={(params) => params}
-              onChange={(_event, value) => {
-                setAssetSelection(value);
-              }}
-            />
+            <CryptoAutoComplete setAssetSelection={setAssetSelection} />
 
             <TextField variant="standard" 
               id="quantity"
