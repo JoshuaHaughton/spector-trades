@@ -67,8 +67,6 @@ export const AddPortfolioModal = ({ open, handleClose, refreshDashboardState }) 
         headers: { Authorization: `Bearer ${token}`}
       };
       api.post('/portfolios', data, config).then(res => {
-        console.log("post portfolio response", res)
-        console.log('portfolio submitted!');
         refreshDashboardState();
         resetBeforeClose();
       }).catch(err => {

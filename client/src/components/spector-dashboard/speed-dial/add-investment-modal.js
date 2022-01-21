@@ -95,8 +95,6 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
         headers: { Authorization: `Bearer ${token}`}
       };
       api.post('/orders', data, config).then(res => {
-        console.log("post asset orders response", res)
-        console.log('asset order submitted!');
         refreshDashboardState();
         resetBeforeClose();
       }).catch(err => {
