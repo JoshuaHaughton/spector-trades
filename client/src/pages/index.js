@@ -11,6 +11,7 @@ import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
+
 import axios from 'axios';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 import centsToDollars from '../utils/toHumanDollars';
@@ -54,9 +55,11 @@ const Dashboard = () => {
     const cryptoAssets = [];
     const stockAssets = [];
     const portfolioData = Object.values(dashboardState);
-    const portfolioCreatedAt =
+    const portfolioCreatedAt = [];
+
     console.log(portfolioData)
     portfolioData.forEach(portfolio => {
+      portfolioCreatedAt.push(portfolio.portfolioInfo.created_at)
       const assetData = Object.values(portfolio.assets);
       assetData.forEach(asset => {
         if (asset.type === 'Cryptocurrency') {
@@ -82,14 +85,28 @@ const Dashboard = () => {
     console.log("STocks:", stockAssets)
     console.log("Crypto:", cryptoAssets)
 
+    console.log("pfolio dates: ", portfolioCreatedAt)
+    portfolioCreatedAt.sort(function(a, b) {
+      return Date.parse(a) - Date.parse(b);
+    });
+    console.log("sorted pfolio dates: ", portfolioCreatedAt)
+    const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
+    console.log("parsed oldestdate: ", oldestDate)
 
-    // axios.post('/api/crypto', {id: value.id}).then(res => {
-    //   const price = Object.values(res.data)[0]['cad'];
-    //   value.price = price * 100;
-    //   setAssetSelection(value);
-    //   setPriceHelperText(price);
-    // });
-
+    const assetData = {};
+    cryptoAssets.forEach(asset => {
+      axios.post('api/cryptoHistorical', {id: cryptoAssets[0].name}).then(res => {
+        console.log("RESPONSE IS:", res)
+        assetData[asset.name] = [];
+        res.data.forEach((day, index) => {
+          const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
+          if (currentDay.getTime() >= oldestDate.getTime()) {
+            assetData[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
+          }
+        });
+      }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
+    })
+    console.log(assetData)
 
   };
 
