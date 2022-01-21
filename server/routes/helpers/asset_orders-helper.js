@@ -3,7 +3,8 @@
  * @param {*} values EX {
  "name": "MyFirstPortfolio",
   "live": true,
- "asset": "ETH",
+ "asset_name": "Ethereum",
+ "asset_symbol": "ETH",
  "type": "Cryptocurrency",
  "exit_point": 150000,
  "price_at_purchase": 1000,
@@ -35,6 +36,7 @@ const addAssetOrder = (values, db) => {
                 INSERT INTO 
                 asset_orders (
                   name,
+                  symbol,
                   type,
                   units,
                   price_at_purchase,
@@ -43,11 +45,12 @@ const addAssetOrder = (values, db) => {
                   sold,
                   exit_point
                 )
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
                 RETURNING *;
                 `;
                 const queryParamsInsert = [
                   values.asset,
+                  values.symbol,
                   values.type,
                   values.units,
                   values.price_at_purchase,
@@ -80,6 +83,7 @@ const verifyReqParams = (req) => {
     !req.body.name ||
     req.body.live === undefined ||
     !req.body.asset ||
+    !req.body.symbol ||
     !req.body.type ||
     req.body.exit_point === undefined ||
     !req.body.price_at_purchase ||
