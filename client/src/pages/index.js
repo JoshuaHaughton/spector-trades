@@ -274,7 +274,12 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial refreshDashboardState={refreshDashboardState} />
+          <SpectorSpeedDial 
+            refreshDashboardState={refreshDashboardState} 
+            portfolios={
+              Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+            }
+          />
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>

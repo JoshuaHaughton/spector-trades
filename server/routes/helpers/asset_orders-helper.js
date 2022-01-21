@@ -78,18 +78,18 @@ const addAssetOrder = (values, db) => {
 const verifyReqParams = (req) => {
   if (
     !req.body.name ||
-    !req.body.live === undefined ||
+    req.body.live === undefined ||
     !req.body.asset ||
     !req.body.type ||
-    !req.body.exit_point ||
+    req.body.exit_point === undefined ||
     !req.body.price_at_purchase ||
     !req.body.units ||
-    !req.body.sold === undefined
+    req.body.sold === undefined
     )
   {
-    return true;
+    return false;
   }
-  return false;
+  return true;
 };
 
 module.exports = { verifyReqParams, addAssetOrder };
