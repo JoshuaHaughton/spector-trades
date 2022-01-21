@@ -52,22 +52,27 @@ export const AddCommentModal = ({ open, handleClose, parentPost }) => {
         let articles = await api.get(`/articles/${parentPost._id}`)
 
 
-        //exist check
+        //article exist check
         if (Object.keys(articles.data.data).length > 0) {
+
            // //retrieve article to post
           savedArticle = articles.data.data.article;
           console.log("ARTICLE RETRIEVED", savedArticle)
-        }
+        } else {
 
+          console.log("article isn't being saved to database, so you can't comment")
+          console.log("attempting to create article")
 
-        //attempt to create new article if article doesn't already exist
-        if (!savedArticle) {
-          await api.post("/articles", parentPost)
-          .then((resp) => {
-            console.log("ARTICLE CREATION", resp.data.data.article[0])
+          //attempt to create new article if article doesn't already exist (shouldve been created upong api request, but if for some reason it wasn't, it creates it here)
+          if (!savedArticle) {
+            await api.post("/articles", parentPost)
+            .then((resp) => {
+              console.log("ARTICLE CREATION", resp.data.data.article[0])
 
-            savedArticle = resp.data.data.article[0];
-          })
+              savedArticle = resp.data.data.article[0];
+            })
+          }
+
         }
 
 

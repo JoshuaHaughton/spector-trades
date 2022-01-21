@@ -54,6 +54,10 @@ app.use("/api/login", loginRoutes(db));
 const articleRoutes = require("./routes/articles")
 app.use("/api/articles", articleRoutes(db));
 
+// like routes
+const likeRoutes = require("./routes/likes")
+app.use("/api/likes", likeRoutes(db));
+
 // Auth jwt testing
 const authRoutes = require("./routes/auth")
 app.use("/api/auth", authenticateToken, authRoutes());

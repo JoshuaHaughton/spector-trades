@@ -10,6 +10,7 @@ const style = {
 };
 
 export const CommentFeedModal = ({ open, handleClose, article }) => {
+  //Default response if no comment array for a specific article comes back
   const [comments, setComments] = useState([
     {
       id: 0,
@@ -21,9 +22,8 @@ export const CommentFeedModal = ({ open, handleClose, article }) => {
     },
   ]);
 
-  // console.log("OLD ID", article._id);
-  const originalId = article._id;
 
+  const originalId = article._id;
   const fetchArticleId = async () => {
     let response = await api.get(`/comments/article/${originalId}`);
 
@@ -34,16 +34,26 @@ export const CommentFeedModal = ({ open, handleClose, article }) => {
 
 
   const fetchCommentArray = async () => {
-    let id = await fetchArticleId();
 
-    let response = await api.get(`/comments/article_id/${id}`);
+    try {
 
-    //Check if response is an array
-    if (Array.isArray(response.data.data.comments)) {
-      setComments(response.data.data.comments);
+      let id = await fetchArticleId();
+      console.log('id', id)
+
+      let response = await api.get(`/comments/article_id/${id}`);
+      console.log('COMMENT ARRAY RESPONSE', response.data.data.comments.length)
+      console.log('CURRENT COMMENTS', comments)
+
+      //Check if response is an array
+      if (Array.isArray(response.data.data.comments) && response.data.data.comments.length > 0) {
+        setComments(response.data.data.comments);
+      }
+
+    } catch(err) {
     }
 
   };
+
 
   //Fetches comments everytime the comment modal opens (updating as you post comments)
   useEffect(() => {

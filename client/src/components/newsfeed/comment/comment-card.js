@@ -23,10 +23,12 @@ export const CommentCard = ({ comment }) => {
   const fetchUser = async () => {
     try {
 
+      //Checks to see if user_id is set to the default value set in comment-feed-modal
       if (comment.user_id === 0) {
         return;
       }
 
+      //
       const response = await api.get(`/users/id/${comment.user_id}`);
 
       setUser(response.data.data.user);
@@ -62,7 +64,7 @@ export const CommentCard = ({ comment }) => {
             >
               <Avatar alt="Product" variant="square" />
               <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                {user.username}
+                {user.username || ''}
               </Typography>
             </Grid>
             <Grid
@@ -88,7 +90,7 @@ export const CommentCard = ({ comment }) => {
           </Grid>
         </Box>
         <Divider />
-        <CardContent>{comment.body}</CardContent>
+        <CardContent>{comment.body || ''}</CardContent>
       </Box>
     </Card>
   );

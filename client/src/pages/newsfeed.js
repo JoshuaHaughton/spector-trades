@@ -2,7 +2,6 @@ import Head from "next/head";
 import { useState, useEffect } from "react";
 const axios = require("axios");
 import { Box, Container, Grid, Pagination } from "@mui/material";
-import { newsfeedPosts } from "../__mocks__/newsfeedposts";
 import { NewsfeedListToolbar } from "../components/newsfeed/newsfeed-list-toolbar";
 import { NewsfeedCard } from "../components/newsfeed/newsfeed-card";
 import { DashboardLayout } from "../components/dashboard-layout";
@@ -11,7 +10,6 @@ const Newsfeed = () => {
   const [newsArrays, setNewsArrays] = useState([]);
 
   //region must be one of the following: US|BR|AU|CA|FR|DE|HK|IN|IT|ES|GB|SG
-
   const options = {
     method: 'GET',
     url: 'https://free-news.p.rapidapi.com/v1/search',
@@ -22,36 +20,44 @@ const Newsfeed = () => {
     }
   };
 
+  // Formats incoming news api response to have no duplicates and to
+  // only include articles posted in the past 24 hours in order of most recent
+  const fetchNews = async () => {
+
+    try {
+      await axios.request(options)
+      .then(function (response) {
+        //success
+
+        //shows array in order of most recent, excluding those that have yet to be posted (future dates)
+        const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(b.published_date) - Date.parse(a.published_date))
+        const today = new Date();
+
+        //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
+        const filteredArticles = sortedNewsArrays.filter(article => Date.parse(article.published_date) < Date.parse(today))
+
+        //There were duplicate articles from multiple news sources, this fixed that
+        const noDuplicateArticles = filteredArticles.filter((thing, index, self) => {
+          return self.findIndex(t => t.title === thing.title) === index
+        });
+
+        //returns articles published on the same day
+        const sameDayArticles = noDuplicateArticles.filter(article => Date.parse(article.published_date) > (Date.parse(today) - 86400000))
+        console.log('same Day:', sameDayArticles)
+
+        //give to state
+        setNewsArrays(sameDayArticles);
+        console.log(newsArrays);
+
+      })
+    } catch (error) {
+      //fail
+      console.error(error);
+    }
+
+  };
+
   useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        await axios.request(options).then(function (response) {
-          //success
-
-          //shows array in order of most recent, excluding those that have yet to be posted (future dates)
-          const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(b.published_date) - Date.parse(a.published_date))
-          const today = new Date();
-
-          //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
-          const filteredArticles = sortedNewsArrays.filter(article => Date.parse(article.published_date) < Date.parse(today))
-
-          //There were duplicate articles from multiple news sources, this fixed that
-          const noDuplicateArticles = filteredArticles.filter((thing, index, self) => {
-            return self.findIndex(t => t.title === thing.title) === index
-          });
-          //returns articles published on the same day
-          const sameDayArticles = noDuplicateArticles.filter(article => Date.parse(article.published_date) > (Date.parse(today) - 86400000))
-
-
-
-          setNewsArrays(sameDayArticles);
-          console.log(sameDayArticles);
-        })
-      } catch (error) {
-        //fail
-        console.error(error);
-      }
-    };
     fetchNews();
   }, []);
 
@@ -68,12 +74,12 @@ const Newsfeed = () => {
           py: 8,
         }}
       >
-        <Container maxWidth={false}>
+        <Container maxWidth={false} sx={{ width: "80%" }}>
           <NewsfeedListToolbar />
           <Box sx={{ pt: 3 }}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} >
               {newsArrays.map((article) => (
-                <Grid item key={article._id} lg={12} md={12} xs={12}>
+                <Grid item key={article._id} lg={12} md={12} xs={12} >
                   <NewsfeedCard key={article._id} article={article} />
                 </Grid>
               ))}
