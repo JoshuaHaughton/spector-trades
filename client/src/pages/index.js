@@ -25,7 +25,9 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
+  const [assetPerformance, setAssetPerformance] = useState({});
   console.log("activeStat: ", activeStat)
+  console.log("asset performance: ", assetPerformance);
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
   console.log("dashboardState: ", dashboardState);
@@ -47,6 +49,9 @@ const Dashboard = () => {
     fetchData();
   };
 
+  const getAssetPerformanceData = (portfolios) => {
+
+  };
 
   useEffect(() => {
     const data = [];
@@ -274,8 +279,8 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial 
-            refreshDashboardState={refreshDashboardState} 
+          <SpectorSpeedDial
+            refreshDashboardState={refreshDashboardState}
             portfolios={
               Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
             }
