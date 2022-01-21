@@ -38,10 +38,10 @@ function createData(quantity, buyPrice, timestamp) {
 const createGroupedAssets = (assets) => {
   const grouped = {};
   assets.forEach(a => {
-    if (!grouped[a.name]) {
-      grouped[a.name] = []
+    if (!grouped[a.symbol]) {
+      grouped[a.symbol] = []
     }
-    grouped[a.name].push(a);
+    grouped[a.symbol].push(a);
   });
   return grouped;
 };
