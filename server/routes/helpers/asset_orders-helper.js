@@ -82,8 +82,8 @@ const verifyReqParams = (req) => {
   if (
     !req.body.name ||
     req.body.live === undefined ||
-    !req.body.asset ||
-    !req.body.symbol ||
+    !req.body.asset_name ||
+    !req.body.asset_symbol ||
     !req.body.type ||
     req.body.exit_point === undefined ||
     !req.body.price_at_purchase ||

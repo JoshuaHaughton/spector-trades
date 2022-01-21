@@ -122,7 +122,7 @@ const StyledPopper = styled(Popper)({
 
 // react-window optimization END
 
-const assetItems = stocksList.map(c => ({code: c.symbol, type: 'Stocks', label: `${c.symbol} - ${c.name}`, price: 1000}));
+const assetItems = stocksList.map(c => ({code: c.symbol, type: 'Stocks', name: c.name, label: `${c.symbol} - ${c.name}`, price: 1000}));
 
 export const StockAutoComplete = ({setAssetSelection}) => {
   const [priceHelperText, setPriceHelperText] = React.useState(" ");
@@ -145,6 +145,7 @@ export const StockAutoComplete = ({setAssetSelection}) => {
         axios.post('/api/stock', {symbol: value.code}).then(res => {
           const price = res.data['price'];
           value.price = price * 100;
+          value.asset_name = value.name;
           setAssetSelection(value);
           setPriceHelperText(price);
         });

@@ -84,8 +84,9 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
     } else {
       const data = {
         name: portfolioSelection.label, 
-        live: portfolioSelection.live, 
-        asset: assetSelection.code, 
+        live: portfolioSelection.live,
+        asset_name: assetSelection.asset_name, 
+        asset_symbol: assetSelection.code, 
         type: assetSelection.type,
         exit_point: exitPoint,
         units: assetQuantity,

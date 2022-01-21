@@ -145,6 +145,7 @@ export const CryptoAutoComplete = ({setAssetSelection}) => {
         axios.post('/api/crypto', {id: value.id}).then(res => {
           const price = Object.values(res.data)[0]['cad'];
           value.price = price * 100;
+          value.asset_name = value.id;
           setAssetSelection(value);
           setPriceHelperText(price);
         });
