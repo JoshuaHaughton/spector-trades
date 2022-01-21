@@ -1,5 +1,6 @@
 // react window optimization
 import * as React from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -121,9 +122,11 @@ const StyledPopper = styled(Popper)({
 
 // react-window optimization END
 
-const assetItems = coinsList.map(c => ({code: c.symbol, type: 'Cryptocurrency', label: `${c.symbol} - ${c.name}`, price: 1000}));
+const assetItems = coinsList.map(c => ({id: c.id, code: c.symbol.toUpperCase(), type: 'Cryptocurrency', label: `${c.symbol.toUpperCase()} - ${c.name}`, price: 1000}));
 
 export const CryptoAutoComplete = ({setAssetSelection}) => {
+  const [priceHelperText, setPriceHelperText] = React.useState(" ");
+
   return (
     <Autocomplete 
     disablePortal
@@ -132,13 +135,23 @@ export const CryptoAutoComplete = ({setAssetSelection}) => {
     options={assetItems}
     sx={{ width: 300 }}
     isOptionEqualToValue={(option, value) => option.label === value.label}
-    renderInput={(params) => <TextField variant="standard" {...params} label="Asset" />}
+    renderInput={(params) => <TextField variant="standard" helperText={priceHelperText} {...params} label="Asset" />}
     PopperComponent={StyledPopper}
     ListboxComponent={ListboxComponent}
     renderOption={(props, option) => [props, option.label]}
     renderGroup={(params) => params}
     onChange={(_event, value) => {
-      setAssetSelection(value);
+      if (value !== null) {
+        axios.post('/api/crypto', {id: value.id}).then(res => {
+          const price = Object.values(res.data)[0]['cad'];
+          value.price = price * 100;
+          setAssetSelection(value);
+          setPriceHelperText(price);
+        });
+      } else {
+        setAssetSelection(null);
+        setPriceHelperText(" ");
+      }
     }}
   />
   );

@@ -174,6 +174,7 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
             <TextField variant="standard" 
               id="quantity"
               placeholder="1"
+              helperText=" "
               label="Quantity"
               onBlur={(event) => setAssetQuantity(prev => {
                   // Ensures the input is a number
