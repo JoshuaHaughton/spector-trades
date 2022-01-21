@@ -32,7 +32,9 @@ export const AddPortfolioModal = ({ open, handleClose, refreshDashboardState }) 
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [portfolioType, setPortfolioType] = useState('spec');
   const handlePortfolioType = (_event, newPortfolioType) => {
-    setPortfolioType(newPortfolioType);
+    if (newPortfolioType !== null) {
+      setPortfolioType(newPortfolioType);
+    }
   };
   const [portfolioName, setPortfolioName] = useState('');
   const [specBalance, setSpecBalance] = useState(0);
