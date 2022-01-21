@@ -30,9 +30,9 @@ const columns = [
   },
 ];
 
-function createData(quantity, buyPrice, timestamp) {
+function createData(quantity, buyPrice, timestamp, name, symbol, type) {
   const date = new Date(timestamp).toLocaleString('en-US');
-  return { quantity, buyPrice, date};
+  return { quantity, buyPrice, date, name, symbol, type };
 }
 
 const createGroupedAssets = (assets) => {
@@ -47,10 +47,13 @@ const createGroupedAssets = (assets) => {
 };
 
 export const GroupedAssets = ({assets}) => {
-  
   const grouped = createGroupedAssets(assets);
   const [name, setName] = useState(Object.keys(grouped)[0]);
   const [rows, setRows] = useState([]);
+
+  const handleClick = (row) => {
+    console.log(row);
+  };
 
   useEffect(() => {
     const grouped = createGroupedAssets(assets);
@@ -58,7 +61,7 @@ export const GroupedAssets = ({assets}) => {
     // I suspect this is doing the flickering after switching portfolios
     let newRows = [];
     if (grouped[name]) {
-      newRows = grouped[name].map(asset => createData(asset.units, asset.price_at_purchase, asset.created_at));
+      newRows = grouped[name].map(asset => createData(asset.units, asset.price_at_purchase, asset.created_at, asset.name, asset.symbol, asset.type));
     }
     setRows(() => newRows);
     if (!Object.keys(grouped).includes(name)) {
@@ -89,7 +92,7 @@ export const GroupedAssets = ({assets}) => {
             {rows
               .map((row, idx) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={idx}>
+                  <TableRow hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)} >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
