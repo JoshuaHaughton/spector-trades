@@ -49,7 +49,37 @@ const Dashboard = () => {
     fetchData();
   };
 
-  const getAssetPerformanceData = (portfolios) => {
+  const getAssetPerformanceData = () => {
+    const cryptoAssets = [];
+    const stockAssets = [];
+    const portfolioData = Object.values(dashboardState);
+    console.log(portfolioData)
+    portfolioData.forEach(portfolio => {
+      const assetData = Object.values(portfolio.assets);
+      assetData.forEach(asset => {
+        if (asset.type === 'Cryptocurrency') {
+          cryptoAssets.push({
+            name: asset.name,
+            units: asset.units,
+            price_at_purchase: asset.price_at_purchase,
+            sold: asset.sold
+          });
+        }
+
+        if (asset.type === 'Stock') {
+          stockAssets.push({
+            name: asset.name,
+            units: asset.units,
+            price_at_purchase: asset.price_at_purchase,
+            sold: asset.sold
+          });
+        }
+      });
+    });
+    console.log("STocks:", stockAssets)
+    console.log("Crypto:", cryptoAssets)
+
+
 
   };
 
@@ -276,6 +306,7 @@ const Dashboard = () => {
       )
     }
     if (isAuthorized) {
+      getAssetPerformanceData();
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
