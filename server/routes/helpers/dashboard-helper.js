@@ -54,30 +54,30 @@ const parsePortfolioDataByUser = (data) => {
       if (order.portfolio_id == portfolio.id) {
         assets.push(order)
         total_assets_value += (
-          order.sold ? - order.price_at_purchase : order.price_at_purchase
+          order.sold ? - ((order.price_at_purchase) * order.units) : ((order.price_at_purchase) * order.units)
         );
         if (order.type === "Cryptocurrency") {
           if (!order.sold) {
-            total_crypto_assets += order.price_at_purchase;
+            total_crypto_assets += (order.price_at_purchase) * order.units;
           }
           if (order.sold) {
-            total_crypto_assets -= order.price_at_purchase;
+            total_crypto_assets -= (order.price_at_purchase) * order.units;
           }
         }
         if (order.type === "Stocks") {
           if (!order.sold) {
-            total_stock_assets += order.price_at_purchase;
+            total_stock_assets += (order.price_at_purchase) * order.units;
           }
           if (order.sold) {
-            total_stock_assets -= order.price_at_purchase;
+            total_stock_assets -= (order.price_at_purchase) * order.units;
           }
         }
         if (spec_money_left) {
           if (!order.sold) {
-            spec_money_left -= order.price_at_purchase;
+            spec_money_left -= (order.price_at_purchase) * order.units;
           }
           if (order.sold) {
-            spec_money_left += order.price_at_purchase;
+            spec_money_left += (order.price_at_purchase) * order.units;
           }
         }
       }

@@ -12,15 +12,23 @@ import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
-
+import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
-
-
+  const [activeGraphData, setActiveGraphData] = useState({
+    options: {},
+    series: []
+  });
+  const [activeStat, setActiveStat] = useState("");
+  console.log("activeStat: ", activeStat)
+  // console.log("active graph: ", activeGraphData);
+  // console.log("activePortfolio: ", activePortfolio);
+  console.log("dashboardState: ", dashboardState);
+  // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -29,7 +37,7 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}`}
         };
         const response = await api.get('/dashboard', config).then(response => {
-          console.log("auth data", response.data)
+          // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
           }
@@ -37,6 +45,111 @@ const Dashboard = () => {
     };
     fetchData();
   };
+
+
+  useEffect(() => {
+    const data = [];
+    const xData = [];
+    let tmp = [];
+    let yMax;
+    if (activeStat === 'spec_money') {
+      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
+      // dashboardState[activePortfolio]
+      data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
+      xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
+      dashboardState[activePortfolio].assets.forEach((item, i) => {
+        if (!item.sold) {
+          data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
+        }
+
+        if (item.sold) {
+          data.push((data[i] + ((item.price_at_purchase * item.units) / 100)))
+        }
+        xData.push(item.created_at)
+      });
+      // console.log("data: ", data)
+      // console.log("Xdata: ", xData)
+      // console.log("Y max: ", yMax);
+    }
+
+    if (activeStat === "growth") {
+
+    }
+    setActiveGraphData({
+      series: [{
+        name: "Spec money",
+        data,
+      }],
+      options: {
+        stroke: {
+          show: true,
+          curve: activeStat ? 'straight' : 'smooth',
+          lineCap: 'butt',
+          colors: undefined,
+          width: 2,
+          dashArray: 0,
+        },
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Stock Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          max: yMax,
+          labels: {
+            formatter: function (val) {
+              return val.toFixed();
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+          categories: xData
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return (val.toFixed(2))
+            }
+          }
+        }
+      }
+    });
+    // console.log(activeGraphData)
+  }, [activeStat]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -48,14 +161,15 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}`}
         };
         console.log( config )
-        const response = await api.get('/dashboard', config).then(response => {
-          console.log("auth data", response.data)
+        api.get('/dashboard', config).then(response => {
+          // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
             // get id of first portfolio
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             setIsAuthorized(true);
             setLoading(false);
+            parseGraphData(activePortfolio);
           }
         }).catch(() => {
           // Response rejected
@@ -78,6 +192,73 @@ const Dashboard = () => {
     //   return <div>Unauthorized user</div>
     // }
 
+  const parseGraphData = (activePortfolio) => {
+    setActiveGraphData({
+      series: [{
+        name: "price",
+        data: [6629.81, 6632.01]
+      }],
+      options: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Stock Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val;
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+          categories: ['01-02-2020', '02-01-2022']
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return (val / 1000000).toFixed(0)
+            }
+          }
+        }
+      }
+    });
+  };
+
   const authorizedDashboard = () => {
     if (loading) {
       return(
@@ -92,14 +273,19 @@ const Dashboard = () => {
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
-          <SpectorSpeedDial refreshDashboardState={refreshDashboardState} />
+          <SpectorSpeedDial 
+            refreshDashboardState={refreshDashboardState} 
+            portfolios={
+              Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+            }
+          />
 
           {/* THIS IS THE PORTFOLIO TAB */}
           <Container maxWidth={false}>
-            <PortfolioTabs 
+            <PortfolioTabs
               portfolios={
                 Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
-              } 
+              }
               {...{activePortfolio, setActivePortfolio}}
               />
           </Container>
@@ -115,7 +301,7 @@ const Dashboard = () => {
                 md={6}
                 xl={3}
                 xs={12}>
-                  <PortfolioStats />
+                  <PortfolioStats {...dashboardState[activePortfolio]} setActiveStat={setActiveStat}/>
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
@@ -124,7 +310,7 @@ const Dashboard = () => {
                 md={6}
                 xl={9}
                 xs={12}>
-                  <HeroGraph />
+                  <HeroGraph {...activeGraphData} />
               </Grid>
 
               {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
@@ -133,7 +319,7 @@ const Dashboard = () => {
                 md={6}
                 xl={4}
                 xs={12}>
-                  <GroupedAssets />
+                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} />}
               </Grid>
 
               {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}

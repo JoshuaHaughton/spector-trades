@@ -2,8 +2,14 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const ProfitStat = (props) => (
-    <Card
+export const ProfitStat = (props) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("profit")
+  };
+  return (
+    <button className="stats" onClick={handleClick}>
+      <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
     >
@@ -12,6 +18,7 @@ export const ProfitStat = (props) => (
           container
           spacing={3}
           sx={{ justifyContent: 'space-between' }}
+          onClick={handleClick}
         >
           <Grid item>
             <Typography
@@ -66,4 +73,5 @@ export const ProfitStat = (props) => (
         </Box>
       </CardContent>
     </Card>
-  );  
+    </button>
+  )};

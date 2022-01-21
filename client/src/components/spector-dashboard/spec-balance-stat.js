@@ -1,8 +1,15 @@
-import { Avatar, Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
+import { Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
-
-export const SpecBalanceStat = (props) => (
-  <Card
+import centsToDollars from '../../utils/toHumanDollars';
+export const SpecBalanceStat = (props) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("spec_money")
+  };
+  return (
+    <button className="stats" onClick={handleClick}>
+        <Card
     sx={{ height: '100%' }}
     {...props}
   >
@@ -11,6 +18,7 @@ export const SpecBalanceStat = (props) => (
         container
         spacing={3}
         sx={{ justifyContent: 'space-between' }}
+
       >
         <Grid item>
           <Typography
@@ -24,27 +32,36 @@ export const SpecBalanceStat = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            $2810
+            ${centsToDollars(props.spec_money_left)}
+          </Typography>
+          <Typography
+            color="textSecondary"
+            variant="h6"
+          >
+{`out of $${centsToDollars(props.portfolioInfo.spec_money)}`}
           </Typography>
         </Grid>
         <Grid item>
-          <Avatar
+          <AccountBalanceIcon
             sx={{
-              backgroundColor: 'warning.main',
+              backgroundColor: 'none',
+              colorPrimary: 'primary',
               height: 56,
               width: 56
             }}
           >
             <InsertChartIcon />
-          </Avatar>
+          </AccountBalanceIcon>
         </Grid>
       </Grid>
       <Box sx={{ pt: 3 }}>
         <LinearProgress
-          value={75.5}
+          color='primary'
+          value={Number((props.spec_money_left)/props.portfolioInfo.spec_money * 100)}
           variant="determinate"
         />
       </Box>
     </CardContent>
   </Card>
-);
+    </button>
+)};

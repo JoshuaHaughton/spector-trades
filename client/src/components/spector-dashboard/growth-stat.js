@@ -3,8 +3,15 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const GrowthStat = (props) => (
-    <Card
+export const GrowthStat = (props) => {
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("growth")
+  };
+
+  return (
+    <button className="stats" onClick={handleClick} >
+      <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
     >
@@ -67,4 +74,5 @@ export const GrowthStat = (props) => (
         </Box>
       </CardContent>
     </Card>
-  );  
+    </button>
+  )};
