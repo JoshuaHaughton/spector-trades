@@ -1,5 +1,6 @@
 // react window optimization
 import * as React from 'react';
+import axios from 'axios';
 import PropTypes from 'prop-types';
 import Autocomplete, { autocompleteClasses } from '@mui/material/Autocomplete';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -124,6 +125,8 @@ const StyledPopper = styled(Popper)({
 const assetItems = stocksList.map(c => ({code: c.symbol, type: 'Stocks', label: `${c.symbol} - ${c.name}`, price: 1000}));
 
 export const StockAutoComplete = ({setAssetSelection}) => {
+  const [priceHelperText, setPriceHelperText] = React.useState(" ");
+
   return (
     <Autocomplete 
     disablePortal
@@ -132,13 +135,23 @@ export const StockAutoComplete = ({setAssetSelection}) => {
     options={assetItems}
     sx={{ width: 300 }}
     isOptionEqualToValue={(option, value) => option.label === value.label}
-    renderInput={(params) => <TextField variant="standard" {...params} label="Asset" />}
+    renderInput={(params) => <TextField variant="standard" helperText={priceHelperText} {...params} label="Asset" />}
     PopperComponent={StyledPopper}
     ListboxComponent={ListboxComponent}
     renderOption={(props, option) => [props, option.label]}
     renderGroup={(params) => params}
     onChange={(_event, value) => {
-      setAssetSelection(value);
+      if (value !== null) {
+        axios.post('/api/stock', {symbol: value.code}).then(res => {
+          const price = res.data['price'];
+          value.price = price * 100;
+          setAssetSelection(value);
+          setPriceHelperText(price);
+        });
+      } else {
+        setAssetSelection(null);
+        setPriceHelperText(" ");
+      }
     }}
   />
   );
