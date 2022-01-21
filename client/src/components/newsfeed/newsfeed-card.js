@@ -116,7 +116,7 @@ export const NewsfeedCard = ({ article, ...rest }) => {
       }).then((resp) => {
 
         console.log("LIKE COUNT FRONTEND", resp.data.data.count);
-        setTotalLikes(resp.data.data.count);
+        setTotalLikes(Number(resp.data.data.count));
 
       });
 
@@ -129,11 +129,11 @@ export const NewsfeedCard = ({ article, ...rest }) => {
     if (liked) {
       setLiked(false);
       setBackendLike();
-      setTotalLikes(totalLikes - 1);
+      setTotalLikes(Number(totalLikes) - 1);
     } else {
       setLiked(true);
       setBackendLike();
-      setTotalLikes(totalLikes + 1);
+      setTotalLikes(Number(totalLikes) + 1);
     }
   };
 
@@ -189,10 +189,10 @@ export const NewsfeedCard = ({ article, ...rest }) => {
             }}
           >
             <Avatar alt="Article Image" src={article.media} variant="rounded" />
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "16px" }} variant="body2">
+            <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
               <strong>{article.author || article.clean_url}</strong> -{" "}
-              {article.title.length > 67 ? article.title.substring(0, 67) + "..." : article.title}
+              {article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title}
             </Typography>
           </Grid>
           <Grid
