@@ -69,7 +69,19 @@ export const IndividualAssets = ({assets, createAssetGraphData}) => {
       });
 
     }
-    // createAssetGraphData
+
+    if (row.type === "Stocks") {
+      console.log(row);
+
+      axios.post('/api/stock-history', {symbol: row.symbol}).then(res => {
+        if (res.data['values']) {
+          const dataSeries = res.data.values.map(v => {
+            return [Math.round((new Date(v.datetime)) / 1000), Number(v.close)];
+          });
+          createAssetGraphData(dataSeries);
+        }
+      });
+    }
   };
 
   return (
