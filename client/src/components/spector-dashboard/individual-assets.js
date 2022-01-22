@@ -6,6 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
+import axios from 'axios';
+
 const columns = [
   {
     id: 'symbol',
@@ -54,10 +56,20 @@ function createData(name, symbol, type, priceAtPurchase, quantity, createdAt) {
   return { name, symbol, type, totalValue, quantity, avgPrice, plusMinusToday, timestamp };
 }
 
-export const IndividualAssets = ({assets}) => {
+export const IndividualAssets = ({assets, createAssetGraphData}) => {
   const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at));
   const handleClick = (row) => {
-    console.log(row);
+    if (row.type === "Cryptocurrency") {
+      console.log(row);
+
+      axios.post('/api/crypto-history', {id: row.name.toLowerCase()}).then(res => {
+        if (res.data['prices']) {
+          createAssetGraphData(res.data.prices);
+        }
+      });
+
+    }
+    // createAssetGraphData
   };
 
   return (
