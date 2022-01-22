@@ -40,6 +40,10 @@ const Dashboard = () => {
           // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
+            if (!activePortfolio) {
+              // Set activePortfolio to the first one
+              setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
+            }
           }
         })
     };
