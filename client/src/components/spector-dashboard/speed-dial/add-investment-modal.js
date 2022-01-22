@@ -13,8 +13,10 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Autocomplete,
-  Snackbar
+  Snackbar,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { CryptoAutoComplete } from "./crypto-autocomplete";
 import { StockAutoComplete } from "./stock-autocomplete";
 
@@ -150,6 +152,19 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
               >
                 New Investment
               </Typography>
+
+              <IconButton
+                aria-label="close"
+                onClick={resetBeforeClose}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
             <Divider />
 

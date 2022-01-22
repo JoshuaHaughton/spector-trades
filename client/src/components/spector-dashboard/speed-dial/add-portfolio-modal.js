@@ -11,8 +11,9 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Snackbar,
+  IconButton,
 } from "@mui/material";
-
+import CloseIcon from '@mui/icons-material/Close';
 import api from "../../../apis/api";
 import { useCookies } from 'react-cookie';
 
@@ -123,6 +124,18 @@ export const AddPortfolioModal = ({ open, handleClose, refreshDashboardState }) 
               >
                 New Portfolio
               </Typography>
+              <IconButton
+                aria-label="close"
+                onClick={resetBeforeClose}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
             <Divider />
 
