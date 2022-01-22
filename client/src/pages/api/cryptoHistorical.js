@@ -28,6 +28,7 @@ export default async (req, res) => {
       return res.status(200).json(cryptoHistory[id]);
     }
     // console.log(options)
+    console.log("MAKING REQUEST TO COINGECKO for: ", id)
     axios.request(options).then(function (response) {
       if (id === 'ethereum') console.log("ETH: ", id, response)
       cryptoHistory[id] = response.data.prices
