@@ -251,7 +251,7 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val / 1000000).toFixed(0)
+              return val
             }
           }
         }
@@ -302,6 +302,9 @@ const Dashboard = () => {
         yaxis: {
           labels: {
             formatter: function (val) {
+              if (val < 1) {
+                return val.toFixed(20).match(/^-?\d*\.?0*\d{0,2}/)[0];
+              }
               return val;
             },
           },
@@ -317,7 +320,7 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val / 1000000).toFixed(0)
+              return val
             }
           }
         }
