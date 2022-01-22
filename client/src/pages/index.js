@@ -95,8 +95,8 @@ const Dashboard = () => {
 
     const assetData = {};
     cryptoAssets.forEach(asset => {
-      axios.post('api/cryptoHistorical', {id: cryptoAssets[0].name}).then(res => {
-        console.log("RESPONSE IS:", res)
+      axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
+        // console.log("RESPONSE IS:", res)
         assetData[asset.name] = [];
         res.data.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
@@ -106,8 +106,8 @@ const Dashboard = () => {
         });
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
     })
-    console.log(assetData)
-
+    console.log("assetData: ", assetData)
+    // axios.post('api/stockHistorical.js', {id: })
   };
 
   useEffect(() => {
