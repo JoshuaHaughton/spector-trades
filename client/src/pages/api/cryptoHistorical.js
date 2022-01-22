@@ -23,14 +23,14 @@ export default async (req, res) => {
     let cryptoHistory = JSON.parse(data); //now it an object
     let historicalData = Object.keys(cryptoHistory);
     console.log("KEYS IN HISTORICAL: ", historicalData)
-    if (historicalData.includes(id)) {
+    if (historicalData.includes(id) && isCurrent(cryptoHistory, id)) {
+      console.log(isCurrent(cryptoHistory, id))
       console.log(`FOUND DATA IN API FOR ${id}`)
       return res.status(200).json(cryptoHistory[id]);
     }
     // console.log(options)
     console.log("MAKING REQUEST TO COINGECKO for: ", id)
     axios.request(options).then(function (response) {
-      if (id === 'ethereum') console.log("ETH: ", id, response)
       cryptoHistory[id] = response.data.prices
       const json = JSON.stringify(cryptoHistory)
       fs.writeFile('src/pages/api/cryptoHistorical.json', json, 'utf8', function writeFileCallback(err, data) {
@@ -49,3 +49,18 @@ export default async (req, res) => {
 
 }
 
+function isCurrent(data, asset) {
+  let current = false
+  const now = new Date(new Date().setHours(0, 0, 0, 0));
+  const cryptoValues = Object.values(data[asset]);
+  // console.log(cryptoValues)
+  cryptoValues.forEach(day => {
+    const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
+    // console.log(currentDay, now)
+  if (currentDay.getTime() === now.getTime()) {
+    console.log("FOUND DAY")
+    current = true;
+  }
+  })
+  return current;
+}
