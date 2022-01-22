@@ -56,12 +56,13 @@ const Dashboard = () => {
     const stockAssets = [];
     const portfolioData = Object.values(dashboardState);
     const portfolioCreatedAt = [];
+    const assetData = {stocks: {}, crypto: {}};
 
     portfolioData.forEach(portfolio => {
       portfolioCreatedAt.push(portfolio.portfolioInfo.created_at)
-      const assetData = Object.values(portfolio.assets);
+      const assets = Object.values(portfolio.assets);
 
-      assetData.forEach(asset => {
+      assets.forEach(asset => {
         if (asset.type === 'Cryptocurrency') {
           cryptoAssets.push({
             name: asset.name,
@@ -89,14 +90,14 @@ const Dashboard = () => {
 
     const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
 
-    const assetData = {};
     cryptoAssets.forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
-        assetData[asset.name] = [];
+
+        assetData.crypto[asset.name] = [];
         res.data.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
           if (currentDay.getTime() >= oldestDate.getTime()) {
-            assetData[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
+            assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
           }
         });
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
@@ -108,19 +109,21 @@ const Dashboard = () => {
 
         stockDataKeys.forEach(key => {
           const stockPriceValues = stockData[key].values;
-          assetData[key] = [];
+          assetData.stocks[key] = [];
           stockPriceValues.forEach(price => {
+            price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
             price.close = currencyConversion.CAD * Number(price.close);
             price.high = currencyConversion.CAD * Number(price.high);
             price.low = currencyConversion.CAD * Number(price.low);
             price.open = currencyConversion.CAD * Number(price.open);
-            assetData[key].push(price);
+            assetData.stocks[key].push(price);
           });
         });
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
       setAssetPerformance(assetData)
   };
+
 
   useEffect(() => {
     const data = [];
@@ -254,16 +257,20 @@ const Dashboard = () => {
       }
     };
 
-    fetchData();
-    axios.get('/api/currencyConversion')
-    .then((resp) => {
-      setCurrencyConversion(resp.data);
-      getAssetPerformanceData();
-    })
-    .catch(err => {
-      console.log("ERROR in currencyConversion call: ", err)
+    fetchData().then(res => {
+      axios.get('/api/currencyConversion')
+      .then((resp) => {
+        setCurrencyConversion(resp.data);
+      })
+      .catch(err => {
+        console.log("ERROR in currencyConversion call: ", err)
+      });
     });
   }, []);
+
+  useEffect(() => {
+    getAssetPerformanceData();
+  }, [currencyConversion])
 
   // useEffect, use axios to call the auth endpoint using our jwt token
   // auth endpoint validates the token, if returns true.. setIsAuthorized to true
