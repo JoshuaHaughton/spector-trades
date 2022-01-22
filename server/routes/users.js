@@ -1,4 +1,5 @@
 let express = require("express");
+const { authenticateToken } = require("../middleware/authenticateToken");
 let app = express.Router();
 const { getUserByColumn } = require("./helpers/user-helpers");
 
@@ -34,6 +35,8 @@ module.exports = (db) => {
   app.get("/id/:user_id", async (req, res) => {
     const { user_id } = req.params;
 
+    if (user_id)
+
     try {
       const resp = await getUserByColumn("id", user_id, db);
 
@@ -50,5 +53,27 @@ module.exports = (db) => {
   });
 
 
+  //get users when they have no id
+  app.get("/id/me", authenticateToken, async (req, res) => {
+
+    const user_id = req.body.user.id
+
+    try {
+      const resp = await getUserByColumn("id", user_id, db);
+
+      res.status(200).json({
+        status: "success",
+        results: resp.length,
+        data: {
+          user: resp.rows
+        },
+      });
+
+    } catch (err) {}
+    
+  });
+
+
   return app;
 };
+

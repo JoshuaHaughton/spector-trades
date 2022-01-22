@@ -5,5 +5,5 @@ CREATE TABLE posts (
   -- portfolio_id INT NOT NULL REFERENCES portfolios(id),
   -- asset_order_id INT NOT NULL REFERENCES assets_order(id),
   description TEXT NOT NULL,
-  created_at DATE NOT NULL
+  created_at TIMESTAMP NOT NULL DEFAULT NOW() 
 );

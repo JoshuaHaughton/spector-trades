@@ -68,10 +68,10 @@ app.get('/post_id/:post_id', (req, res) => {
 
 // Get article by the article's original id (retrieved via api request), 
 // is used for linking articles to comments
-app.get('/article/:article_oldId', (req, res) => {
-  const { article_oldId } = req.params;
+app.get('/media/:media_id', (req, res) => {
+  const { media_id } = req.params;
   
-  getArticleByOldId(article_oldId, db)
+  getArticleByOldId(media_id, db)
   .then(resp => {
 
     if (!resp) {
@@ -150,27 +150,41 @@ app.post('/post', authenticateToken, (req, res) => {
 
 
 
-app.post('/article', authenticateToken, (req, res) => {
+app.post('/media', authenticateToken, (req, res) => {
 
-  if (!req.body.user|| !req.body.article_id || !req.body.body) {
+  if (!req.body.user|| !req.body.media_id || !req.body.body) {
     console.log("FAILED POST TO COMMENTS, req.body: ", req.body)
     return res.sendStatus(422)
   }
 
-  const { article_id, body, user } = req.body;
+  const { media_id, body, user, parentState } = req.body;
 
-  console.log('TO COMMENTS', req.body)
+  let type;
+  let idType;
+
+  if (parentState.mediaTitle !== '') {
+    type = "post_id"
+    idType = "posts"
+  } else {
+    type = "original_article_id"
+    idType = "articles"
+  }
+
+  console.log('TO COMMENTS', req.body, type, id)
 
   addArticleComment({
     user_id: user.id,
-    article_id,
+    state: req.body.parentState,
+    media_id,
+    type,
+    idType,
     body
   }, db)
     .then(result => {
       if (result == 'insert or update on table \"comments\" violates foreign key constraint \"comments_article_id_fkey\"') {
         res.send({status: 500, error: "article_id does not exist"})
       }
-      console.log("addArticleComment result: ", result);
+      console.log("addMediaComment result: ", result);
       res.send({status: 200, result})
 
     })

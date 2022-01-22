@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { AddCommentModal } from "../../components/newsfeed/comment/add-comment-modal";
 import { CommentFeedModal } from "../../components/newsfeed/comment/comment-feed-modal";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect } from "react";
 import { Clock as ClockIcon } from "../../icons/clock";
 import TimeAgo from "timeago-react";
 import { useCookies } from "react-cookie";
@@ -33,7 +33,7 @@ const style = {
   p: 4,
 };
 
-export const NewsfeedCard = ({ article, ...rest }) => {
+export const NewsfeedCard = ({ media, ...rest }) => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
   const handleAddCommentOpen = () => setAddCommentOpen(true);
   const handleAddCommentClose = () => setAddCommentOpen(false);
@@ -43,6 +43,40 @@ export const NewsfeedCard = ({ article, ...rest }) => {
   const [cookies, setCookie] = useCookies();
   const [liked, setLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState("Loading");
+  const [user, setUser] = useState("");
+  const [state, setState] = useState(() => {
+
+    if (media._id && !media.id) {
+      console.log('ARTICLE', media)
+
+
+
+      return {
+
+        mediaTitle: media.title.length > 60 ? media.title.substring(0, 60) + "..." : media.title,
+        mediaPublish: media.published_date,
+        mediaBody: media.summary.length > 150 ? media.summary.substring(0, 150) + "..." : media.summary,
+        id: media._id,
+        media,
+        type: `original_article_id`
+      }
+
+
+
+  } else if (media.id && !media._id) {
+    console.log('POST', media)
+    return {
+      mediaPublish: media.created_at,
+      mediaBody: media.description,
+      id: media.id,
+      media,
+      type: `post_id`
+    }
+  }
+
+})
+
+
 
 
   const createArticle = async () => {
@@ -50,15 +84,29 @@ export const NewsfeedCard = ({ article, ...rest }) => {
     try {
 
       console.log("going to create article now...");
-      let articles = await api.get(`/articles/${article._id}`);
+
+      // let articles = await api.get(`/articles/`);
 
 
-      console.log("grabbed this article for exist check", articles.data.data.article);
+
+      console.log('STATE FFS', state)
+      let media = await api({
+        method: "get",
+        url: `/articles/${state.type}/${state.id}`,
+        data: state,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: cookies.spector_jwt,
+        },
+      })
+
+
+      console.log("grabbed this article for exist check", media.data.data);
 
       //exist check
-      if (Object.keys(articles.data.data).length > 0) {
+      if (Object.keys(media.data.data).length > 0) {
         //save retrieved article
-        const savedArticle = articles.data.data.article;
+        const savedArticle = media.data.data.article;
         console.log("ARTICLE EXISTS", savedArticle);
 
       } else {
@@ -66,13 +114,13 @@ export const NewsfeedCard = ({ article, ...rest }) => {
         await api({
           method: "post",
           url: "/articles",
-          data: article,
+          data: media,
           headers: {
             "Content-Type": "application/json",
             Authorization: cookies.spector_jwt,
           },
         }).then((resp) => {
-          console.log(resp);
+          console.log('creation response check', resp);
 
         });
       }
@@ -81,14 +129,71 @@ export const NewsfeedCard = ({ article, ...rest }) => {
 
   };
 
+  // let mediaTitle = '';
+  // let mediaPublish;
+  // let mediaBody;
+
+  // if (article && !post) {
+  //   mediaTitle = article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title
+  //   mediaPublish = article.published_date
+  //   mediaBody = article.summary.length > 150
+  //           ? article.summary.substring(0, 150) + "..."
+  //           : article.summary;
+  // } else if (post && !article) {
+  //   mediaPublish = post.created_at;
+  //   mediaBody = post.description;
+  // }
+
+
+
+
+
+
+  const fetchUser = async () => {
+    const userReturned = await api({
+      method: "get",
+      url: "/users/me",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookies.spector_jwt}`
+      }
+    })
+    console.log("Fetch user", userReturned.data.data.user)
+    return userReturned.data.data.user;
+  }
+
+
+
+
+
+  // let id;
+  // let media;
+
+  // if (article && !post) {
+  //   id = article._id
+  //   media = article
+
+
+
+
+  // } else if (post && !article) {
+  //   id = post.id
+  //   media = post
+
+  // }
+
+  // if (article && !post) {
+
+
 
   const checkIfLiked = async () => {
 
     try {
 
       await api({
-        method: "get",
-        url: `/likes/${article._id}`,
+        method: "put",
+        url: `/likes/${state.id}`,
+        data: state.media,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookies.spector_jwt}`,
@@ -108,11 +213,18 @@ export const NewsfeedCard = ({ article, ...rest }) => {
 
   const fetchTotalLikes = async () => {
 
+
     try {
+      console.log('STATE FOR COUNT', state.media)
 
       await api({
         method: "get",
-        url: `/likes//count/${article._id}`,
+        url: `/likes/count/${state.type}/${state.id}`,
+        data: state.media,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.spector_jwt}`,
+        }
       }).then((resp) => {
 
         console.log("LIKE COUNT FRONTEND", resp.data.data.count);
@@ -125,17 +237,6 @@ export const NewsfeedCard = ({ article, ...rest }) => {
   };
 
 
-  const pressLike = () => {
-    if (liked) {
-      setLiked(false);
-      setBackendLike();
-      setTotalLikes(Number(totalLikes) - 1);
-    } else {
-      setLiked(true);
-      setBackendLike();
-      setTotalLikes(Number(totalLikes) + 1);
-    }
-  };
 
   const setBackendLike = async () => {
 
@@ -143,7 +244,8 @@ export const NewsfeedCard = ({ article, ...rest }) => {
 
       await api({
         method: "post",
-        url: `/likes/${article._id}`,
+        url: `/likes/${state.id}`,
+        data: state.media,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${cookies.spector_jwt}`,
@@ -160,13 +262,89 @@ export const NewsfeedCard = ({ article, ...rest }) => {
     }
   };
 
+  const pressLike = () => {
+    if (liked) {
+      setLiked(false);
+      setBackendLike();
+      setTotalLikes(Number(totalLikes) - 1);
+    } else {
+      setLiked(true);
+      setBackendLike();
+      setTotalLikes(Number(totalLikes) + 1);
+    }
+  };
+
+
+  const asyncArticleLink = async () => {
+    try {
+
+    } catch(err) {
+
+    }
+  }
+
+//   useLayoutEffect(() => {
+
+//   if (media._id && !media.id) {
+//     console.log('ARTICLE', media)
+
+//       createArticle();
+//       checkIfLiked();
+//       fetchTotalLikes();
+
+// } else if (media.id && !media._id) {
+//   console.log('POST', media)
+
+//       checkIfLiked();
+//       fetchTotalLikes();
+//       setUser(fetchUser());
+
+// })
 
 
   //ON FIRST MOUNT ONLY
   useEffect(() => {
-    createArticle();
-    checkIfLiked();
-    fetchTotalLikes();
+
+    if (media._id && !media.id) {
+      // setState({
+
+      //   mediaTitle: article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title,
+      //   mediaPublish: article.published_date,
+      //   mediaBody: article.summary.length > 150 ? article.summary.substring(0, 150) + "..." : article.summary,
+      //   id: article._id,
+      //   media: article
+
+      // })
+        createArticle();
+        checkIfLiked();
+        fetchTotalLikes();
+
+
+
+
+
+    } else if (media.id && !media._id) {
+      // setState({
+
+      //   mediaPublish: post.created_at,
+      //   mediaBody: post.description,
+      //   id: post.id,
+      //   media: post
+
+      // })
+
+        checkIfLiked();
+        fetchTotalLikes();
+        setUser(fetchUser());
+
+
+
+    }
+
+    // if (article) createArticle();
+    // checkIfLiked();
+    // fetchTotalLikes();
+    // fetchUserPosts();
   }, []);
 
 
@@ -188,11 +366,11 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               display: "flex",
             }}
           >
-            <Avatar alt="Article Image" src={article.media} variant="rounded" />
+            <Avatar alt="Article Image" src={state.media.media || user.avatar_url} variant="rounded" />
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
-              <strong>{article.author || article.clean_url}</strong> -{" "}
-              {article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title}
+              <strong>{media ? (media.author || media.clean_url) : user.username}</strong> -{" "}
+              {state.mediaTitle}
             </Typography>
           </Grid>
           <Grid
@@ -204,7 +382,7 @@ export const NewsfeedCard = ({ article, ...rest }) => {
           >
             <ClockIcon color="action" />
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "16px" }} variant="body2">
-              <TimeAgo datetime={article.published_date} locale="en" />
+              <TimeAgo datetime={state.mediaPublish} locale="en" />
             </Typography>
           </Grid>
         </Grid>
@@ -219,14 +397,14 @@ export const NewsfeedCard = ({ article, ...rest }) => {
           }}
         ></Box>
         <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '14px' }}>
-          {article.summary.length > 150
-            ? article.summary.substring(0, 150) + "..."
-            : article.summary}
+          {state.mediaBody}
           <br />
           <br />
-          <Link href={article.link} color="inherit">
+          {media &&
+          <Link href={media.link} color="inherit">
             Click here to learn more
           </Link>
+          }
         </Typography>
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
@@ -247,7 +425,7 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               <CommentFeedModal
                 open={commentFeedOpen}
                 handleClose={handleCommentFeedClose}
-                article={article}
+                media={state.media}
               />
             </Typography>
           </Grid>
@@ -263,8 +441,8 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               <AddCommentModal
                 open={addCommentOpen}
                 handleClose={handleAddCommentClose}
-                //PASSES ARTICLE TO ADD COMMENT MODAL
-                parentPost={article}
+                //PASSES media TO ADD COMMENT MODAL
+                parentPost={media}
               />
             </Typography>
           </Grid>
@@ -285,7 +463,8 @@ export const NewsfeedCard = ({ article, ...rest }) => {
               <CommentFeedModal
                 open={commentFeedOpen}
                 handleClose={handleCommentFeedClose}
-                article={article}
+                media={state.media}
+                parentState={state}
               />
             </Typography>
           </Grid>
@@ -304,7 +483,8 @@ export const NewsfeedCard = ({ article, ...rest }) => {
                 open={addCommentOpen}
                 handleClose={handleAddCommentClose}
                 //PASSES ARTICLE TO ADD COMMENT MODAL
-                parentPost={article}
+                parentPost={media}
+                parentState={state}
               />
             </Typography>
           </Grid>
@@ -312,8 +492,15 @@ export const NewsfeedCard = ({ article, ...rest }) => {
       </Box>
     </Card>
   );
+
+// } else if (post && !article) {
+//   console.log("POST CAME IN", post)
+
+
+// }
+
 };
 
 NewsfeedCard.propTypes = {
-  article: PropTypes.object.isRequired,
+  media: PropTypes.object.isRequired,
 };

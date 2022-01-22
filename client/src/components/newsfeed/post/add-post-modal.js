@@ -28,7 +28,7 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) => {
+export const AddPostModal = ({ open, handleClose, parentPost }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
   const [charColour, setCharColour] = useState('textSecondary')
@@ -43,32 +43,21 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
     onSubmit: async (values) => {
       console.log(values);
 
-      console.log('parent',parentState)
       //set as falsey
       let savedArticle = false;
 
       try {
 
         //check if article exists / retrieve article
-        let articles = await api({
-          method: "get",
-          url: `/articles/${parentState.type}/${parentState.id}`,
-          data: parentState,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: cookies.spector_jwt,
-          },
-        })
-
-        console.log(object)
+        let articles = await api.get(`/articles/${parentPost._id}`)
 
 
         //article exist check
         if (Object.keys(articles.data.data).length > 0) {
 
            // //retrieve article to post
-          savedArticle = articles.data.data.media;
-          console.log("MEDIA RETRIEVED", savedArticle)
+          savedArticle = articles.data.data.article;
+          console.log("ARTICLE RETRIEVED", savedArticle)
         } else {
 
           console.log("article isn't being saved to database, so you can't comment")
@@ -89,15 +78,14 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
 
         const formData = {
           body: values.body,
-          media_id: savedArticle.id,
-          ...parentState
+          article_id: savedArticle.id
         };
 
 
         //Post comment and link it to article, then close modal
         await api({
             method: "post",
-            url: "/comments/media",
+            url: "/comments/article",
             data: formData,
             headers: {
               "Content-Type": "application/json",

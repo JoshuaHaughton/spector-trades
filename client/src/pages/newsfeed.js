@@ -5,9 +5,10 @@ import { Box, Container, Grid, Pagination } from "@mui/material";
 import { NewsfeedListToolbar } from "../components/newsfeed/newsfeed-list-toolbar";
 import { NewsfeedCard } from "../components/newsfeed/newsfeed-card";
 import { DashboardLayout } from "../components/dashboard-layout";
+import api from "src/apis/api";
 
 const Newsfeed = () => {
-  const [newsArrays, setNewsArrays] = useState([]);
+  const [newsFeed, setNewsFeed] = useState([]);
 
   //region must be one of the following: US|BR|AU|CA|FR|DE|HK|IN|IT|ES|GB|SG
   const options = {
@@ -22,32 +23,68 @@ const Newsfeed = () => {
 
   // Formats incoming news api response to have no duplicates and to
   // only include articles posted in the past 24 hours in order of most recent
-  const fetchNews = async () => {
+  const fetchFeedData = async () => {
 
     try {
+
+      //Retrieves posts
+      const posts = await api.get(`/posts`)
+
+      console.log('POSTS', posts.data.data.posts)
+
+      const postsArray = posts.data.data.posts;
+
       await axios.request(options)
       .then(function (response) {
         //success
 
-        //shows array in order of most recent, excluding those that have yet to be posted (future dates)
-        const sortedNewsArrays = response.data.articles.sort((a, b) => Date.parse(b.published_date) - Date.parse(a.published_date))
-        const today = new Date();
-
-        //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
-        const filteredArticles = sortedNewsArrays.filter(article => Date.parse(article.published_date) < Date.parse(today))
-
-        //There were duplicate articles from multiple news sources, this fixed that
-        const noDuplicateArticles = filteredArticles.filter((thing, index, self) => {
+         //There were duplicate articles from multiple news sources, this fixed that
+         const noDuplicateArticles = response.data.articles.filter((thing, index, self) => {
           return self.findIndex(t => t.title === thing.title) === index
         });
 
+        const today = new Date();
+
+        //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
+        const filteredArticles = noDuplicateArticles.filter(article => Date.parse(article.published_date) < Date.parse(today))
+
+        // adds posts to array
+        const combinedArray = [...filteredArticles, ...postsArray];
+
         //returns articles published on the same day
-        const sameDayArticles = noDuplicateArticles.filter(article => Date.parse(article.published_date) > (Date.parse(today) - 86400000))
-        console.log('same Day:', sameDayArticles)
+        const sameDayCombined = combinedArray.filter(article => {
+
+          let article_date
+
+          if (article.published_date) article_date = Date.parse(article.published_date);
+          if (article.created_at) article_date = Date.parse(article.created_at);
+
+          return (article_date > (Date.parse(today) - 86400000))
+
+        })
+
+        console.log('same Day:', sameDayCombined)
+
+        //shows array in order of most recent
+        const sortedCombinedArray = sameDayCombined.sort((a, b) => {
+
+          let a_date
+          let b_date
+
+          if (a.published_date) a_date = Date.parse(a.published_date)
+          if (a.created_at) a_date = Date.parse(a.created_at)
+
+          if (b.published_date) b_date = Date.parse(b.published_date)
+          if (b.created_at) b_date = Date.parse(b.created_at)
+
+          return b_date - a_date
+
+        })
 
         //give to state
-        setNewsArrays(sameDayArticles);
-        console.log(newsArrays);
+        setNewsFeed(sortedCombinedArray);
+        console.log('SORTED COMBINED!:', sortedCombinedArray)
+        console.log(newsFeed);
 
       })
     } catch (error) {
@@ -57,8 +94,25 @@ const Newsfeed = () => {
 
   };
 
+  // const fetchUserPosts = async () => {
+
+  //   try {
+
+  //     let posts = await api.get(`/posts`);
+
+  //     console.log("POSTS: ", posts.data.data.posts)
+
+  //     setNewsFeed
+
+
+  //   } catch(error) {
+
+  //   }
+  // }
+
   useEffect(() => {
-    fetchNews();
+    fetchFeedData();
+
   }, []);
 
 
@@ -78,9 +132,10 @@ const Newsfeed = () => {
           <NewsfeedListToolbar />
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3} >
-              {newsArrays.map((article) => (
+              {newsFeed.map((article) => (
                 <Grid item key={article._id} lg={12} md={12} xs={12} >
-                  <NewsfeedCard key={article._id} article={article} />
+                  {article._id ? <NewsfeedCard key={article._id} media={article} /> : <NewsfeedCard key={article.id} media={article} />}
+                  {/* {<NewsfeedCard key={article._id} media={article} />} */}
                 </Grid>
               ))}
             </Grid>

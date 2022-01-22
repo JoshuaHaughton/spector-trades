@@ -17,13 +17,12 @@ app.get('/', async (req, res) => {
       data: {
         posts: posts.rows
       }
-    })
-    res.send(posts.rows);
+    }) 
 
   } catch(err) {
 
     res.status(500).send;
-    console.log(res)
+    console.log(err)
   }
 })
 return app;

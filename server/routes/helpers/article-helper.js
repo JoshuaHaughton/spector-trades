@@ -1,9 +1,10 @@
-const getArticleByOldId = (values, db) => {
+const getArticleByOldId = (values, type, idType, db) => {
+
   let queryString = 
                     `
                     SELECT * 
-                    FROM articles
-                    WHERE original_id = $1;
+                    FROM ${idType}
+                    WHERE ${type} = $1;
                     `;
 
   const queryParams = [values];

@@ -5,15 +5,21 @@ const jwt = require("jsonwebtoken");
 const { getArticleByOldId } = require('./helpers/article-helper')
 const { getUserByColumn } = require("./helpers/user-helpers");
 const { authenticateToken } = require("../middleware/authenticateToken");
+// const bodyParser = require("body-parser");
 
+// app.use(bodyParser.json())
 //Default route is /api/articles
 module.exports = (db) => {
 
   //Create article using full retrieved article object from News api
   app.post("/", authenticateToken, (req, res) => {
-    const article = req.body;
 
-    console.log('SERVER', req.body)
+
+    const article = JSON.parse(req.body.config.data).media;
+    console.log('UHDAIDBSYIBSIYAB', article)
+
+    // console.log('SERVER', req.body)
+    // console.log('LINKAZZ', JSON.parse(req.body.config.data))
 
     let articleResponse = "";
 
@@ -33,6 +39,8 @@ module.exports = (db) => {
             return res.status(402).send("Already exists in database")
           }
 
+          console.log("ALREADY EXISTS!!!")
+
       articleResponse = await db
           .query(
             `
@@ -44,13 +52,14 @@ module.exports = (db) => {
           )
           .then((resp) => {
             console.log("resp", resp.rows);
+            console.log("CREATEDDDDD!")
 
 
             res.status(200).json({
               status: "success",
               results: resp.length,
               data: {
-                article: resp.rows,
+                article: resp.rows[0],
               },
             });
             return resp.rows;
@@ -70,12 +79,29 @@ module.exports = (db) => {
 
 
   //Retrive a specific article via their original id (already had this id upon retrieval)
-  app.get("/:article_id", (req, res) => {
+  app.get("/:type/:media_id", (req, res) => {
 
-    const { article_id } = req.params;
-    console.log("OLD ID", article_id)
+    const { media_id } = req.params;
+    const { type } = req.params;
+    console.log("OLD ID", media_id)
+    console.log("TYPE", type)
 
-  getArticleByOldId(article_id, db)
+    // const { state } = req.body;
+    // console.log("BODY", req.body)
+    // console.log("PARENT STATE", state)
+
+    let columnType;
+    let idType;
+
+    if (type === 'post_id') {
+      columnType = "id"
+      idType = "posts"
+    } else {
+      columnType = "original_id"
+      idType = "articles"
+    }
+
+  getArticleByOldId(media_id, columnType, idType, db)
   .then(resp => {
 
     res.status(200).json({
@@ -94,3 +120,4 @@ module.exports = (db) => {
 
   return app;
 };
+

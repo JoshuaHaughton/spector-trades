@@ -9,8 +9,10 @@ const style = {
   maxWidth: 600,
 };
 
-export const CommentFeedModal = ({ open, handleClose, article }) => {
-  //Default response if no comment array for a specific article comes back
+export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
+
+
+  //Default response if no comment array for a specific media comes back
   const [comments, setComments] = useState([
     {
       id: 0,
@@ -23,9 +25,10 @@ export const CommentFeedModal = ({ open, handleClose, article }) => {
   ]);
 
 
-  const originalId = article._id;
+
   const fetchArticleId = async () => {
-    let response = await api.get(`/comments/article/${originalId}`);
+    console.log('stateeeee', media)
+    let response = await api.get(`/comments/media/${parentState.id}`);
 
     const articleId = response.data.data.article_id;
 

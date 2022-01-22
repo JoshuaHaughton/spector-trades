@@ -75,15 +75,16 @@ const addPostComment = (values, db) => {
  * @returns rows from query
  */
 const addArticleComment = (values, db) => {
+  console.log("ADD COMMENT VALUES", values)
   let queryString = 
                     `
                     INSERT INTO 
-                    comments (user_id, article_id, body)
+                    comments (user_id, ${values.type}, body)
                     VALUES ($1, $2, $3)
                     RETURNING *;
                     `;
 
-  const queryParams = [ values.user_id, values.article_id, values.body ];
+  const queryParams = [ values.user_id, values.media_id, values.body ];
 
   return db.query(queryString, queryParams)
   .then((result) => {
