@@ -14,7 +14,6 @@ import api from "../apis/api";
 
 import axios from 'axios';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
-import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -26,7 +25,8 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
-  const [assetPerformance, setAssetPerformance] = useState([]);
+  const [assetPerformance, setAssetPerformance] = useState({});
+  const [currencyConversion, setCurrencyConversion] = useState({});
   console.log("activeStat: ", activeStat)
   console.log("asset performance: ", assetPerformance);
   // console.log("active graph: ", activeGraphData);
@@ -57,10 +57,10 @@ const Dashboard = () => {
     const portfolioData = Object.values(dashboardState);
     const portfolioCreatedAt = [];
 
-    console.log(portfolioData)
     portfolioData.forEach(portfolio => {
       portfolioCreatedAt.push(portfolio.portfolioInfo.created_at)
       const assetData = Object.values(portfolio.assets);
+
       assetData.forEach(asset => {
         if (asset.type === 'Cryptocurrency') {
           cryptoAssets.push({
@@ -82,21 +82,16 @@ const Dashboard = () => {
         }
       });
     });
-    console.log("STocks:", stockAssets)
-    console.log("Crypto:", cryptoAssets)
 
-    console.log("pfolio dates: ", portfolioCreatedAt)
     portfolioCreatedAt.sort(function(a, b) {
       return Date.parse(a) - Date.parse(b);
     });
-    console.log("sorted pfolio dates: ", portfolioCreatedAt)
+
     const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
-    console.log("parsed oldestdate: ", oldestDate)
 
     const assetData = {};
     cryptoAssets.forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
-        // console.log("RESPONSE IS:", res)
         assetData[asset.name] = [];
         res.data.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
@@ -106,8 +101,25 @@ const Dashboard = () => {
         });
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
     })
-    console.log("assetData: ", assetData)
-    // axios.post('api/stockHistorical.js', {id: })
+    axios.post('api/stockHistorical', {id: ['AAPL', 'AMZN']})
+      .then(res => {
+        const stockData = res.data;
+        const stockDataKeys = Object.keys(stockData);
+
+        stockDataKeys.forEach(key => {
+          const stockPriceValues = stockData[key].values;
+          assetData[key] = [];
+          stockPriceValues.forEach(price => {
+            price.close = currencyConversion.CAD * Number(price.close);
+            price.high = currencyConversion.CAD * Number(price.high);
+            price.low = currencyConversion.CAD * Number(price.low);
+            price.open = currencyConversion.CAD * Number(price.open);
+            assetData[key].push(price);
+          });
+        });
+      })
+      .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
+      setAssetPerformance(assetData)
   };
 
   useEffect(() => {
@@ -243,7 +255,14 @@ const Dashboard = () => {
     };
 
     fetchData();
-
+    axios.get('/api/currencyConversion')
+    .then((resp) => {
+      setCurrencyConversion(resp.data);
+      getAssetPerformanceData();
+    })
+    .catch(err => {
+      console.log("ERROR in currencyConversion call: ", err)
+    });
   }, []);
 
   // useEffect, use axios to call the auth endpoint using our jwt token
@@ -333,7 +352,6 @@ const Dashboard = () => {
       )
     }
     if (isAuthorized) {
-      getAssetPerformanceData();
       return (
         <>
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
