@@ -12,7 +12,8 @@ import {
   TextField,
   ToggleButton,
   ToggleButtonGroup,
-  Autocomplete
+  Autocomplete,
+  Snackbar
 } from "@mui/material";
 import { CryptoAutoComplete } from "./crypto-autocomplete";
 import { StockAutoComplete } from "./stock-autocomplete";
@@ -32,6 +33,22 @@ const style = {
 
 export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState }) => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  }
+  const handleSnackbarMessage = (message, severity) => {
+    setSnackbarOpen(true);
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+  };
+
   const [portfolioSelection, setPortfolioSelection] = useState(null);
   const [info, setInfo] = useState({visibility: 'hidden',
                                     severity: 'info',
@@ -98,9 +115,11 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
         headers: { Authorization: `Bearer ${token}`}
       };
       api.post('/orders', data, config).then(res => {
+        handleSnackbarMessage('Successfully added an investment!', 'success');
         refreshDashboardState();
         resetBeforeClose();
       }).catch(err => {
+        handleSnackbarMessage('Oops! Something happened, please try again.', 'error');
         console.log('error in posting asset order: ', err)
         resetBeforeClose();
       });
@@ -108,126 +127,134 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
   };
 
   return (
-    <Modal
-      open={open}
-      onClose={resetBeforeClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-      disableRestoreFocus
-    >
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-        }}
+    <>
+      <Modal
+        open={open}
+        onClose={resetBeforeClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        disableRestoreFocus
       >
-        <Box sx={style}>
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-            <Typography
-              color="textSecondary"
-              display="inline"
-              variant="h5"
-            >
-              New Investment
-            </Typography>
-          </Box>
-          <Divider />
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Box sx={style}>
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+              <Typography
+                color="textSecondary"
+                display="inline"
+                variant="h5"
+              >
+                New Investment
+              </Typography>
+            </Box>
+            <Divider />
 
-          <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
+            <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
 
-            <Autocomplete 
-              disablePortal
-              id="portfolio-select"
-              options={portfolioItems}
-              sx={{ width: 250 }}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              renderInput={
-                (params) => <TextField variant="standard" {...params} label="Portfolio" />
-              }
-              onChange={(_event, value) => {
-                setPortfolioSelection(value);
-              }}
-            />
-
-          </Box>
-
-          <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-            <ToggleButtonGroup
-              exclusive
-              aria-label="asset type"
-              value={assetType}
-              onChange={handleAssetType}
-            >
-              <ToggleButton value="stock" aria-label="stock">
-                Stock
-              </ToggleButton>
-              <ToggleButton value="crypto" aria-label="srypto">
-                Crypto
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-
-          <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
-
-            { assetType === 'stock' && <StockAutoComplete setAssetSelection={setAssetSelection} /> }  
-            { assetType === 'crypto' && <CryptoAutoComplete setAssetSelection={setAssetSelection} /> } 
-
-            <TextField variant="standard" 
-              id="quantity"
-              placeholder="1"
-              helperText=" "
-              label="Quantity"
-              onBlur={(event) => setAssetQuantity(prev => {
-                  // Ensures the input is a number
-                  if (isNaN(event.target.value)) {
-                    event.target.value = prev;
-                    return prev;
-                  }
-                  return Number(event.target.value);
+              <Autocomplete 
+                disablePortal
+                id="portfolio-select"
+                options={portfolioItems}
+                sx={{ width: 250 }}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={
+                  (params) => <TextField variant="standard" {...params} label="Portfolio" />
                 }
-              )}
-            />  
+                onChange={(_event, value) => {
+                  setPortfolioSelection(value);
+                }}
+              />
 
-          </Box>
+            </Box>
 
-          <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-            <TextField
-              id="exit-point"
-              label="Exit Point"
-              placeholder="1"
-              variant="standard"
-              onBlur={(event) => setExitPoint(prev => {
-                  // Ensures the input is a number
-                  if (isNaN(event.target.value)) {
-                    event.target.value = prev;
-                    return prev;
+            <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
+              <ToggleButtonGroup
+                exclusive
+                aria-label="asset type"
+                value={assetType}
+                onChange={handleAssetType}
+              >
+                <ToggleButton value="stock" aria-label="stock">
+                  Stock
+                </ToggleButton>
+                <ToggleButton value="crypto" aria-label="srypto">
+                  Crypto
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+
+            <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
+
+              { assetType === 'stock' && <StockAutoComplete setAssetSelection={setAssetSelection} /> }  
+              { assetType === 'crypto' && <CryptoAutoComplete setAssetSelection={setAssetSelection} /> } 
+
+              <TextField variant="standard" 
+                id="quantity"
+                placeholder="1"
+                helperText=" "
+                label="Quantity"
+                onBlur={(event) => setAssetQuantity(prev => {
+                    // Ensures the input is a number
+                    if (isNaN(event.target.value)) {
+                      event.target.value = prev;
+                      return prev;
+                    }
+                    return Number(event.target.value);
                   }
-                  return Number(event.target.value);
-                }
-              )}
-            />
-          </Box>
+                )}
+              />  
 
-          <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
-            <Typography
-              color="textSecondary"
-              display="inline"
-              variant="h5"
-            >
-              Total: ${(totalValue / 100).toFixed(2)}
-            </Typography>
-          </Box>
+            </Box>
 
-          {/* THE INFOBOX */}
-          <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
-   
-          <Divider />
-          <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-              <Button onClick={handleSubmit} variant="outlined">Create</Button>
+            <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
+              <TextField
+                id="exit-point"
+                label="Exit Point"
+                placeholder="1"
+                variant="standard"
+                onBlur={(event) => setExitPoint(prev => {
+                    // Ensures the input is a number
+                    if (isNaN(event.target.value)) {
+                      event.target.value = prev;
+                      return prev;
+                    }
+                    return Number(event.target.value);
+                  }
+                )}
+              />
+            </Box>
+
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+              <Typography
+                color="textSecondary"
+                display="inline"
+                variant="h5"
+              >
+                Total: ${(totalValue / 100).toFixed(2)}
+              </Typography>
+            </Box>
+
+            {/* THE INFOBOX */}
+            <Alert sx={{ visibility: info.visibility }} severity={info.severity}>{info.message}</Alert>
+    
+            <Divider />
+            <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
+                <Button onClick={handleSubmit} variant="outlined">Create</Button>
+            </Box>
           </Box>
-        </Box>
-      </Card>
-    </Modal>
+        </Card>
+      </Modal>
+
+      <Snackbar open={snackbarOpen} autoHideDuration={3000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          { snackbarMessage }
+        </Alert>
+      </Snackbar>
+    </>
   );
   
 }
