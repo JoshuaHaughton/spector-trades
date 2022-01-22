@@ -42,6 +42,7 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios}) => {
       >
         {actions.map((action) => (
           <SpeedDialAction
+            FabProps={{disabled: action.name === 'Add Investment' && !portfolios}}
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
@@ -54,12 +55,16 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios}) => {
         handleClose={handleAddPortfolioClose}
         refreshDashboardState={refreshDashboardState}
       />
-      <AddInvestmentModal
-        portfolios={portfolios}
-        open={addInvestmentOpen}
-        handleClose={handleAddInvestmentClose}
-        refreshDashboardState={refreshDashboardState}
-      />
+      {portfolios && (
+          <AddInvestmentModal
+            portfolios={portfolios}
+            open={addInvestmentOpen}
+            handleClose={handleAddInvestmentClose}
+            refreshDashboardState={refreshDashboardState}
+          />
+        )
+      }
+
     </>
   );
 }

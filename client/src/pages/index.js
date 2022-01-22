@@ -165,9 +165,10 @@ const Dashboard = () => {
           // console.log("auth data", response.data)
           if (response.status === 200) {
             setDashboardState(response.data);
+            setIsAuthorized(true);
             // get id of first portfolio
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
-            setIsAuthorized(true);
+            
             setLoading(false);
             parseGraphData(activePortfolio);
           }
@@ -269,6 +270,16 @@ const Dashboard = () => {
       </Container>
       )
     }
+
+    if (isAuthorized && Object.keys(dashboardState).length === 0) {
+      return (         
+        <SpectorSpeedDial 
+          refreshDashboardState={refreshDashboardState}
+        />
+      );
+
+    }
+
     if (isAuthorized) {
       return (
         <>
