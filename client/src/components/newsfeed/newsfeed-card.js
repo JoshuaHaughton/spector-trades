@@ -43,7 +43,6 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const [cookies, setCookie] = useCookies();
   const [liked, setLiked] = useState(false);
   const [totalLikes, setTotalLikes] = useState("Loading");
-  const [user, setUser] = useState("");
   const [state, setState] = useState(() => {
 
     if (media._id && !media.id) {
@@ -53,7 +52,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
       return {
 
-        mediaTitle: media.title.length > 60 ? media.title.substring(0, 60) + "..." : media.title,
+        mediaTitle: media.title.length > 55 ? media.title.substring(0, 55) + "..." : media.title,
         mediaPublish: media.published_date,
         mediaBody: media.summary.length > 150 ? media.summary.substring(0, 150) + "..." : media.summary,
         id: media._id,
@@ -70,7 +69,9 @@ export const NewsfeedCard = ({ media, ...rest }) => {
       mediaBody: media.description,
       id: media.id,
       media,
-      type: `post_id`
+      type: `post_id`,
+      username: media.username,
+      profileSrc: ''
     }
   }
 
@@ -152,7 +153,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const fetchUser = async () => {
     const userReturned = await api({
       method: "get",
-      url: "/users/me",
+      url: "/users/id/me",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.spector_jwt}`
@@ -283,6 +284,22 @@ export const NewsfeedCard = ({ media, ...rest }) => {
     }
   }
 
+  const userSetter = async () => {
+    try {
+      await fetchUser()
+      .then(data => {
+        data.avatar_url ? setState({...state, profileSrc: data.avatar_url}) : console.log("no profile pic")
+      })
+      // console.log(userResponse)
+      (fetchUser());
+      console.log('USER', user)
+
+    } catch(err) {
+      console.log(err)
+    }
+
+  }
+
 //   useLayoutEffect(() => {
 
 //   if (media._id && !media.id) {
@@ -297,13 +314,15 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
 //       checkIfLiked();
 //       fetchTotalLikes();
-//       setUser(fetchUser());
+//       (fetchUser());
 
 // })
 
 
   //ON FIRST MOUNT ONLY
   useEffect(() => {
+
+    console.log("FETCHINNNNN", fetchUser())
 
     if (media._id && !media.id) {
       // setState({
@@ -335,7 +354,10 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
         checkIfLiked();
         fetchTotalLikes();
-        setUser(fetchUser());
+
+        userSetter();
+        // setState({...state, profileSrc = })
+
 
 
 
@@ -366,10 +388,10 @@ export const NewsfeedCard = ({ media, ...rest }) => {
               display: "flex",
             }}
           >
-            <Avatar alt="Article Image" src={state.media.media || user.avatar_url} variant="rounded" />
+            <Avatar alt="Article Image" src={state.media.media || state.profileSrc} variant="rounded" />
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
-              <strong>{media ? (media.author || media.clean_url) : user.username}</strong> -{" "}
+              <strong>{media._id ? (media.author || media.clean_url) :`- @${media.username}`}</strong>{" "}
               {state.mediaTitle}
             </Typography>
           </Grid>
@@ -396,16 +418,24 @@ export const NewsfeedCard = ({ media, ...rest }) => {
             pb: 3,
           }}
         ></Box>
-        <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '14px' }}>
+        {media._id ?
+          <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '14px' }}>
           {state.mediaBody}
           <br />
           <br />
-          {media &&
+          {media._id &&
           <Link href={media.link} color="inherit">
             Click here to learn more
           </Link>
           }
-        </Typography>
+        </Typography> :
+
+        <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '16px' }}>
+        {state.mediaBody}
+        {/* <br />
+        <br /> */}
+      </Typography>
+        }
       </CardContent>
       <Box sx={{ flexGrow: 1 }} />
       <Divider />

@@ -47,6 +47,7 @@ export const CommentCard = ({ comment }) => {
 
   return (
     <Card
+      key={comment.id}
       sx={{
         display: "flex",
         flexDirection: "column",

@@ -50,28 +50,30 @@ app.get('/user_id/:user_id', (req, res) => {
   });
 });
 
-app.get('/post_id/:post_id', (req, res) => {
-  const { post_id } = req.params;
-  getCommentsByPost(post_id, db)
-  .then(resp => {
-    res.status(200).json({
-      status: "success",
-      results: resp.length,
-      data: {
-        comments: resp
-      }
-    })
-  }).catch(err => {
-    console.log("ERROR IN getCommentsByUser: ", err)
-  });
-});
+// app.get('/post_id/:post_id', (req, res) => {
+//   const { post_id } = req.params;
+//   getCommentsByPost(post_id, db)
+//   .then(resp => {
+//     res.status(200).json({
+//       status: "success",
+//       results: resp.length,
+//       data: {
+//         comments: resp
+//       }
+//     })
+//   }).catch(err => {
+//     console.log("ERROR IN getCommentsByUser: ", err)
+//   });
+// });
 
 // Get article by the article's original id (retrieved via api request), 
 // is used for linking articles to comments
-app.get('/media/:media_id', (req, res) => {
+app.get('/media/:type/:media_id', (req, res) => {
   const { media_id } = req.params;
+  const { type } = req.params;
+
   
-  getArticleByOldId(media_id, db)
+  getArticleByOldId(media_id, type, db)
   .then(resp => {
 
     if (!resp) {
@@ -82,7 +84,7 @@ app.get('/media/:media_id', (req, res) => {
       status: "success",
       results: resp.length,
       data: {
-        article_id: resp.id
+        media_id: resp.id
       }
     })
   }).catch(err => {
@@ -91,12 +93,15 @@ app.get('/media/:media_id', (req, res) => {
 });
 
 
-// Get comments by article ID
-app.get('/article_id/:article_id', (req, res) => {
-  const { article_id } = req.params;
-  console.log('ARTICLE ID', article_id)
+// Get comments by article/post ID
+app.get('/:type/:media_id', (req, res) => {
+  const { media_id } = req.params;
+  const { type } = req.params;
+  console.log('MEDIA ID', media_id)
+  console.log('TYPE', type)
+  console.log('REQ PARAMS FFS', req.params)
   
-  getCommentsByArticleId(article_id, db)
+  getCommentsByArticleId(media_id, type, db)
   .then(resp => {
 
     if (!resp) {
@@ -116,40 +121,40 @@ app.get('/article_id/:article_id', (req, res) => {
   });
 });
 
-app.post('/post', authenticateToken, (req, res) => {
-  if (!req.body.user|| !req.body.post_id || !req.body.body) {
-    console.log("FAILED POST TO COMMENTS, req.body: ", req.body)
-    return res.sendStatus(422)
-  }
+// app.post('/post', authenticateToken, (req, res) => {
+//   if (!req.body.user|| !req.body.post_id || !req.body.body) {
+//     console.log("FAILED POST TO COMMENTS, req.body: ", req.body)
+//     return res.sendStatus(422)
+//   }
 
-  const { post_id, body, user } = req.body;
+//   const { post_id, body, user } = req.body;
 
-  console.log(req.body)
+//   console.log(req.body)
 
-  addPostComment({
-    user_id: user.id,
-    post_id,
-    body
-  }, db)
-    .then(result => {
-      if (result == 'insert or update on table \"comments\" violates foreign key constraint \"comments_post_id_fkey\"') {
-        res.send({status: 500, error: "post_id does not exist"})
-      }
-      console.log("addPostComment result: ", result);
-      res.send({status: 200, result})
+//   addPostComment({
+//     user_id: user.id,
+//     post_id,
+//     body
+//   }, db)
+//     .then(result => {
+//       if (result == 'insert or update on table \"comments\" violates foreign key constraint \"comments_post_id_fkey\"') {
+//         res.send({status: 500, error: "post_id does not exist"})
+//       }
+//       console.log("addPostComment result: ", result);
+//       res.send({status: 200, result})
 
-    })
-    .catch(err => {
+//     })
+//     .catch(err => {
 
-      console.log("ERROR in addPostComment: ", err);
-      res.send({status: 500, error: err})
-    });
+//       console.log("ERROR in addPostComment: ", err);
+//       res.send({status: 500, error: err})
+//     });
     
-});
+// });
 
 
 
-
+//HERE
 app.post('/media', authenticateToken, (req, res) => {
 
   if (!req.body.user|| !req.body.media_id || !req.body.body) {
@@ -157,27 +162,30 @@ app.post('/media', authenticateToken, (req, res) => {
     return res.sendStatus(422)
   }
 
-  const { media_id, body, user, parentState } = req.body;
+  const media = req.body;
+  const user = req.body.user
+  const media_id = req.body.media_id
+  const body = req.body.body
+
+  console.log("INCOMING to comment post", req.body)
 
   let type;
   let idType;
 
-  if (parentState.mediaTitle !== '') {
+  if (!media.mediaTitle) {
     type = "post_id"
     idType = "posts"
   } else {
-    type = "original_article_id"
+    type = "article_id"
     idType = "articles"
   }
 
-  console.log('TO COMMENTS', req.body, type, id)
+  console.log('TO COMMENTS', req.body, type, idType)
 
   addArticleComment({
     user_id: user.id,
-    state: req.body.parentState,
     media_id,
     type,
-    idType,
     body
   }, db)
     .then(result => {

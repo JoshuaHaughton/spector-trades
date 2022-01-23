@@ -9,12 +9,17 @@ import api from "src/apis/api";
 
 const Newsfeed = () => {
   const [newsFeed, setNewsFeed] = useState([]);
+  const [reloadFeed, setReloadFeed] = useState(false)
+
+  const triggerReload = () => {
+    reloadFeed ? setReloadFeed(false) : setReloadFeed(true);
+  }
 
   //region must be one of the following: US|BR|AU|CA|FR|DE|HK|IN|IT|ES|GB|SG
   const options = {
     method: 'GET',
     url: 'https://free-news.p.rapidapi.com/v1/search',
-    params: {q: 'Crypto', lang: 'en'},
+    params: {q: 'bitcoin', lang: 'en'},
     headers: {
       'x-rapidapi-host': 'free-news.p.rapidapi.com',
       'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
@@ -42,6 +47,8 @@ const Newsfeed = () => {
          const noDuplicateArticles = response.data.articles.filter((thing, index, self) => {
           return self.findIndex(t => t.title === thing.title) === index
         });
+
+        console.log("this the api", noDuplicateArticles)
 
         const today = new Date();
 
@@ -113,7 +120,11 @@ const Newsfeed = () => {
   useEffect(() => {
     fetchFeedData();
 
-  }, []);
+    return () => {
+      console.log("unmounts")
+    }
+
+  }, [reloadFeed]);
 
 
   return (
@@ -129,11 +140,11 @@ const Newsfeed = () => {
         }}
       >
         <Container maxWidth={false} sx={{ width: "80%" }}>
-          <NewsfeedListToolbar />
+          <NewsfeedListToolbar triggerReload={triggerReload}/>
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3} >
               {newsFeed.map((article) => (
-                <Grid item key={article._id} lg={12} md={12} xs={12} >
+                <Grid item key={article._id ? article._id : article.id} lg={12} md={12} xs={12} >
                   {article._id ? <NewsfeedCard key={article._id} media={article} /> : <NewsfeedCard key={article.id} media={article} />}
                   {/* {<NewsfeedCard key={article._id} media={article} />} */}
                 </Grid>

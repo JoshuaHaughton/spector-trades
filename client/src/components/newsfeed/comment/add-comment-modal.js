@@ -13,7 +13,7 @@ import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import api from "src/apis/api";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const style = {
   position: "absolute",
@@ -43,7 +43,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
     onSubmit: async (values) => {
       console.log(values);
 
-      console.log('parent',parentState)
+      console.log('parent', parentState)
       //set as falsey
       let savedArticle = false;
 
@@ -60,7 +60,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
           },
         })
 
-        console.log(object)
+        console.log('EXISTSSSS?', articles.data.data.media)
 
 
         //article exist check
@@ -69,29 +69,42 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
            // //retrieve article to post
           savedArticle = articles.data.data.media;
           console.log("MEDIA RETRIEVED", savedArticle)
+        }
+        // } else {
+
+        //   console.log("article isn't being saved to database, so you can't comment")
+        //   console.log("attempting to create article")
+
+        //   //attempt to create new article if article doesn't already exist (shouldve been created upong api request, but if for some reason it wasn't, it creates it here)
+        //   if (!savedArticle) {
+        //     await api.post("/articles", parentPost)
+        //     .then((resp) => {
+        //       console.log("ARTICLE CREATION", resp.data.data.article[0])
+
+        //       savedArticle = resp.data.data.article[0];
+        //     })
+        //   }
+
+        // }
+
+        let formData;
+        if(savedArticle.original_id) {
+          formData = {
+            body: values.body,
+            media_id: savedArticle.original_id,
+            ...parentState
+          };
         } else {
 
-          console.log("article isn't being saved to database, so you can't comment")
-          console.log("attempting to create article")
-
-          //attempt to create new article if article doesn't already exist (shouldve been created upong api request, but if for some reason it wasn't, it creates it here)
-          if (!savedArticle) {
-            await api.post("/articles", parentPost)
-            .then((resp) => {
-              console.log("ARTICLE CREATION", resp.data.data.article[0])
-
-              savedArticle = resp.data.data.article[0];
-            })
-          }
+          formData = {
+            body: values.body,
+            media_id: savedArticle.id,
+            ...parentState
+          };
 
         }
 
 
-        const formData = {
-          body: values.body,
-          media_id: savedArticle.id,
-          ...parentState
-        };
 
 
         //Post comment and link it to article, then close modal
@@ -104,10 +117,13 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
               "Authorization": cookies.spector_jwt
             },
           }).then(resp => {
-            if(resp.data.status === 200) {
+
+            if(resp.data.status === 200 || resp.data.status === 304) {
               handleClose();
+              setCharLeft(140);
             }
           })
+
 
       } catch (err) {
         console.log(err);
@@ -116,10 +132,18 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
     },
   });
 
+  // useEffect(() => {
+
+  //   return () => setCharLeft(140);
+  // }, [])
+
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={() => {
+        setCharLeft(140);
+        handleClose();
+      }}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

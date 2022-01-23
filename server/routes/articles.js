@@ -107,10 +107,12 @@ module.exports = (db) => {
     res.status(200).json({
       status: "success",
       data: {
-        article: resp
+        media: resp
       }
     })
-    console.log(resp)
+    console.log('ALREADY EXISTS', resp)
+
+    return resp;
 
   }).catch(err => {
 

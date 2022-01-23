@@ -31,6 +31,30 @@ module.exports = (db) => {
   });
 
 
+  //get users when they have no id
+  app.get("/id/me", authenticateToken, async (req, res) => {
+
+    const user_id = req.body.user.id
+    console.log('POST', req.body)
+
+    try {
+      const resp = await getUserByColumn("id", user_id, db);
+
+
+      res.status(200).json({
+        status: "success",
+        results: resp.length,
+        data: {
+          user: resp
+        },
+      });
+
+    } catch (err) {}
+    
+  });
+
+
+
   //get specific user info by their id
   app.get("/id/:user_id", async (req, res) => {
     const { user_id } = req.params;
@@ -52,26 +76,6 @@ module.exports = (db) => {
     
   });
 
-
-  //get users when they have no id
-  app.get("/id/me", authenticateToken, async (req, res) => {
-
-    const user_id = req.body.user.id
-
-    try {
-      const resp = await getUserByColumn("id", user_id, db);
-
-      res.status(200).json({
-        status: "success",
-        results: resp.length,
-        data: {
-          user: resp.rows
-        },
-      });
-
-    } catch (err) {}
-    
-  });
 
 
   return app;

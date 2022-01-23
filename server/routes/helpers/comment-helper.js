@@ -95,12 +95,24 @@ const addArticleComment = (values, db) => {
   });
 };
 
-const getArticleByOldId = (values, db) => {
+const getArticleByOldId = (values, type, db) => {
+
+  let table;
+  let column;
+
+  if (type === 'original_article_id') {
+    table = 'articles'
+    column = 'original_id'
+  } else {
+    table = 'posts';
+    column = 'id';
+  }
+
   let queryString = 
                     `
                     SELECT * 
-                    FROM articles
-                    WHERE original_id = $1;
+                    FROM ${table}
+                    WHERE ${column} = $1;
                     `;
 
   const queryParams = [values];
@@ -114,12 +126,21 @@ const getArticleByOldId = (values, db) => {
   });
 }
 
-const getCommentsByArticleId = (values, db) => {
+const getCommentsByArticleId = (values, type, db) => {
+
+  let column;
+
+  if (type === 'original_article_id') {
+    column = 'article_id'
+  } else {
+    column = 'post_id';
+  }
+
   let queryString = 
                     `
                     SELECT * 
                     FROM comments
-                    WHERE article_id = $1;
+                    WHERE ${column} = $1;
                     `;
 
   const queryParams = [values];

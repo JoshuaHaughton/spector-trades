@@ -26,30 +26,35 @@ export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
 
 
 
-  const fetchArticleId = async () => {
-    console.log('stateeeee', media)
-    let response = await api.get(`/comments/media/${parentState.id}`);
+  // const fetchArticleId = async () => {
+  //   console.log('stateeeee', parentState)
+  //   let response = await api.get(`/comments/media/${parentState.type}/${parentState.id}`);
 
-    const articleId = response.data.data.article_id;
+  //   const mediaId = response.data.data.media_id;
 
-    return articleId;
-  };
+  //   console.log("MEDIA BACK!!!!!", mediaId)
+
+  //   return mediaId;
+  // };
 
 
   const fetchCommentArray = async () => {
 
     try {
 
-      let id = await fetchArticleId();
+      // let id = await fetchArticleId();
+      let id = String(parentState.id)
       console.log('id', id)
+      console.log('TYPE', parentState.type)
 
-      let response = await api.get(`/comments/article_id/${id}`);
-      console.log('COMMENT ARRAY RESPONSE', response.data.data.comments.length)
-      console.log('CURRENT COMMENTS', comments)
+      let response = await api.get(`/comments/${parentState.type}/${id}`);
+
+      console.log('COMMENT ARRAY RESPONSE', response.data.data.comments)
+      console.log('CURRENT COMMENTS BEFORE SETTING', comments)
 
       //Check if response is an array
       if (Array.isArray(response.data.data.comments) && response.data.data.comments.length > 0) {
-        setComments(response.data.data.comments);
+        setComments(response.data.data.comments.reverse());
       }
 
     } catch(err) {
@@ -74,8 +79,9 @@ export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
       <Box sx={style}>
         <Grid container spacing={3}>
           {comments.map((comment) => (
+            // <Grid item key={comment.id} lg={12} md={12} xs={12}>
             <Grid item key={comment.id} lg={12} md={12} xs={12}>
-              <CommentCard comment={comment} />
+              <CommentCard key={comment.id} comment={comment} />
             </Grid>
           ))}
         </Grid>

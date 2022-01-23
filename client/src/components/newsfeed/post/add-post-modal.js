@@ -28,7 +28,7 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddPostModal = ({ open, handleClose, parentPost }) => {
+export const AddPostModal = ({ open, handleClose, triggerReload }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
   const [charColour, setCharColour] = useState('textSecondary')
@@ -43,57 +43,83 @@ export const AddPostModal = ({ open, handleClose, parentPost }) => {
     onSubmit: async (values) => {
       console.log(values);
 
+      // console.log('parent', parentState)
       //set as falsey
-      let savedArticle = false;
+      // let savedArticle = false;
 
       try {
 
         //check if article exists / retrieve article
-        let articles = await api.get(`/articles/${parentPost._id}`)
+        // let articles = await api({
+        //   method: "get",
+        //   url: `/articles/${parentState.type}/${parentState.id}`,
+        //   data: parentState,
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //     Authorization: cookies.spector_jwt,
+        //   },
+        // })
+        console.log('starting')
+
+        const fetchUserName = await api({
+          method: "get",
+          url: `/users/id/me`,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: cookies.spector_jwt,
+          },
+        })
+
+        console.log('EXISTSSSS?', fetchUserName.data.data.user)
+
+        let username = fetchUserName.data.data.user.username
 
 
         //article exist check
-        if (Object.keys(articles.data.data).length > 0) {
+        if (Object.keys(fetchUserName.data.data).length > 0) {
 
            // //retrieve article to post
-          savedArticle = articles.data.data.article;
-          console.log("ARTICLE RETRIEVED", savedArticle)
+          // savedArticle = articles.data.data.media;
+          // console.log("MEDIA RETRIEVED", savedArticle)
         } else {
 
           console.log("article isn't being saved to database, so you can't comment")
           console.log("attempting to create article")
 
           //attempt to create new article if article doesn't already exist (shouldve been created upong api request, but if for some reason it wasn't, it creates it here)
-          if (!savedArticle) {
-            await api.post("/articles", parentPost)
-            .then((resp) => {
-              console.log("ARTICLE CREATION", resp.data.data.article[0])
+          // if (!savedArticle) {
+          //   await api.post("/articles", parentPost)
+          //   .then((resp) => {
+          //     console.log("ARTICLE CREATION", resp.data.data.article[0])
 
-              savedArticle = resp.data.data.article[0];
-            })
-          }
+          //     savedArticle = resp.data.data.article[0];
+          //   })
+          // }
 
         }
 
+        let formData = {
+            body: values.body,
+            username
+            // ...parentState
+          }
 
-        const formData = {
-          body: values.body,
-          article_id: savedArticle.id
-        };
+          console.log('TIME TO POST')
 
-
-        //Post comment and link it to article, then close modal
+        //Post Post , then close modal
         await api({
             method: "post",
-            url: "/comments/article",
+            url: "/posts",
             data: formData,
             headers: {
               "Content-Type": "application/json",
               "Authorization": cookies.spector_jwt
             },
           }).then(resp => {
-            if(resp.data.status === 200) {
+            console.log(resp.data)
+            if(resp.data.status === 200 || resp.data.status === 304) {
               handleClose();
+              triggerReload();
             }
           })
 
@@ -136,7 +162,7 @@ export const AddPostModal = ({ open, handleClose, parentPost }) => {
               </Grid>
             </Box>
             <Divider />
-            <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={(e) => {
+            <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
               formik.handleChange(e);
               setCharLeft(140 - e.target.value.length);
               ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
