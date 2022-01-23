@@ -55,6 +55,27 @@ module.exports = (db) => {
     }
   });
 
+  app.post('/sell', authenticateToken, async (req, res) => {
+    if (!req.body['id']) {
+      return res.status(400).send({error: 'missing asset id'});
+    }
+    console.log(`user ${req.body.user.id} is trying to sell asset ${req.body.id}!`);
+
+    const text = `UPDATE asset_orders SET sold = true WHERE id=$1 and user_id=$2 RETURNING *`;
+    const values = [req.body.id, req.body.user.id];
+
+    try {
+      const result = await db.query(text, values);
+      if (result.rows.length === 0) {
+        return res.status(403).send({error: 'user does not own that stock'});
+      }
+      return res.status(200).send(result.rows[0]);
+    } catch(err) {
+      console.log(err.stack);
+      return res.status(500).send({error: 'server error'});
+    }
+  });
+
 app.get('/', async (req, res) => {
   try {
     const assetOrders = await db.query(`

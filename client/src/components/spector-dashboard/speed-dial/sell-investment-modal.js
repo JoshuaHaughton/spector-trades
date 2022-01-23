@@ -75,7 +75,6 @@ export const SellInvestmentModal = ({ open, handleClose, portfolios, refreshDash
   
   useEffect(() => {
     if (portfolioSelection) {
-      console.log(portfolioSelection);
       setAssetlist(assetsByPortfolio[portfolioSelection.id].map(a => ({label: `${a.symbol} - ${a.units} @ $${(a.price_at_purchase / 100).toFixed(2)}`, ...a})  ));
     } else {
       setAssetlist([]);
@@ -122,33 +121,22 @@ export const SellInvestmentModal = ({ open, handleClose, portfolios, refreshDash
     } else if (!assetSelection) {
       setInfo({visibility: 'visible', severity: 'error', message: 'Must select asset!'});
     } else {
-      handleSnackbarMessage('Successfully sold an investment!', 'success');
-      refreshDashboardState();
-      resetBeforeClose();
-    //   const data = {
-    //     name: portfolioSelection.label, 
-    //     live: portfolioSelection.live,
-    //     asset_name: assetSelection.asset_name, 
-    //     asset_symbol: assetSelection.code, 
-    //     type: assetSelection.type,
-    //     exit_point: exitPoint * 100,
-    //     units: assetQuantity,
-    //     price_at_purchase: assetSelection.price,
-    //     sold: false,
-    //   };
-    //   const token = cookies.spector_jwt;
-    //   const config = {
-    //     headers: { Authorization: `Bearer ${token}`}
-    //   };
-    //   api.post('/orders', data, config).then(res => {
-    //     handleSnackbarMessage('Successfully added an investment!', 'success');
-    //     refreshDashboardState();
-    //     resetBeforeClose();
-    //   }).catch(err => {
-    //     handleSnackbarMessage('Oops! Something happened, please try again.', 'error');
-    //     console.log('error in posting asset order: ', err)
-    //     resetBeforeClose();
-    //   });
+      const data = {
+        id: assetSelection.id,
+      };
+      const token = cookies.spector_jwt;
+      const config = {
+        headers: { Authorization: `Bearer ${token}`}
+      };
+      api.post('/orders/sell', data, config).then(res => {
+        handleSnackbarMessage('Successfully sold an investment!', 'success');
+        refreshDashboardState();
+        resetBeforeClose();
+      }).catch(err => {
+        handleSnackbarMessage('Oops! Something happened, please try again.', 'error');
+        console.log('error in posting asset order: ', err)
+        resetBeforeClose();
+      });
     }
   };
 
