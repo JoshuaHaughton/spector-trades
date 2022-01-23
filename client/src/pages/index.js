@@ -73,9 +73,9 @@ const Dashboard = () => {
           });
         }
 
-        if (asset.type === 'Stock') {
+        if (asset.type === 'Stocks') {
           stockAssets.push({
-            name: asset.name,
+            name: asset.symbol,
             units: asset.units,
             price_at_purchase: asset.price_at_purchase,
             sold: asset.sold
@@ -83,7 +83,7 @@ const Dashboard = () => {
         }
       });
     });
-
+    console.log("STOCK ASSETS: ", stockAssets)
     portfolioCreatedAt.sort(function(a, b) {
       return Date.parse(a) - Date.parse(b);
     });
@@ -102,22 +102,30 @@ const Dashboard = () => {
         });
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
     })
-    axios.post('api/stockHistorical', {id: ['AAPL', 'AMZN']})
+    if (stockAssets.length > 0) {
+      const stockNames = [];
+      stockAssets.forEach((stock) => {
+        stockNames.push(stock.name);
+      });
+    }
+    axios.post('api/stockHistorical', {id: stockNames})
       .then(res => {
         const stockData = res.data;
         const stockDataKeys = Object.keys(stockData);
 
         stockDataKeys.forEach(key => {
-          const stockPriceValues = stockData[key].values;
-          assetData.stocks[key] = [];
-          stockPriceValues.forEach(price => {
-            price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-            price.close = currencyConversion.CAD * Number(price.close);
-            price.high = currencyConversion.CAD * Number(price.high);
-            price.low = currencyConversion.CAD * Number(price.low);
-            price.open = currencyConversion.CAD * Number(price.open);
-            assetData.stocks[key].push(price);
-          });
+          if (stockNames.includes(key)) {
+            const stockPriceValues = stockData[key].values;
+            assetData.stocks[key] = [];
+            stockPriceValues.forEach(price => {
+              price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
+              price.close = currencyConversion.CAD * Number(price.close);
+              price.high = currencyConversion.CAD * Number(price.high);
+              price.low = currencyConversion.CAD * Number(price.low);
+              price.open = currencyConversion.CAD * Number(price.open);
+              assetData.stocks[key].push(price);
+            });
+          }
         });
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
