@@ -241,7 +241,7 @@ export const SellInvestmentModal = ({ open, handleClose, portfolios, refreshDash
     
             <Divider />
             <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-                <Button onClick={handleSubmit} variant="outlined">Create</Button>
+                <Button onClick={handleSubmit} variant="outlined">Sell</Button>
             </Box>
           </Box>
         </Card>
