@@ -39,11 +39,13 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios, unsoldAsset
     if (name === 'Add Investment' && !portfolios) {
       return true;
     }
-    if (name === 'Sell Investment' && unsoldAssets.length === 0) {
+    if (name === 'Sell Investment' && (unsoldAssets === undefined || unsoldAssets.length === 0) ) {
       return true;
     }
     return false;
   }
+
+  console.log('unsold', unsoldAssets)
 
   return (
     <>
