@@ -30,9 +30,10 @@ export default async (req, res) => {
     if (remainingSearchKeys.length !== 0) {
     console.log("MAKING REQUEST TO twelve-data-api for: ", remainingSearchKeys)
       axios.request(options).then(function (response) {
+        // console.log(response.data)
         const respKeys = Object.keys(response.data);
         respKeys.forEach(key => {
-            stockHistory[key] = response.data[key];
+          stockHistory[key] = response.data[key];
         });
         const json = JSON.stringify(stockHistory);
         fs.writeFile('src/pages/api/stockHistorical.json', json, 'utf8', function readFileCallback(err, data) {
@@ -40,6 +41,7 @@ export default async (req, res) => {
             console.log("error writing back to json, cryptoHistorical", err)
             // console.log(json);
           }
+          console.log("data: ",data)
           remainingSearchKeys.forEach(key => {
             stockHistory[key] = response.data[key];
           });
@@ -61,17 +63,32 @@ export default async (req, res) => {
     const searchArray = JSON.parse(JSON.stringify(stocksArray));
     const output = {};
     const keys = Object.keys(data);
-
+    const now = new Date(new Date().setHours(0, 0, 0, 0));
+    now.setDate(now.getDate() - 2);
     stocksArray.forEach((key, i) => {
 
       if (keys.includes(key)) {
-        console.log("MATCH")
-        output[key] = data[key];
-        if (i === 1) {
-          searchArray.pop();
-        } else {
-          searchArray.splice(i, 1);
-        }
+        console.log("STOCKS MATCH")
+
+        const values = Object.values(data[key].values)
+        values.forEach(day => {
+          const currentDay = new Date(new Date(day.datetime).setHours(0, 0, 0, 0))
+          // console.log(currentDay, now)
+          if (currentDay.getTime() === now.getTime()) {
+            console.log("STOCKS FOUND DAY IN JSON", key)
+            output[key] = data[key];
+            if (i === 1) {
+              console.log("STOCKS POP")
+              searchArray.pop();
+            } else {
+              console.log("STOCKS SPLICE")
+
+              searchArray.splice(i, 1);
+            }
+          }
+
+        })
+
       }
 
     });
@@ -79,3 +96,33 @@ export default async (req, res) => {
   }
 }
 
+function isCurrent(data, assets) {
+  const searchArray = JSON.parse(JSON.stringify(assets));
+
+  const now = new Date(new Date().setHours(0, 0, 0, 0));
+  // const stockValues = Object.values(data[asset]);
+  const needsUpdatingStocks = [];
+
+  // console.log(cryptoValues)
+  searchArray.forEach(key => {
+    needsUpdatingStocks.push(key)
+    const values = Object.values(data[key].values)
+    values.forEach(day => {
+      const currentDay = new Date(new Date(day.datetime).setHours(0, 0, 0, 0))
+      if (currentDay.getTime() === now.getTime()) {
+        console.log("FOUND DAY")
+        needsUpdatingStocks.pop()
+      }
+
+    })
+  });
+  return needsUpdatingStocks;
+}
+// cryptoValues.forEach(day => {
+//   const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
+//   // console.log(currentDay, now)
+// if (currentDay.getTime() === now.getTime()) {
+//   console.log("FOUND DAY")
+//   current = true;
+// }
+// })
