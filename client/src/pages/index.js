@@ -362,6 +362,9 @@ const Dashboard = () => {
             portfolios={
               Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
             }
+            unsoldAssets={
+              Object.values(dashboardState).map(p => p.assets).flat(1).filter(a => a.sold === false)
+            }
           />
 
           {/* THIS IS THE PORTFOLIO TAB */}
