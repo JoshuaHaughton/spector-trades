@@ -35,6 +35,16 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios, unsoldAsset
     { icon: <PrintIcon />, name: 'Sell Investment', handle: handleSellInvestmentOpen },
   ];
 
+  const shouldDisable = (name) => {
+    if (name === 'Add Investment' && !portfolios) {
+      return true;
+    }
+    if (name === 'Sell Investment' && unsoldAssets.length === 0) {
+      return true;
+    }
+    return false;
+  }
+
   return (
     <>
       <Backdrop open={open} sx={{ zIndex: (theme) => theme.zIndex.speedDial - 1 }} />
@@ -48,7 +58,7 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios, unsoldAsset
       >
         {actions.map((action) => (
           <SpeedDialAction
-            FabProps={{disabled: (action.name === 'Add Investment' && !portfolios) || (action.name === 'Sell Investment' && !unsoldAssets) }}
+            FabProps={{disabled: shouldDisable(action.name) }}
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
