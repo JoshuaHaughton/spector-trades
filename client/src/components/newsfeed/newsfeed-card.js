@@ -12,26 +12,15 @@ import {
 } from "@mui/material";
 import { AddCommentModal } from "../../components/newsfeed/comment/add-comment-modal";
 import { CommentFeedModal } from "../../components/newsfeed/comment/comment-feed-modal";
-import { useState, useEffect, useLayoutEffect } from "react";
+import { useState, useEffect } from "react";
 import { Clock as ClockIcon } from "../../icons/clock";
 import TimeAgo from "timeago-react";
 import { useCookies } from "react-cookie";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import api from "src/apis/api";
+import { fetchTotalLikes, pressLike, setBackendLike, checkIfLiked, createArticle } from "../helpers/newsfeed-card-helper";
+import { userSetter } from "../helpers/user-helper";
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: "100%",
-  maxWidth: 600,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
 
 export const NewsfeedCard = ({ media, ...rest }) => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
@@ -45,10 +34,12 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const [totalLikes, setTotalLikes] = useState("Loading");
   const [state, setState] = useState(() => {
 
+    //First conditional sets up variables so that regardless of the name of the variables
+    // they come in, they can be processed by the newsfeed card
+
+    //Articles here have an id key of "_id"
     if (media._id && !media.id) {
       console.log('ARTICLE', media)
-
-
 
       return {
 
@@ -60,10 +51,10 @@ export const NewsfeedCard = ({ media, ...rest }) => {
         type: `original_article_id`
       }
 
-
-
+    //Posts here have an id key of "id"
   } else if (media.id && !media._id) {
     console.log('POST', media)
+
     return {
       mediaPublish: media.created_at,
       mediaBody: media.description,
@@ -78,295 +69,23 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 })
 
 
-
-
-  const createArticle = async () => {
-
-    try {
-
-      console.log("going to create article now...");
-
-      // let articles = await api.get(`/articles/`);
-
-
-
-      console.log('STATE FFS', state)
-      let media = await api({
-        method: "get",
-        url: `/articles/${state.type}/${state.id}`,
-        data: state,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: cookies.spector_jwt,
-        },
-      })
-
-
-      console.log("grabbed this article for exist check", media.data.data);
-
-      //exist check
-      if (Object.keys(media.data.data).length > 0) {
-        //save retrieved article
-        const savedArticle = media.data.data.article;
-        console.log("ARTICLE EXISTS", savedArticle);
-
-      } else {
-        //create article
-        await api({
-          method: "post",
-          url: "/articles",
-          data: media,
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: cookies.spector_jwt,
-          },
-        }).then((resp) => {
-          console.log('creation response check', resp);
-
-        });
-      }
-
-    } catch (err) {}
-
-  };
-
-  // let mediaTitle = '';
-  // let mediaPublish;
-  // let mediaBody;
-
-  // if (article && !post) {
-  //   mediaTitle = article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title
-  //   mediaPublish = article.published_date
-  //   mediaBody = article.summary.length > 150
-  //           ? article.summary.substring(0, 150) + "..."
-  //           : article.summary;
-  // } else if (post && !article) {
-  //   mediaPublish = post.created_at;
-  //   mediaBody = post.description;
-  // }
-
-
-
-
-
-
-  const fetchUser = async () => {
-    const userReturned = await api({
-      method: "get",
-      url: "/users/id/me",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${cookies.spector_jwt}`
-      }
-    })
-    console.log("Fetch user", userReturned.data.data.user)
-    return userReturned.data.data.user;
-  }
-
-
-
-
-
-  // let id;
-  // let media;
-
-  // if (article && !post) {
-  //   id = article._id
-  //   media = article
-
-
-
-
-  // } else if (post && !article) {
-  //   id = post.id
-  //   media = post
-
-  // }
-
-  // if (article && !post) {
-
-
-
-  const checkIfLiked = async () => {
-
-    try {
-
-      await api({
-        method: "put",
-        url: `/likes/${state.id}`,
-        data: state.media,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.spector_jwt}`,
-        },
-      }).then((resp) => {
-
-        console.log("CHECK IF LIKED FRONTEND", resp.data.data.exists);
-        setLiked(resp.data.data.exists);
-
-      });
-
-      return response;
-
-    } catch (err) {}
-
-  };
-
-  const fetchTotalLikes = async () => {
-
-
-    try {
-      console.log('STATE FOR COUNT', state.media)
-
-      await api({
-        method: "get",
-        url: `/likes/count/${state.type}/${state.id}`,
-        data: state.media,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.spector_jwt}`,
-        }
-      }).then((resp) => {
-
-        console.log("LIKE COUNT FRONTEND", resp.data.data.count);
-        setTotalLikes(Number(resp.data.data.count));
-
-      });
-
-    } catch (err) {}
-
-  };
-
-
-
-  const setBackendLike = async () => {
-
-    try {
-
-      await api({
-        method: "post",
-        url: `/likes/${state.id}`,
-        data: state.media,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${cookies.spector_jwt}`,
-        },
-      }).then((resp) => {
-        console.log("(frontend)LIKE: ", resp.data.data.like);
-      });
-
-    } catch (err) {
-
-      console.log(err);
-      console.log("setting backend like failed");
-
-    }
-  };
-
-  const pressLike = () => {
-    if (liked) {
-      setLiked(false);
-      setBackendLike();
-      setTotalLikes(Number(totalLikes) - 1);
-    } else {
-      setLiked(true);
-      setBackendLike();
-      setTotalLikes(Number(totalLikes) + 1);
-    }
-  };
-
-
-  const asyncArticleLink = async () => {
-    try {
-
-    } catch(err) {
-
-    }
-  }
-
-  const userSetter = async () => {
-    try {
-      await fetchUser()
-      .then(data => {
-        data.avatar_url ? setState({...state, profileSrc: data.avatar_url}) : console.log("no profile pic")
-      })
-      // console.log(userResponse)
-      (fetchUser());
-      console.log('USER', user)
-
-    } catch(err) {
-      console.log(err)
-    }
-
-  }
-
-//   useLayoutEffect(() => {
-
-//   if (media._id && !media.id) {
-//     console.log('ARTICLE', media)
-
-//       createArticle();
-//       checkIfLiked();
-//       fetchTotalLikes();
-
-// } else if (media.id && !media._id) {
-//   console.log('POST', media)
-
-//       checkIfLiked();
-//       fetchTotalLikes();
-//       (fetchUser());
-
-// })
-
-
   //ON FIRST MOUNT ONLY
   useEffect(() => {
 
-    console.log("FETCHINNNNN", fetchUser())
-
     if (media._id && !media.id) {
-      // setState({
 
-      //   mediaTitle: article.title.length > 60 ? article.title.substring(0, 60) + "..." : article.title,
-      //   mediaPublish: article.published_date,
-      //   mediaBody: article.summary.length > 150 ? article.summary.substring(0, 150) + "..." : article.summary,
-      //   id: article._id,
-      //   media: article
-
-      // })
-        createArticle();
-        checkIfLiked();
-        fetchTotalLikes();
-
-
-
-
+        createArticle(state, cookies);
+        checkIfLiked(state, cookies, setLiked);
+        fetchTotalLikes(state, cookies, setTotalLikes);
 
     } else if (media.id && !media._id) {
-      // setState({
 
-      //   mediaPublish: post.created_at,
-      //   mediaBody: post.description,
-      //   id: post.id,
-      //   media: post
-
-      // })
-
-        checkIfLiked();
-        fetchTotalLikes();
-
-        userSetter();
-        // setState({...state, profileSrc = })
-
-
-
+        checkIfLiked(state, cookies, setLiked);
+        fetchTotalLikes(state, cookies, setTotalLikes);
+        userSetter(state, setState, cookies);
 
     }
 
-    // if (article) createArticle();
-    // checkIfLiked();
-    // fetchTotalLikes();
-    // fetchUserPosts();
   }, []);
 
 
@@ -390,7 +109,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
           >
             <Avatar alt="Article Image" src={state.media.media || state.profileSrc} variant="rounded" />
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
-              {/* displays author, or clean_url if author isnt there (e.g. google.com) */}
+              {/* displays author, or clean_url if author isnt there (e.g. google.com), and for posts it displays the username */}
               <strong>{media._id ? (media.author || media.clean_url) :`- @${media.username}`}</strong>{" "}
               {state.mediaTitle}
             </Typography>
@@ -449,7 +168,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
             }}
           >
             <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-              <Button onClick={pressLike} >
+              <Button onClick={() => pressLike(liked, setLiked, totalLikes, setBackendLike, setTotalLikes, state, cookies)} >
               {liked ? <FavoriteIcon sx={{ fontSize: "35px", color: "red" }} /> : <FavoriteBorderIcon sx={{ fontSize: "35px" }}/>}
               </Button>
               <CommentFeedModal
@@ -523,14 +242,9 @@ export const NewsfeedCard = ({ media, ...rest }) => {
     </Card>
   );
 
-// } else if (post && !article) {
-//   console.log("POST CAME IN", post)
-
-
-// }
-
 };
 
+//article /post is required
 NewsfeedCard.propTypes = {
   media: PropTypes.object.isRequired,
 };

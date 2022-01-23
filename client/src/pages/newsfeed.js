@@ -19,7 +19,7 @@ const Newsfeed = () => {
   const options = {
     method: 'GET',
     url: 'https://free-news.p.rapidapi.com/v1/search',
-    params: {q: 'bitcoin', lang: 'en'},
+    params: {q: 'Money', lang: 'en'},
     headers: {
       'x-rapidapi-host': 'free-news.p.rapidapi.com',
       'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
@@ -91,7 +91,6 @@ const Newsfeed = () => {
         //give to state
         setNewsFeed(sortedCombinedArray);
         console.log('SORTED COMBINED!:', sortedCombinedArray)
-        console.log(newsFeed);
 
       })
     } catch (error) {
@@ -101,21 +100,6 @@ const Newsfeed = () => {
 
   };
 
-  // const fetchUserPosts = async () => {
-
-  //   try {
-
-  //     let posts = await api.get(`/posts`);
-
-  //     console.log("POSTS: ", posts.data.data.posts)
-
-  //     setNewsFeed
-
-
-  //   } catch(error) {
-
-  //   }
-  // }
 
   useEffect(() => {
     fetchFeedData();

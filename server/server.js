@@ -54,6 +54,10 @@ app.use("/api/login", loginRoutes(db));
 const articleRoutes = require("./routes/articles")
 app.use("/api/articles", articleRoutes(db));
 
+// media routes (Routes that include both article and posts)
+const mediaRoutes = require("./routes/media")
+app.use("/api/media", mediaRoutes(db));
+
 // like routes
 const likeRoutes = require("./routes/likes")
 app.use("/api/likes", likeRoutes(db));

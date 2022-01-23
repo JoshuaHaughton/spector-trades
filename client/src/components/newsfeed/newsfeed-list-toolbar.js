@@ -1,17 +1,9 @@
 import {
     Box,
     Button,
-    Card,
-    CardContent,
-    TextField,
-    InputAdornment,
-    SvgIcon,
     Typography
   } from '@mui/material';
 import { useState } from 'react';
-  import { Download as DownloadIcon } from '../../icons/download';
-  import { Search as SearchIcon } from '../../icons/search';
-  import { Upload as UploadIcon } from '../../icons/upload';
   import { AddPostModal } from './post/add-post-modal';
 
   export const NewsfeedListToolbar = ({ triggerReload, ...rest }) => {
@@ -19,10 +11,6 @@ import { useState } from 'react';
     const [addPostOpen, setAddPostOpen] = useState(false);
     const handleAddPostOpen = () => setAddPostOpen(true);
     const handleAddPostClose = () => setAddPostOpen(false);
-    // const reload = () => {
-    //   triggerReload(prev => prev + 1)
-    // };
-
 
 
   return (
@@ -55,8 +43,6 @@ import { useState } from 'react';
                 handleClose={handleAddPostClose}
                 triggerReload={triggerReload}
                 //PASSES ARTICLE TO ADD Post MODAL
-                // parentPost={media}
-                // parentState={state}
               />
         </Box>
       </Box>

@@ -20,7 +20,7 @@ export const CommentCard = ({ comment }) => {
   const [user, setUser] = useState("");
 
 
-  const fetchUser = async () => {
+  const fetchUserForComment = async () => {
     try {
 
       //Checks to see if user_id is set to the default value set in comment-feed-modal
@@ -28,7 +28,7 @@ export const CommentCard = ({ comment }) => {
         return;
       }
 
-      //
+      //Get user by id
       const response = await api.get(`/users/id/${comment.user_id}`);
 
       setUser(response.data.data.user);
@@ -42,7 +42,7 @@ export const CommentCard = ({ comment }) => {
   };
 
   useEffect(() => {
-    fetchUser();
+    fetchUserForComment();
   }, []);
 
   return (

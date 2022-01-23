@@ -22,9 +22,6 @@ app.post('/:media_id', authenticateToken, async (req, res) => {
     idType = `post_id`
   }
 
-  console.log('ARRIVAL likes route old article id', mediaId)
-  console.log('ARRIVAL likes route old article id', req.body)
-  console.log('ARRIVAL likes route old article id', idType)
   
   const user_id = req.body.user.id;
   console.log(user_id)
@@ -141,44 +138,6 @@ app.put('/:media_id', authenticateToken, async (req, res) => {
     }
 
 
-    // const postId = req.body.article.id;
-    // console.log('ARRIVAL likes route old article id', postId)
-    // console.log('ARRIVAL likes route old article id', req.body)
-    
-    // const user_id = req.body.user.id;
-    // console.log(user_id)
-  
-    // try {
-  
-    //   const exist = await db.query(
-    //     `
-    //     SELECT *
-    //     FROM likes
-    //     WHERE post_id = $1
-    //       AND liker_id = $2;
-    //     `, [postId, user_id]
-    //   );
-  
-    //   console.log('YOU LIKED THIS (POST!!!!!) ALREADY FROM LIKES.JS BACKEND', exist.rows)
-    //   console.log('YOU LIKED THIS (POST!!!!!) ALREADY FROM LIKES.JS BACKEND', exist.rows.length > 0)
-  
-  
-    //   res.status(200).json({
-    //     status: "LIKE TOGGLED",
-    //     data: {
-    //       exists: exist.rows.length > 0
-    //     }
-    //   })
-  
-    //   console.log(exist.rows);
-  
-    // } catch(err) {
-  
-    //   res.status(500).send;
-    //   console.log('like backend failed')
-    //   console.log(err)
-    // }
-
 })
 
 //Returns total likes for an article
@@ -187,18 +146,6 @@ app.get('/count/:type/:media_id', async (req, res) => {
   const mediaId = req.params.media_id;
   const idType = req.params.type;
 
-  // console.log('count body', req.body)
-
-  // let idType;
-
-  // if (req.body._id) {
-  //   idType = `original_article_id`
-  // } else if (req.body.id){
-  //   idType = `post_id`
-  // }
-  console.log('ARRIVAL for count likes route old article id', mediaId)
-  console.log('ARRIVAL for count likes route old article id', req.body)
-  console.log('ARRIVAL for count likes route old article id', idType)
 
   try {
 

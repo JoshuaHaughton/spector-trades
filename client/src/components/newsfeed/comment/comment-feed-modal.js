@@ -1,7 +1,6 @@
 import { Box, Grid, Dialog } from "@mui/material";
 import { useEffect, useState } from "react";
-import api from "src/apis/api";
-
+import { fetchCommentArray } from "src/components/helpers/comment-feed-helpers";
 import { CommentCard } from "./comment-card";
 
 const style = {
@@ -10,7 +9,6 @@ const style = {
 };
 
 export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
-
 
   //Default response if no comment array for a specific media comes back
   const [comments, setComments] = useState([
@@ -25,48 +23,11 @@ export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
   ]);
 
 
-
-  // const fetchArticleId = async () => {
-  //   console.log('stateeeee', parentState)
-  //   let response = await api.get(`/comments/media/${parentState.type}/${parentState.id}`);
-
-  //   const mediaId = response.data.data.media_id;
-
-  //   console.log("MEDIA BACK!!!!!", mediaId)
-
-  //   return mediaId;
-  // };
-
-
-  const fetchCommentArray = async () => {
-
-    try {
-
-      // let id = await fetchArticleId();
-      let id = String(parentState.id)
-      console.log('id', id)
-      console.log('TYPE', parentState.type)
-
-      let response = await api.get(`/comments/${parentState.type}/${id}`);
-
-      console.log('COMMENT ARRAY RESPONSE', response.data.data.comments)
-      console.log('CURRENT COMMENTS BEFORE SETTING', comments)
-
-      //Check if response is an array
-      if (Array.isArray(response.data.data.comments) && response.data.data.comments.length > 0) {
-        setComments(response.data.data.comments.reverse());
-      }
-
-    } catch(err) {
-    }
-
-  };
-
-
-  //Fetches comments everytime the comment modal opens (updating as you post comments)
+  //Fetches comments everytime the comment modal opens (updating as you go to check comments)
   useEffect(() => {
-    fetchCommentArray();
+    fetchCommentArray(parentState, comments, setComments);
   }, [open]);
+
 
   return (
     <Dialog

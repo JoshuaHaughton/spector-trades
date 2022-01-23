@@ -43,23 +43,8 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
     onSubmit: async (values) => {
       console.log(values);
 
-      // console.log('parent', parentState)
-      //set as falsey
-      // let savedArticle = false;
 
       try {
-
-        //check if article exists / retrieve article
-        // let articles = await api({
-        //   method: "get",
-        //   url: `/articles/${parentState.type}/${parentState.id}`,
-        //   data: parentState,
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //     Authorization: cookies.spector_jwt,
-        //   },
-        // })
-        console.log('starting')
 
         const fetchUserName = await api({
           method: "get",
@@ -70,43 +55,19 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
           },
         })
 
-        console.log('EXISTSSSS?', fetchUserName.data.data.user)
 
         let username = fetchUserName.data.data.user.username
 
 
-        //article exist check
-        if (Object.keys(fetchUserName.data.data).length > 0) {
-
-           // //retrieve article to post
-          // savedArticle = articles.data.data.media;
-          // console.log("MEDIA RETRIEVED", savedArticle)
-        } else {
-
-          console.log("article isn't being saved to database, so you can't comment")
-          console.log("attempting to create article")
-
-          //attempt to create new article if article doesn't already exist (shouldve been created upong api request, but if for some reason it wasn't, it creates it here)
-          // if (!savedArticle) {
-          //   await api.post("/articles", parentPost)
-          //   .then((resp) => {
-          //     console.log("ARTICLE CREATION", resp.data.data.article[0])
-
-          //     savedArticle = resp.data.data.article[0];
-          //   })
-          // }
-
-        }
-
         let formData = {
             body: values.body,
             username
-            // ...parentState
           }
 
           console.log('TIME TO POST')
 
-        //Post Post , then close modal
+
+        //Post the Post, then close modal
         await api({
             method: "post",
             url: "/posts",
@@ -129,6 +90,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
       }
     },
   });
+
 
   return (
     <Modal

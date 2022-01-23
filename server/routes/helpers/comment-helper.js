@@ -45,36 +45,11 @@ const getCommentsByPost = (id, db) => {
 }; 
 /**
  * 
- * @param {*} values {user_id, post_id, user_id}
+ * @param {*} values {user_id, media_id, body, type}
  * @param {*} db POOL connection to pg
  * @returns rows from query
  */
-const addPostComment = (values, db) => {
-  let queryString = 
-                    `
-                    INSERT INTO 
-                    comments (user_id, post_id, body)
-                    VALUES ($1, $2, $3)
-                    RETURNING *;
-                    `;
-
-  const queryParams = [ values.user_id, values.post_id, values.body ];
-
-  return db.query(queryString, queryParams)
-  .then((result) => {
-    return result.rows[0];
-  })
-  .catch((err) => {
-    return err.message
-  });
-};
-/**
- * 
- * @param {*} values {user_id, article_id, user_id}
- * @param {*} db POOL connection to pg
- * @returns rows from query
- */
-const addArticleComment = (values, db) => {
+const addMediaComment = (values, db) => {
   console.log("ADD COMMENT VALUES", values)
   let queryString = 
                     `
@@ -95,38 +70,8 @@ const addArticleComment = (values, db) => {
   });
 };
 
-const getArticleByOldId = (values, type, db) => {
 
-  let table;
-  let column;
-
-  if (type === 'original_article_id') {
-    table = 'articles'
-    column = 'original_id'
-  } else {
-    table = 'posts';
-    column = 'id';
-  }
-
-  let queryString = 
-                    `
-                    SELECT * 
-                    FROM ${table}
-                    WHERE ${column} = $1;
-                    `;
-
-  const queryParams = [values];
-
-  return db.query(queryString, queryParams)
-  .then((result) => {
-    return result.rows[0];
-  })
-  .catch((err) => {
-    return err.message
-  });
-}
-
-const getCommentsByArticleId = (values, type, db) => {
+const getCommentsByMediaId = (values, type, db) => {
 
   let column;
 
@@ -155,4 +100,4 @@ const getCommentsByArticleId = (values, type, db) => {
 }
 
 
-module.exports = { getCommentsByUser, getCommentsByPost, addPostComment, addArticleComment, getArticleByOldId, getCommentsByArticleId };
+module.exports = { getCommentsByUser, getCommentsByPost, addMediaComment, getCommentsByMediaId };
