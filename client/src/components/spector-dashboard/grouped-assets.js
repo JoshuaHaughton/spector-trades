@@ -3,12 +3,33 @@ import { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
+import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-
+import { styled } from '@mui/material/styles'
 import { GroupedAssetsTabs } from './grouped-assets-tabs';
+
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
+  [`&.${tableCellClasses.head}`]: {
+    backgroundColor: theme.palette.neutral[200],
+    color: theme.palette.common.black,
+  },
+  [`&.${tableCellClasses.body}`]: {
+    fontSize: 14,
+  },
+}));
+
+const StyledTableRow = styled(TableRow)(({ theme }) => ({
+  '&:nth-of-type(odd)': {
+    backgroundColor: theme.palette.action.hover,
+  },
+  
+  // hide last border
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+}));
 
 const columns = [
   { id: 'quantity', 
@@ -105,13 +126,13 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
+                <StyledTableCell
                   key={column.id}
                   align={column.align}
                   style={{ minWidth: column.minWidth }}
                 >
                   {column.label}
-                </TableCell>
+                </StyledTableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -119,18 +140,18 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
             {rows
               .map((row, idx) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)} >
+                  <StyledTableRow hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)} >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
+                        <StyledTableCell key={column.id} align={column.align}>
                           {column.format && typeof value === 'number'
                             ? column.format(value)
                             : value}
-                        </TableCell>
+                        </StyledTableCell>
                       );
                     })}
-                  </TableRow>
+                  </StyledTableRow>
                 );
               })}
           </TableBody>
