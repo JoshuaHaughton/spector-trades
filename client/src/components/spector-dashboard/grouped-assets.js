@@ -140,7 +140,7 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
             {rows
               .map((row, idx) => {
                 return (
-                  <StyledTableRow hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)} >
+                  <StyledTableRow hover sx={{cursor: 'pointer'}} role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)} >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (

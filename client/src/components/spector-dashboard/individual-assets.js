@@ -128,7 +128,7 @@ export const IndividualAssets = ({assets, createAssetGraphData}) => {
             {rows
               .map((row, idx) => {
                 return (
-                  <StyledTableRow hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)}  >
+                  <StyledTableRow sx={{cursor: 'pointer'}} hover role="checkbox" tabIndex={-1} key={idx} onClick={() => handleClick(row)}  >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
