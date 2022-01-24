@@ -22,7 +22,6 @@ export default async (req, res) => {
     } else {
     let cryptoHistory = JSON.parse(data); //now it an object
     let historicalData = Object.keys(cryptoHistory);
-    console.log("KEYS IN HISTORICAL: ", historicalData)
     if (historicalData.includes(id) && isCurrent(cryptoHistory, id)) {
       console.log(`FOUND DATA IN API FOR ${id}`)
       return res.status(200).json(cryptoHistory[id]);
@@ -57,7 +56,6 @@ function isCurrent(data, asset) {
     const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
     // console.log(currentDay, now)
   if (currentDay.getTime() === now.getTime()) {
-    console.log("FOUND DAY")
     current = true;
   }
   })

@@ -38,7 +38,7 @@ export default async (req, res) => {
     stockHistory = JSON.parse(data); //now it an object
     storedData = findStocks(id, stockHistory)[0];
     needsSearch = findStocks(id, stockHistory)[1];
-    console.log("keys left to search for: ", needsSearch);
+    console.log("needsSearch: ", needsSearch);
 
     const options = {
       method: 'GET',
@@ -51,8 +51,22 @@ export default async (req, res) => {
     };
 
     if (needsSearch.includes(true)) {
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!MAKING API CALL TO TWELVE-DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       console.log("MAKING REQUEST TO twelve-data-api for: ", needsSearch);
-      return axios.request(options);
+      console.log("!!!!!!!!!!!!!!!!!!!!!!!!!MAKING API CALL TO TWELVE-DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+      axios.request(options).then(resp => {
+        const reply = {};
+        let newData = {};
+        if (id.length === 1) {
+          reply[id[0]] = resp.data.values
+          stockHistory[id[0]] = resp.data.values
+          newData = JSON.stringify(stockHistory);
+        } else {
+          reply = resp.data;
+        }
+        res.status(200).send(reply);
+        return writeFile('src/pages/api/stockHistorical.json', newData);
+      });
     }
 
     // return storedData if no remaining keys
@@ -61,13 +75,12 @@ export default async (req, res) => {
     });
 
   }).then(response => {
-    if (response['storedData']) {
+    if (response['storedData'] && !needsSearch.includes(true)) {
       console.log("NO SEARCH REQUIRED IN STOCKSHISTORICAL for: ", id)
       return res.status(200).json(response.storedData);
     }
 
     if (response) {
-      // console.log(response.data)
       const respKeys = Object.keys(response.data);
       respKeys.forEach(key => {
         stockHistory[key] = response.data[key];
@@ -89,6 +102,7 @@ export default async (req, res) => {
     let needsSearch = [];
     const output = {};
     const keys = Object.keys(data);
+
     const now = new Date(new Date().setHours(-6, 0, 0, 0));
     if (moment(new Date()).format('dddd') === 'Saturday') {
       now.setDate(now.getDate() - 1);
@@ -100,13 +114,14 @@ export default async (req, res) => {
     if (month < 10) {
       month = '0' + month;
     }
-    const today = `${now.getFullYear()}-${month}-${now.getDate()}`
+    const today = `${now.getFullYear()}-${month}-${now.getDate() + 1}`
     stocksArray.forEach((key, i) => {
+      needsSearch.push(true);
       if (keys.includes(key)) {
-        const values = Object.values(data[key].values) || []
+        const values = Object.values(data[key])
         values.forEach(day => {
           if (today === day.datetime) {
-            needsSearch.push(false);
+            needsSearch.pop();
             output[key] = data[key];
           }
 

@@ -2,7 +2,7 @@ INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_
 VALUES ('Bitcoin', 'BTC', 'Cryptocurrency', 1.32, 1000, '2021-01-20T06:00:00.000Z', 1, 1, false);
 
 INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
-VALUES ('Leon', 'BLNK', 'Stocks', 1.01, 11302, '2021-01-20T06:00:00.000Z', 1, 1, false);
+VALUES ('Blink Charging Co.', 'BLNK', 'Stocks', 1.01, 11302, '2021-01-20T06:00:00.000Z', 1, 1, false);
 
 INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
 VALUES ('Ripple', 'XRP', 'Cryptocurrency', 2, 23453, '2021-02-20T06:00:00.000Z', 1, 1, false);

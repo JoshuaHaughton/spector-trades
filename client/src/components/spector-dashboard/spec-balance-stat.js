@@ -1,8 +1,10 @@
 import { Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
-import centsToDollars from '../../utils/toHumanDollars';
+import {centsToDollars} from '../../utils/toHumanDollars';
 export const SpecBalanceStat = (props) => {
+  const {dashboardState} = props;
+  // console.log(dashboardState)
   const handleClick = (e) => {
     e.preventDefault();
     props.setActiveStat("spec_money")
@@ -32,13 +34,13 @@ export const SpecBalanceStat = (props) => {
             color="textPrimary"
             variant="h4"
           >
-            ${centsToDollars(props.spec_money_left)}
+            ${centsToDollars(dashboardState.spec_money_left)}
           </Typography>
           <Typography
             color="textSecondary"
             variant="h6"
           >
-{`out of $${centsToDollars(props.portfolioInfo.spec_money)}`}
+{`out of $${centsToDollars(dashboardState.portfolioInfo.spec_money)}`}
           </Typography>
         </Grid>
         <Grid item>
@@ -57,7 +59,7 @@ export const SpecBalanceStat = (props) => {
       <Box sx={{ pt: 3 }}>
         <LinearProgress
           color='primary'
-          value={Number((props.spec_money_left)/props.portfolioInfo.spec_money * 100)}
+          value={Number((dashboardState.spec_money_left)/dashboardState.portfolioInfo.spec_money * 100)}
           variant="determinate"
         />
       </Box>

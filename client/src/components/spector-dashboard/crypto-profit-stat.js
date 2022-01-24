@@ -1,14 +1,28 @@
 import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MoneyIcon from '@mui/icons-material/Money';
 
-export const ProfitStat = (props) => {
+export const CryptoProfitStat = (props) => {
+  const { assets, assetPerformance } = props;
   const handleClick = (e) => {
     e.preventDefault();
-    props.setActiveStat("profit")
+    props.setActiveStat("crypto-profit")
   };
+  const initialCost = [];
+
+  // assets.forEach(asset => {
+  //   if (asset.type === 'Cryptocurrency') {
+  //     initialCost.push({
+  //       name: asset.name,
+  //       symbol: asset.symbol,
+
+  //     })
+  //   }
+  // });
+
   return (
-    <button className="stats" onClick={handleClick}>
+    <button className="stats" onClick={handleClick} >
       <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
@@ -18,7 +32,6 @@ export const ProfitStat = (props) => {
           container
           spacing={3}
           sx={{ justifyContent: 'space-between' }}
-          onClick={handleClick}
         >
           <Grid item>
             <Typography
@@ -26,7 +39,7 @@ export const ProfitStat = (props) => {
               gutterBottom
               variant="overline"
             >
-              Profit
+              Crypto Profit
             </Typography>
             <Typography
               color="textPrimary"
@@ -54,9 +67,9 @@ export const ProfitStat = (props) => {
             alignItems: 'center'
           }}
         >
-          <ArrowDownwardIcon color="error" />
+          <ArrowUpwardIcon color="success" />
           <Typography
-            color="error"
+            color="success"
             sx={{
               mr: 1
             }}

@@ -27,12 +27,12 @@ const Dashboard = () => {
   const [activeStat, setActiveStat] = useState("");
   const [assetPerformance, setAssetPerformance] = useState({});
   const [currencyConversion, setCurrencyConversion] = useState({});
-  console.log("activeStat: ", activeStat)
-  console.log("asset performance: ", assetPerformance);
+  // console.log("activeStat: ", activeStat)
+  // console.log("asset performance: ", assetPerformance);
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
-  console.log("dashboardState: ", dashboardState);
-  console.log("assetPerformance: ", assetPerformance)
+  // console.log("dashboardState: ", dashboardState);
+  // console.log("assetPerformance: ", assetPerformance)
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
@@ -89,7 +89,46 @@ const Dashboard = () => {
     });
 
     const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
+    if (stockAssets.length > 0) {
+      const stockNames = [];
+      stockAssets.forEach((stock) => {
+        stockNames.push(stock.name);
+      });
+    }
+    axios.post('api/stockHistorical', {id: stockNames})
+      .then(res => {
+        const stockData = res.data;
+        const stockDataKeys = Object.keys(stockData);
+        stockDataKeys.forEach(key => {
+          if (stockNames.includes(key)) {
+            if (stockNames.length === 1) {
+              const stockPriceValues = stockData[key];
+              assetData.stocks[key] = [];
+              stockPriceValues.forEach(price => {
+                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
+                price.close = currencyConversion.CAD * Number(price.close);
+                price.high = currencyConversion.CAD * Number(price.high);
+                price.low = currencyConversion.CAD * Number(price.low);
+                price.open = currencyConversion.CAD * Number(price.open);
+                assetData.stocks[key].push(price);
+              });
+            } else {
+              const stockPriceValues = stockData[key].values;
+              assetData.stocks[key] = [];
+              stockPriceValues.forEach(price => {
+                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
+                price.close = currencyConversion.CAD * Number(price.close);
+                price.high = currencyConversion.CAD * Number(price.high);
+                price.low = currencyConversion.CAD * Number(price.low);
+                price.open = currencyConversion.CAD * Number(price.open);
+                assetData.stocks[key].push(price);
+              });
 
+            }
+          }
+        });
+      })
+      .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
     cryptoAssets.forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
 
@@ -102,34 +141,15 @@ const Dashboard = () => {
         });
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
     })
-    if (stockAssets.length > 0) {
-      const stockNames = [];
-      stockAssets.forEach((stock) => {
-        stockNames.push(stock.name);
-      });
-    }
-    axios.post('api/stockHistorical', {id: stockNames})
-      .then(res => {
-        const stockData = res.data;
-        const stockDataKeys = Object.keys(stockData);
-
-        stockDataKeys.forEach(key => {
-          if (stockNames.includes(key)) {
-            const stockPriceValues = stockData[key].values;
-            assetData.stocks[key] = [];
-            stockPriceValues.forEach(price => {
-              price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-              price.close = currencyConversion.CAD * Number(price.close);
-              price.high = currencyConversion.CAD * Number(price.high);
-              price.low = currencyConversion.CAD * Number(price.low);
-              price.open = currencyConversion.CAD * Number(price.open);
-              assetData.stocks[key].push(price);
-            });
-          }
-        });
-      })
-      .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
       setAssetPerformance(assetData)
+      console.log("assetData: ", assetData)
+      console.log("dashboardState: ", dashboardState)
+      console.log("assetPerformance: ", assetPerformance)
+
+    };
+
+  const parsestats = (assetData, portfolio) => {
+
   };
 
 
@@ -235,7 +255,7 @@ const Dashboard = () => {
       }
     });
     // console.log(activeGraphData)
-  }, [activeStat]);
+  }, [activeStat, assetPerformance]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -398,7 +418,7 @@ const Dashboard = () => {
                 md={6}
                 xl={3}
                 xs={12}>
-                  <PortfolioStats {...dashboardState[activePortfolio]} setActiveStat={setActiveStat}/>
+                  <PortfolioStats activePortfolio={activePortfolio} dashboardState={dashboardState[activePortfolio]} setActiveStat={setActiveStat} assetPerformance={assetPerformance}/>
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
