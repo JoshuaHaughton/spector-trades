@@ -11,6 +11,6 @@ export const PortfolioStats = (props) => {
           justifyContent='space-between'>
         <ProfitStat {...props} />
         <GrowthStat {...props} />
-        {!props.portfolioInfo.live && <SpecBalanceStat {...props} />}
+        {props.portfolioInfo && !props.portfolioInfo.live && <SpecBalanceStat {...props} />}
     </Stack>
 )};
