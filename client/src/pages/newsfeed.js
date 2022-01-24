@@ -6,45 +6,127 @@ import { NewsfeedListToolbar } from "../components/newsfeed/newsfeed-list-toolba
 import { NewsfeedCard } from "../components/newsfeed/newsfeed-card";
 import { DashboardLayout } from "../components/dashboard-layout";
 import api from "src/apis/api";
+import { useCookies } from 'react-cookie';
+import { RateLimiter } from "limiter";
 
 const Newsfeed = () => {
   const [newsFeed, setNewsFeed] = useState([]);
   const [reloadFeed, setReloadFeed] = useState(false)
+  const [cookies, setCookie] = useCookies();
 
   const triggerReload = () => {
     reloadFeed ? setReloadFeed(false) : setReloadFeed(true);
   }
 
   //region must be one of the following: US|BR|AU|CA|FR|DE|HK|IN|IT|ES|GB|SG
-  const options = {
-    method: 'GET',
-    url: 'https://free-news.p.rapidapi.com/v1/search',
-    params: {q: 'Money', lang: 'en'},
-    headers: {
-      'x-rapidapi-host': 'free-news.p.rapidapi.com',
-      'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
-    }
-  };
+  // const options = {
+  //   method: 'GET',
+  //   url: 'https://free-news.p.rapidapi.com/v1/search',
+  //   params: {q: 'Money', lang: 'en'},
+  //   headers: {
+  //     'x-rapidapi-host': 'free-news.p.rapidapi.com',
+  //     'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
+  //   }
+  // };
+
+  let newsParams = [];
+  let allRelatedArticles = [];
 
   // Formats incoming news api response to have no duplicates and to
   // only include articles posted in the past 24 hours in order of most recent
   const fetchFeedData = async () => {
 
+
     try {
 
-      //Retrieves posts
+      //get user id
+    let getUser = await api({
+      method: "get",
+      url: `/users/id/me`,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${cookies.spector_jwt}`,
+      },
+    })
+
+    let user_id = getUser.data.data.user
+    console.log("user id FOR NEW CALLS", user_id)
+
+      //get a list of all user assets
+      let getAssets = await api({
+        method: "get",
+        url: `/orders/me`,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${cookies.spector_jwt}`,
+        },
+    })
+
+    let user_assets = getAssets.data.data.assetOrders
+    console.log("ASSETS FOR NEW API CALLS", user_assets)
+
+
+    //Create a list of paramters to use for the seach using the names of all user assets
+    for (let asset of user_assets) {
+      newsParams.push(asset.name)
+    }
+    console.log('QUERY LIST', newsParams)
+
+
+
+        //api won't allow anything faster right now (free)
+        //Retrieves 25 articles for every query
+        const delay = (ms = 1250) => new Promise((r) => setTimeout(r, ms));
+        const getTodosSeries = async function () {
+          let results = [];
+          for (let i = 0; i < newsParams.length; i++) {
+            const options = {
+              method: 'GET',
+              url: 'https://free-news.p.rapidapi.com/v1/search',
+              params: {q: newsParams[i], lang: 'en'},
+              headers: {
+                'x-rapidapi-host': 'free-news.p.rapidapi.com',
+                'x-rapidapi-key': 'f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0'
+              }
+            };
+            await delay();
+            const res = await axios.request(options);
+
+            results.push(res.data);
+          }
+          return results;
+        };
+
+        async function main() {
+          // const strings = [1, 2, 3, 4];
+          const results = await getTodosSeries();
+          console.log('results',results);
+          return results
+        }
+
+        let response = await main();
+
+        console.log('yeaaaaa', response)
+
+        //Push all articles into one big array of articles
+        for (let obj of response) {
+
+          allRelatedArticles = [...allRelatedArticles, ...obj.articles]
+        }
+
+        console.log('ALL QUERIES ', allRelatedArticles)
+
+
+      //Retrieves all posts
       const posts = await api.get(`/posts`)
-
       console.log('POSTS', posts.data.data.posts)
-
       const postsArray = posts.data.data.posts;
 
-      await axios.request(options)
-      .then(function (response) {
-        //success
+
+
 
          //There were duplicate articles from multiple news sources, this fixed that
-         const noDuplicateArticles = response.data.articles.filter((thing, index, self) => {
+         const noDuplicateArticles = allRelatedArticles.filter((thing, index, self) => {
           return self.findIndex(t => t.title === thing.title) === index
         });
 
@@ -92,7 +174,7 @@ const Newsfeed = () => {
         setNewsFeed(sortedCombinedArray);
         console.log('SORTED COMBINED!:', sortedCombinedArray)
 
-      })
+
     } catch (error) {
       //fail
       console.error(error);
