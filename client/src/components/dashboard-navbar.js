@@ -46,6 +46,8 @@ export const DashboardNavbar = (props) => {
           >
             <MenuIcon fontSize="small" />
           </IconButton>
+
+          { /*
           <Tooltip title="Search">
             <IconButton sx={{ ml: 1 }}>
               <SearchIcon fontSize="small" />
@@ -78,6 +80,8 @@ export const DashboardNavbar = (props) => {
           >
             <UserCircleIcon fontSize="small" />
           </Avatar>
+
+          */}
         </Toolbar>
       </DashboardNavbarRoot>
     </>
