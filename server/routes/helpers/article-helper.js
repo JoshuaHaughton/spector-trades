@@ -28,8 +28,10 @@ const insertArticle = async (article, db) => {
       `,
     [article.link],
   );
+  
   if (test.rows.length > 0) {
-    return res.status(402).send("Already exists in database");
+    //Already Exists
+    return;
   }
 
   //Create new article if it doesnt exist already

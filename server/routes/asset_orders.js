@@ -76,6 +76,37 @@ app.get('/', async (req, res) => {
     console.log(res)
   }
 })
+
+//Returns all orders for an individual user
+app.get('/me', authenticateToken, async(req, res) => {
+
+  console.log('ASSET ORDER BODY', req.body)
+
+  const { user } = req.body
+  console.log('USER IN NEW ASSET ORDER CALL', user)
+
+  try {
+    const assetOrders = await db.query(`
+    SELECT * FROM asset_orders
+    WHERE user_id = $1;
+    `, [user.id]);
+
+    res.status(200).json({
+      status: "success",
+      results: assetOrders.rows.length,
+      data: {
+        assetOrders: assetOrders.rows
+      }
+    })
+    res.send(assetOrders.rows);
+
+  } catch(err) {
+
+    res.status(500).send;
+    console.log(res)
+  }
+})
+
 return app;
 
 }
