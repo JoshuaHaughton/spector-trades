@@ -44,9 +44,7 @@ export const SpectorSpeedDial = ({refreshDashboardState, portfolios, unsoldAsset
     }
     return false;
   }
-
-  console.log('unsold', unsoldAssets)
-
+  
   return (
     <>
       <Backdrop open={open} sx={{ zIndex: (theme) => theme.zIndex.speedDial - 1 }} />
