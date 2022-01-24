@@ -141,7 +141,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                 >
                   <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
                     <Button variant="outlined" type="submit">
-                      Post Comment
+                      Add Post
                     </Button>
                   </Typography>
                 </Grid>
