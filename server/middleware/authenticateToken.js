@@ -19,7 +19,7 @@ const authenticateToken = (req, res, next) => {
         return res.status(403).send({status: 403, message: "invalid token"});
     }
     console.log("authorized user: ", user);
-    req.body.user = {id: user.user_id, email: user.user_email}
+    req.body.user = {id: user.user_id, email: user.user_email, avatar_url: user.user_avatar_url, name: user.user_name};
     next();
   });
 };

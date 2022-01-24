@@ -70,6 +70,9 @@ app.use("/api/auth", authenticateToken, authRoutes());
 // const dashboardRoutes = require("./routes/dashboard");
 // app.use("/api/dashboard", authenticateToken, dashboardRoutes(db));
 
+// Serve our public folder
+app.use("/public", express.static('public'));
+
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });

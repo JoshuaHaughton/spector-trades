@@ -146,7 +146,7 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val.toFixed(2))
+              return (val.toFixed(2));
             }
           }
         }
@@ -256,7 +256,76 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val / 1000000).toFixed(0)
+              return val
+            }
+          }
+        }
+      }
+    });
+  };
+
+  const createAssetGraphData = (data) => {
+    setActiveGraphData({
+      series: [{
+        name: "price",
+        data: data,
+      }],
+      options: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Asset Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              if (val < 1) {
+                return val.toFixed(20).match(/^-?\d*\.?0*\d{0,2}/)[0];
+              }
+              return val;
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return val
             }
           }
         }
@@ -292,6 +361,9 @@ const Dashboard = () => {
             refreshDashboardState={refreshDashboardState} 
             portfolios={
               Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+            }
+            unsoldAssets={
+              Object.values(dashboardState).map(p => p.assets).flat(1).filter(a => a.sold === false)
             }
           />
 
@@ -334,7 +406,7 @@ const Dashboard = () => {
                 md={6}
                 xl={4}
                 xs={12}>
-                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} />}
+                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
               </Grid>
 
               {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
@@ -343,7 +415,7 @@ const Dashboard = () => {
                 md={6}
                 xl={8}
                 xs={12}>
-                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} />}
+                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
               </Grid>
             </Grid>
           </Container>
