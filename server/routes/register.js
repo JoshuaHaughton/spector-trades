@@ -72,7 +72,7 @@ module.exports = (db) => {
           };
     
           addUser(user, db).then(resp => {
-            const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
+            const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email, user_name: resp.username, user_avatar_url: resp.avatar_url} , process.env.JWT_SECRET);
             const responseString = { status: 200, spector_jwt: accessToken };
 
             console.log("New user added");

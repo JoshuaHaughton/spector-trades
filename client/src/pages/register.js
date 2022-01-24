@@ -27,6 +27,7 @@ const Register = () => {
   const [message, setMessage] = React.useState('');
   const [severity, setSeverity] = React.useState(severityObj.OK);
   const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [avatarFileNameText, setAvatarFileNameText] = React.useState('');
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -209,13 +210,37 @@ React.useEffect(() => {
               value={formik.values.password}
               variant="outlined"
             />
-              <Stack direction="row" alignItems="center" spacing={2}>
-              <input id="file" name="avatar" type="file" onChange={(event) => {
-                formik.setFieldValue("avatar", event.currentTarget.files[0]);
-              }} />
+              <Stack sx={{my: 1}} direction="row" alignItems="center" spacing={2}>
+
+              <label htmlFor="contained-button-file">
+                <Input sx={{display: 'none'}} accept="image/*" id="contained-button-file" multiple type="file" onChange={(event) => {
+                  setAvatarFileNameText(event.currentTarget.files[0].name);
+                  formik.setFieldValue("avatar", event.currentTarget.files[0]);
+                }} />
+                <Button variant="contained" component="span">
+                  Upload avatar
+                </Button>
+              </label>
+
+              <Typography
+                color="textSecondary"
+                gutterBottom
+                variant="body2"
+              >
+                { avatarFileNameText }
+              </Typography>
 
             </Stack>
-            {/* <Box
+            {/* 
+            
+                          <input id="file" name="avatar" type="file" onChange={(event) => {
+                console.log(event.currentTarget.files[0]);
+                formik.setFieldValue("avatar", event.currentTarget.files[0]);
+              }} />
+            
+            
+            
+            <Box
               sx={{
                 alignItems: 'center',
                 display: 'flex',

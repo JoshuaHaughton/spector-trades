@@ -1,4 +1,5 @@
 import api from "../../../apis/api";
+import axios from "axios";
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import {
@@ -10,15 +11,12 @@ import {
   Typography,
   Modal,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
   Autocomplete,
   Snackbar,
   IconButton,
 } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-import { CryptoAutoComplete } from "./crypto-autocomplete";
-import { StockAutoComplete } from "./stock-autocomplete";
+import { AssessmentSharp } from "@mui/icons-material";
 
 const style = {
   position: "absolute",
@@ -33,7 +31,18 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState }) => {
+const getAssetsByPortfolio = (assets) => {
+  const assetsByPortfolio = {};
+  assets.forEach(a => {
+    if (!assetsByPortfolio[a.portfolio_id]) {
+      assetsByPortfolio[a.portfolio_id] = [];
+    }
+    assetsByPortfolio[a.portfolio_id].push(a);
+  });
+  return assetsByPortfolio;
+}; 
+
+export const SellInvestmentModal = ({ open, handleClose, portfolios, refreshDashboardState, unsoldAssets }) => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -56,33 +65,46 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
                                     severity: 'info',
                                     message: ''});
   const [totalValue, setTotalValue] = useState(0);
-  const [assetSelection, setAssetSelection] = useState({});
-  const [assetQuantity, setAssetQuantity] = useState(0);
-  const [exitPoint, setExitPoint] = useState('');
-  const [assetType, setAssetType] = useState('stock');
-  const handleAssetType = (_event, newAssetType) => {
-    if (newAssetType !== null) {
-      setAssetSelection({});
-      setAssetType(newAssetType);
-    }
-  };
+  const [totalReturn, setTotalReturn] = useState(0);
+  const [assetSelection, setAssetSelection] = useState(null);
+  const [assetList, setAssetlist] = useState([]);
+  const [priceHelperText, setPriceHelperText] = useState(' ');
 
-  const portfolioItems = portfolios.map(p => ({id: p.id, label: p.name, live: p.live}));
+  const assetsByPortfolio = getAssetsByPortfolio(unsoldAssets);
+  const portfolioItems = portfolios.map(p => ({id: p.id, label: p.name, live: p.live})).filter(p => assetsByPortfolio[p.id] );
+  
+  useEffect(() => {
+    if (portfolioSelection) {
+      setAssetlist(assetsByPortfolio[portfolioSelection.id].map(a => ({label: `${a.symbol} - ${a.units} @ $${(a.price_at_purchase / 100).toFixed(2)}`, ...a})  ));
+    } else {
+      setAssetlist([]);
+    }
+    setPriceHelperText(' ');
+    setAssetSelection(null);
+    setTotalValue(0);
+    
+  }, [portfolioSelection]);
 
   useEffect(() => {
-    if (assetSelection && assetSelection['price']) {
-      setTotalValue(assetSelection.price * assetQuantity);
+    if (assetSelection && assetSelection.type === 'Cryptocurrency') {
+      axios.post('/api/crypto', {id: assetSelection.name}).then(res => {
+        const price = Object.values(res.data)[0]['cad'];
+        setPriceHelperText(`now @ $${price.toFixed(2)}`);
+        setTotalValue((price * 100 * assetSelection.units));
+        setTotalReturn((price * 100) * assetSelection.units - (assetSelection.price_at_purchase * assetSelection.units));
+      });
     } else {
+      setPriceHelperText(' ');
       setTotalValue(0);
+      setTotalReturn(0);
     }
-  }, [assetSelection, assetQuantity]);
+  }, [assetSelection]);
 
   const resetForm = () => {
     setPortfolioSelection(null);
     setTotalValue(0);
+    setTotalReturn(0);
     setAssetSelection(null);
-    setAssetQuantity(0);
-    setExitPoint(0);
     setInfo({visibility: 'hidden',
       severity: 'info',
       message: ''});
@@ -98,30 +120,16 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
       setInfo({visibility: 'visible', severity: 'error', message: 'Must select portfolio!'});
     } else if (!assetSelection) {
       setInfo({visibility: 'visible', severity: 'error', message: 'Must select asset!'});
-    } else if (assetQuantity < 1) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Asset quantity must be at least 1!'});
-    } else if (totalValue < 1) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Total purchase must be at least 1 cent!'});
-    } else if (exitPoint > 0 && exitPoint * 100 <= totalValue) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Exit point must be greater than total purchase!'});
     } else {
       const data = {
-        name: portfolioSelection.label, 
-        live: portfolioSelection.live,
-        asset_name: assetSelection.asset_name, 
-        asset_symbol: assetSelection.code, 
-        type: assetSelection.type,
-        exit_point: exitPoint * 100,
-        units: assetQuantity,
-        price_at_purchase: assetSelection.price,
-        sold: false,
+        id: assetSelection.id,
       };
       const token = cookies.spector_jwt;
       const config = {
         headers: { Authorization: `Bearer ${token}`}
       };
-      api.post('/orders', data, config).then(res => {
-        handleSnackbarMessage('Successfully added an investment!', 'success');
+      api.post('/orders/sell', data, config).then(res => {
+        handleSnackbarMessage('Successfully sold an investment!', 'success');
         refreshDashboardState();
         resetBeforeClose();
       }).catch(err => {
@@ -154,7 +162,7 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
                 display="inline"
                 variant="h5"
               >
-                New Investment
+                Sell Investment
               </Typography>
 
               <IconButton
@@ -191,63 +199,34 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
             </Box>
 
             <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-              <ToggleButtonGroup
-                exclusive
-                aria-label="asset type"
-                value={assetType}
-                onChange={handleAssetType}
-              >
-                <ToggleButton value="stock" aria-label="stock">
-                  Stock
-                </ToggleButton>
-                <ToggleButton value="crypto" aria-label="srypto">
-                  Crypto
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
 
-            <Box sx={{ display:'flex', p: 2, justifyContent: 'center', gap: 2 }}>
-
-              { assetType === 'stock' && <StockAutoComplete setAssetSelection={setAssetSelection} /> }  
-              { assetType === 'crypto' && <CryptoAutoComplete setAssetSelection={setAssetSelection} /> } 
-
-              <TextField variant="standard" 
-                id="quantity"
-                placeholder="1"
-                helperText=" "
-                label="Quantity"
-                onBlur={(event) => setAssetQuantity(prev => {
-                    // Ensures the input is a number
-                    if (isNaN(event.target.value)) {
-                      event.target.value = prev;
-                      return prev;
-                    }
-                    return Number(event.target.value);
-                  }
-                )}
-              />  
-
-            </Box>
-
-            <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-              <TextField
-                id="exit-point"
-                label="Exit Point"
-                placeholder="1"
-                variant="standard"
-                onBlur={(event) => setExitPoint(prev => {
-                    // Ensures the input is a number
-                    if (isNaN(event.target.value)) {
-                      event.target.value = prev;
-                      return prev;
-                    }
-                    return Number(event.target.value);
-                  }
-                )}
+              <Autocomplete
+                disabled={!portfolioSelection} 
+                disablePortal
+                id="asset-select"
+                options={assetList}                
+                sx={{ width: 250 }}
+                value={assetSelection}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                renderInput={
+                  (params) => <TextField variant="standard" helperText={priceHelperText} {...params} label="Assets" />
+                }
+                onChange={(_event, value) => {
+                  setAssetSelection(value);
+                }}
               />
+
             </Box>
 
-            <Box sx={{ p: 2, display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ p: 2, display: 'flex', justifyContent: 'center', flexDirection: 'column', alignItems: 'center' }}>
+              <Typography
+                color="textSecondary"
+                display="inline"
+                variant="h5"
+              >
+                Return: ${(totalReturn / 100).toFixed(2)}
+              </Typography>
+
               <Typography
                 color="textSecondary"
                 display="inline"
@@ -262,7 +241,7 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
     
             <Divider />
             <Box sx={{ display:'flex', p: 2, justifyContent: 'center' }}>
-                <Button onClick={handleSubmit} variant="outlined">Create</Button>
+                <Button onClick={handleSubmit} variant="outlined">Sell</Button>
             </Box>
           </Box>
         </Card>
