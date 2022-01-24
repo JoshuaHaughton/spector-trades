@@ -5,7 +5,7 @@ import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats'
 import { HeroGraph } from '../components/spector-dashboard/hero-graph';
 import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
 import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
-
+import {centsToDollars, niceMoney} from '../utils/toHumanDollars';
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
@@ -25,7 +25,7 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
-  const [assetPerformance, setAssetPerformance] = useState({});
+  const [assetPerformance, setAssetPerformance] = useState(null);
   const [currencyConversion, setCurrencyConversion] = useState({});
   // console.log("activeStat: ", activeStat)
   // console.log("asset performance: ", assetPerformance);
@@ -139,17 +139,97 @@ const Dashboard = () => {
             assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
           }
         });
+
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
     })
-      setAssetPerformance(assetData)
+    setAssetPerformance(assetData);
       console.log("assetData: ", assetData)
       console.log("dashboardState: ", dashboardState)
       console.log("assetPerformance: ", assetPerformance)
-
     };
 
-  const parsestats = (assetData, portfolio) => {
+    useEffect(() => {
 
+
+        assetPerformance && parseStats(assetPerformance, dashboardState);
+    }, [assetPerformance]);
+
+
+  const parseStats = (assetPerformance, dashboardState) => {
+    const assetData = assetPerformance;
+    console.log("______________________________________________________")
+    console.log("assetPerformance to parseStats: ", assetPerformance['stocks']['BLNK'])
+    console.log("dashboardState to parseStats: ", dashboardState)
+    const dashboardWithStats = {};
+    const monthAgo = new Date(new Date().setHours(0, 0, 0, 0))
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    monthAgo.setDate(monthAgo.getDate() - 2);
+
+    const dashboards = Object.values(dashboardState);
+    dashboards.forEach(dashboard => {
+      const assetOrders = [];
+      let totalInvested = 0;
+      let currentValue = 0;
+      let noAssets = false;
+      let lastMonthValue = 0;
+      let lastMonthSpent = 0;
+      let lastMonthProfit = 0;
+      let existedLastMonth = false;
+      let currentProfit;
+      console.log("dashboard: ", dashboard)
+      // console.log("HERE: ", dashboard.total_stock_assets)
+      totalInvested = centsToDollars(dashboard.total_stock_assets)
+      dashboardWithStats[dashboard.portfolioInfo.id] = dashboard;
+
+      assetPerformance && dashboard.assets.forEach(asset => {
+        console.log("asset symbol: ", assetPerformance["stocks"]['BLNK'])
+        console.log("asset performance: ", assetPerformance.stocks)
+
+        console.log("asset performance: ", assetPerformance.stocks.BLNK)
+        if (asset.type === 'Stocks') {
+          assetOrders.push({
+            ...asset,
+            initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
+            currentPrice: assetPerformance.stocks[asset.symbol][0].close
+          });
+          if (asset.sold) {
+            if (new Date(asset.created_at) <= monthAgo.getTime()) {
+              lastMonthValue -= assetPerformance.stocks[asset.symbol][20].close * asset.units;
+            }
+            currentValue -= (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
+          } else {
+            if (new Date(asset.created_at) <= monthAgo.getTime()) {
+              lastMonthValue += assetPerformance.stocks[asset.symbol][20].close * asset.units;
+            }
+            currentValue += (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
+          }
+        }
+        assetOrders.forEach(asset => {
+          if (!asset.sold) {
+            if (new Date(asset.created_at) <= monthAgo.getTime()) {
+              lastMonthSpent +=  asset.units * asset.price_at_purchase
+            }
+          } else {
+            if (new Date(asset.created_at) <= monthAgo.getTime()) {
+              lastMonthSpent -=  asset.units * asset.price_at_purchase
+            }
+          }
+        });
+        console.log(lastMonthValue)
+      });
+      lastMonthSpent = (lastMonthSpent / 100).toFixed(2);
+      dashboardWithStats[dashboard.portfolioInfo.id]["last_month_growth_stocks"] = lastMonthSpent - lastMonthValue;
+      console.log("FOR DASHBOARD: ", dashboard.portfolioInfo.name)
+      console.log("monthAgo: ", monthAgo)
+      console.log("assetOrders: ", assetOrders)
+      console.log("totalInvested: ", totalInvested)
+      console.log("currentValue: ", currentValue)
+      console.log("lastMonthValue: ", lastMonthValue)
+      console.log("lastMonthSpent: ", lastMonthSpent)
+      console.log("lastMonthProfit: ", lastMonthProfit)
+      console.log("currentProfit: ", currentProfit)
+      console.log("dashboardWithStats: ", dashboardWithStats)
+    })
   };
 
 
