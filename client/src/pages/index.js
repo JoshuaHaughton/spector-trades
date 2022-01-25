@@ -1,4 +1,7 @@
 import Head from 'next/head';
+
+import { useRouter } from 'next/router';
+
 import { Box, Container, Grid } from '@mui/material';
 import { PortfolioTabs } from '../components/spector-dashboard/portfolio-tabs';
 import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats';
@@ -14,6 +17,7 @@ import api from "../apis/api";
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
+  const router = useRouter();
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -178,6 +182,8 @@ const Dashboard = () => {
           }
         }).catch(() => {
           // Response rejected
+
+          router.push('/home');
           setTimeout(() => {setLoading(false)}, 1000);
         });
       } catch(err) {

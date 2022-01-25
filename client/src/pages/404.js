@@ -7,7 +7,7 @@ const NotFound = () => (
   <>
     <Head>
       <title>
-        404 | Material Kit
+        404 | Spector Trades
       </title>
     </Head>
     <Box
@@ -55,7 +55,7 @@ const NotFound = () => (
             />
           </Box>
           <NextLink
-            href="/"
+            href="/home"
             passHref
           >
             <Button
@@ -64,7 +64,7 @@ const NotFound = () => (
               sx={{ mt: 3 }}
               variant="contained"
             >
-              Go back to dashboard
+              Go back to home
             </Button>
           </NextLink>
         </Box>
