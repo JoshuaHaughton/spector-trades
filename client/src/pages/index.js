@@ -31,6 +31,10 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
+  const [stocksGraphData, setStocksGraphData] = useState({});
+  const [cryptoGraphData, setCryptoGraphData] = useState({});
+
+
   console.log("activeStat: ", activeStat)
   // console.log("asset performance: ", assetPerformanceStocks, assetPerformanceCrypto);
   // console.log("active graph: ", activeGraphData);
@@ -141,7 +145,7 @@ const Dashboard = () => {
         if (assetData.crypto === undefined) {
           assetData['crypto'] = {};
         }
-        const cryptoData = res.data;
+        const cryptoData = res.data.reverse();
         assetData.crypto[asset.name] = [];
         cryptoData.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
@@ -233,7 +237,7 @@ const Dashboard = () => {
           }
         }
         if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto.crypto[asset.name] !== undefined) {
-          assetPerformanceCrypto.crypto[asset.name].reverse()
+          // assetPerformanceCrypto.crypto[asset.name].reverse()
           // console.log("lastMonthValueCrypto in calc: ",  assetPerformanceCrypto.crypto[asset.name][0])
           assetOrdersCrypto.push({
             ...asset,
@@ -298,6 +302,9 @@ const Dashboard = () => {
     })
   };
 
+  const calculateGraphData = () => {
+
+  };
 
   useEffect(() => {
     const data = [];
@@ -544,7 +551,6 @@ const Dashboard = () => {
           profitForAsset[asset.name] = {};
           // console.log(asset)
           if (assetPerformanceCrypto.crypto[asset.name] !== undefined) {
-            assetPerformanceCrypto.crypto[asset.name].reverse();
             assetPerformanceCrypto.crypto[asset.name].forEach((day, i) => {
               let openValue = 0;
               let amountSpent = 0;
@@ -591,7 +597,7 @@ const Dashboard = () => {
         });
       })
       console.log("overallProfit: ", overallProfit)
-      overallProfit.reverse()
+      // overallProfit.reverse()
       overallProfit.forEach((day, i) => {
         if (i % 2 === 0) {
           data.push({
@@ -638,7 +644,7 @@ const Dashboard = () => {
       }
     });
     // console.log(activeGraphData)
-  }, [activeStat, assetPerformanceStocks, assetPerformanceCrypto]);
+  }, [activeStat, assetPerformanceStocks, assetPerformanceCrypto, activePortfolio]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
