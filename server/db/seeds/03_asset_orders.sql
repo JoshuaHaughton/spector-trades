@@ -8,7 +8,7 @@ INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_
 VALUES ('Leon', 'LEON', 'Stocks', 1.01, 11302, '2021-01-20T06:00:00.000Z', 3, 3, false);
 
 INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
-VALUES ('Bill', 'BILL', 'Cryptocurrency', 2, 23453, '2021-02-20T06:00:00.000Z', 2, 2, false);
+VALUES ('bill-token', 'BILL', 'Cryptocurrency', 2, 23453, '2021-02-20T06:00:00.000Z', 2, 2, false);
 
 INSERT INTO asset_orders (name, symbol, type, units, price_at_purchase, created_at, user_id, portfolio_id, sold) 
 VALUES ('Ethereum', 'ETH', 'Cryptocurrency', 2, 23453, '2021-03-20T06:00:00.000Z', 2, 2, false);
