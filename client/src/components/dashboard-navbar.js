@@ -24,7 +24,10 @@ export const DashboardNavbar = (props) => {
           },
           width: {
             lg: 'calc(100% - 280px)'
-          }
+          },
+          height: {
+            lg: '0px',
+          },
         }}
         {...other}>
         <Toolbar
@@ -46,6 +49,8 @@ export const DashboardNavbar = (props) => {
           >
             <MenuIcon fontSize="small" />
           </IconButton>
+
+          { /*
           <Tooltip title="Search">
             <IconButton sx={{ ml: 1 }}>
               <SearchIcon fontSize="small" />
@@ -78,6 +83,8 @@ export const DashboardNavbar = (props) => {
           >
             <UserCircleIcon fontSize="small" />
           </Avatar>
+
+          */}
         </Toolbar>
       </DashboardNavbarRoot>
     </>

@@ -22,11 +22,11 @@ app.get('/', function (req, res) {
 const userRoutes = require("./routes/users")
 app.use("/api/users", userRoutes(db));
 
-// post routes import
+// portfolio routes import
 const portfolioRoutes = require("./routes/portfolios")
 app.use("/api/portfolios", portfolioRoutes(db));
 
-// post routes import
+// asset order routes import
 const assetOrderRoutes = require("./routes/asset_orders")
 app.use("/api/orders", assetOrderRoutes(db));
 
@@ -34,21 +34,33 @@ app.use("/api/orders", assetOrderRoutes(db));
 const postRoutes = require("./routes/posts")
 app.use("/api/posts", postRoutes(db));
 
-// post routes import
+// comment routes import
 const commentRoutes = require("./routes/comments")
 app.use("/api/comments", commentRoutes(db));
 
-// Post avatar upload
+// avatar upload routes
 const avatarRoutes = require("./routes/avatar_upload")
 app.use("/api/avatars", avatarRoutes(db));
 
-// Post avatar upload
+// register routes
 const RegisterRoutes = require("./routes/register")
 app.use("/api/register", RegisterRoutes(db));
 
-// Post avatar upload
+// login routes
 const loginRoutes = require("./routes/login")
 app.use("/api/login", loginRoutes(db));
+
+// article routes
+const articleRoutes = require("./routes/articles")
+app.use("/api/articles", articleRoutes(db));
+
+// media routes (Routes that include both article and posts)
+const mediaRoutes = require("./routes/media")
+app.use("/api/media", mediaRoutes(db));
+
+// like routes
+const likeRoutes = require("./routes/likes")
+app.use("/api/likes", likeRoutes(db));
 
 // Auth jwt testing
 const authRoutes = require("./routes/auth")
@@ -57,6 +69,9 @@ app.use("/api/auth", authenticateToken, authRoutes());
 // Dashboard routes import
 const dashboardRoutes = require("./routes/dashboard");
 app.use("/api/dashboard", authenticateToken, dashboardRoutes(db));
+
+// Serve our public folder
+app.use("/public", express.static('public'));
 
 app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

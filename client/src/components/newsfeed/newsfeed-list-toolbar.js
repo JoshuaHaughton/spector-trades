@@ -1,19 +1,20 @@
 import {
     Box,
     Button,
-    Card,
-    CardContent,
-    TextField,
-    InputAdornment,
-    SvgIcon,
     Typography
   } from '@mui/material';
-  import { Download as DownloadIcon } from '../../icons/download';
-  import { Search as SearchIcon } from '../../icons/search';
-  import { Upload as UploadIcon } from '../../icons/upload';
+import { useState } from 'react';
+  import { AddPostModal } from './post/add-post-modal';
 
-  export const NewsfeedListToolbar = (props) => (
-    <Box {...props}>
+  export const NewsfeedListToolbar = ({ triggerReload, ...rest }) => {
+
+    const [addPostOpen, setAddPostOpen] = useState(false);
+    const handleAddPostOpen = () => setAddPostOpen(true);
+    const handleAddPostClose = () => setAddPostOpen(false);
+
+
+  return (
+    <Box {...rest}>
       <Box
         sx={{
           alignItems: 'center',
@@ -33,10 +34,17 @@ import {
           <Button
             color="primary"
             variant="contained"
+            onClick={handleAddPostOpen}
           >
             Add post
           </Button>
+          <AddPostModal
+                open={addPostOpen}
+                handleClose={handleAddPostClose}
+                triggerReload={triggerReload}
+                //PASSES ARTICLE TO ADD Post MODAL
+              />
         </Box>
       </Box>
     </Box>
-  );
+  )};

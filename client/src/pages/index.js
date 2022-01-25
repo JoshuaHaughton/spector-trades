@@ -42,6 +42,10 @@ const Dashboard = () => {
         const response = await api.get('/dashboard', config).then(response => {
           if (response.status === 200) {
             setDashboardState(response.data);
+            if (!activePortfolio) {
+              // Set activePortfolio to the first one
+              setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
+            }
           }
         })
     };
@@ -574,7 +578,7 @@ const Dashboard = () => {
           shared: false,
           y: {
             formatter: function (val) {
-              return (val.toFixed(2))
+              return (val.toFixed(2));
             }
           }
         }
@@ -595,9 +599,10 @@ const Dashboard = () => {
         api.get('/dashboard', config).then(response => {
           if (response.status === 200) {
             setDashboardState(response.data);
+            setIsAuthorized(true);
             // get id of first portfolio
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
-            setIsAuthorized(true);
+
             setLoading(false);
             parseGraphData(activePortfolio);
           }
@@ -637,6 +642,16 @@ const Dashboard = () => {
       </Container>
       )
     }
+
+    if (isAuthorized && Object.keys(dashboardState).length === 0) {
+      return (
+        <SpectorSpeedDial
+          refreshDashboardState={refreshDashboardState}
+        />
+      );
+
+    }
+
     if (isAuthorized) {
       return (
         <>
@@ -645,6 +660,9 @@ const Dashboard = () => {
             refreshDashboardState={refreshDashboardState}
             portfolios={
               Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
+            }
+            unsoldAssets={
+              Object.values(dashboardState).map(p => p.assets).flat(1).filter(a => a.sold === false)
             }
           />
 
@@ -695,7 +713,7 @@ const Dashboard = () => {
                 md={6}
                 xl={4}
                 xs={12}>
-                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} />}
+                  {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
               </Grid>
 
               {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
@@ -704,7 +722,7 @@ const Dashboard = () => {
                 md={6}
                 xl={8}
                 xs={12}>
-                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} />}
+                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
               </Grid>
             </Grid>
           </Container>

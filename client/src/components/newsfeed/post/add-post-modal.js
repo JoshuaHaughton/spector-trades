@@ -28,7 +28,7 @@ const style = {
   borderRadius: "8px",
 };
 
-export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) => {
+export const AddPostModal = ({ open, handleClose, triggerReload }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
   const [charColour, setCharColour] = useState('textSecondary')
@@ -42,68 +42,45 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
     }),
     onSubmit: async (values) => {
       console.log(values);
-      console.log('parent', parentState)
 
-      //set as falsey
-      let savedMedia = false;
 
       try {
 
-        //check if media exists / retrieve media
-        let media = await api({
+        const fetchUserName = await api({
           method: "get",
-          url: `/media/${parentState.type}/${parentState.id}`,
-          data: parentState.media,
+          url: `/users/id/me`,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${cookies.spector_jwt}`,
+            Authorization: cookies.spector_jwt,
           },
         })
 
-        console.log('MEDIA EXISTS?', media.data.data.media)
 
-        //media exist check
-        if (Object.keys(media.data.data).length > 0) {
-
-           //save media to original variable to post
-          savedMedia = media.data.data.media;
-          console.log("MEDIA RETRIEVED", savedMedia)
-        }
+        let username = fetchUserName.data.data.user.username
 
 
-
-        let formData;
-        if(savedMedia.original_id) {
-          formData = {
+        let formData = {
             body: values.body,
-            media_id: savedMedia.original_id,
-            ...parentState
-          };
-        } else {
+            username
+          }
 
-          formData = {
-            body: values.body,
-            media_id: savedMedia.id,
-            ...parentState
-          };
-
-        }
+          console.log('TIME TO POST')
 
 
-        //Post comment and link it to media, then close modal
+        //Post the Post, then close modal
         await api({
             method: "post",
-            url: "/comments/media",
+            url: "/posts",
             data: formData,
             headers: {
               "Content-Type": "application/json",
               "Authorization": cookies.spector_jwt
             },
           }).then(resp => {
-
+            console.log(resp.data)
             if(resp.data.status === 200 || resp.data.status === 304) {
               handleClose();
-              setCharLeft(140);
+              triggerReload();
             }
           })
 
@@ -118,10 +95,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
   return (
     <Modal
       open={open}
-      onClose={() => {
-        setCharLeft(140);
-        handleClose();
-      }}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >
@@ -150,7 +124,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
               </Grid>
             </Box>
             <Divider />
-            <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={(e) => {
+            <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
               formik.handleChange(e);
               setCharLeft(140 - e.target.value.length);
               ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
@@ -167,7 +141,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
                 >
                   <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
                     <Button variant="outlined" type="submit">
-                      Post Comment
+                      Add Post
                     </Button>
                   </Typography>
                 </Grid>

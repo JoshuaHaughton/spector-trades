@@ -45,20 +45,21 @@ const getCommentsByPost = (id, db) => {
 }; 
 /**
  * 
- * @param {*} values {user_id, post_id, user_id}
+ * @param {*} values {user_id, media_id, body, type}
  * @param {*} db POOL connection to pg
  * @returns rows from query
  */
-const addComment = (values, db) => {
+const addMediaComment = (values, db) => {
+  console.log("ADD COMMENT VALUES", values)
   let queryString = 
                     `
                     INSERT INTO 
-                    comments (user_id, post_id, body)
+                    comments (user_id, ${values.type}, body)
                     VALUES ($1, $2, $3)
                     RETURNING *;
                     `;
 
-  const queryParams = [ values.user_id, values.post_id, values.body ];
+  const queryParams = [ values.user_id, values.media_id, values.body ];
 
   return db.query(queryString, queryParams)
   .then((result) => {
@@ -70,4 +71,33 @@ const addComment = (values, db) => {
 };
 
 
-module.exports = { getCommentsByUser, getCommentsByPost, addComment };
+const getCommentsByMediaId = (values, type, db) => {
+
+  let column;
+
+  if (type === 'original_article_id') {
+    column = 'article_id'
+  } else {
+    column = 'post_id';
+  }
+
+  let queryString = 
+                    `
+                    SELECT * 
+                    FROM comments
+                    WHERE ${column} = $1;
+                    `;
+
+  const queryParams = [values];
+
+  return db.query(queryString, queryParams)
+  .then((result) => {
+    return result.rows;
+  })
+  .catch((err) => {
+    return err.message
+  });
+}
+
+
+module.exports = { getCommentsByUser, getCommentsByPost, addMediaComment, getCommentsByMediaId };

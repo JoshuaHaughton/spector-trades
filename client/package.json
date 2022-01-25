@@ -17,6 +17,7 @@
     "@emotion/react": "^11.5.0",
     "@emotion/server": "^11.4.0",
     "@emotion/styled": "^11.3.0",
+    "@fortawesome/react-fontawesome": "^0.1.16",
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
     "@mui/icons-material": "^5.0.5",
@@ -32,6 +33,7 @@
     "fs": "0.0.1-security",
     "history": "^5.0.0",
     "moment": "^2.29.1",
+    "limiter": "^2.1.0",
     "next": "^12.0.3-canary.7",
     "nprogress": "^0.2.0",
     "prop-types": "^15.7.2",
@@ -42,6 +44,7 @@
     "react-dom": "^17.0.2",
     "react-perfect-scrollbar": "^1.5.8",
     "react-window": "^1.8.6",
+    "timeago-react": "^3.0.4",
     "uuid": "^8.3.0",
     "yup": "^0.32.9"
   },
