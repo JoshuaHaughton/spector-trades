@@ -33,7 +33,7 @@ export const HeroGraph = (props) => {
       color = 'error.main';
       height = 30;
       width = 30;
-      typeOfGraph = 'candlestick';
+      typeOfGraph = 'area';
       break;
     case "crypto_profit":
       statName = "Cryptocurrency profit";

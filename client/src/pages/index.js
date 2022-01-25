@@ -233,6 +233,7 @@ const Dashboard = () => {
           }
         }
         if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto.crypto[asset.name] !== undefined) {
+          assetPerformanceCrypto.crypto[asset.name].reverse()
           // console.log("lastMonthValueCrypto in calc: ",  assetPerformanceCrypto.crypto[asset.name][0])
           assetOrdersCrypto.push({
             ...asset,
@@ -518,7 +519,7 @@ const Dashboard = () => {
           autoSelected: 'zoom'
         }
       }
-      console.log("Asset performance (crypto): ", assetPerformanceCrypto.crypto)
+      // console.log("Asset performance (crypto): ", assetPerformanceCrypto.crypto)
       let portfolioData = statsData[activePortfolio]
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       const dates = [];
@@ -543,6 +544,7 @@ const Dashboard = () => {
           profitForAsset[asset.name] = {};
           // console.log(asset)
           if (assetPerformanceCrypto.crypto[asset.name] !== undefined) {
+            assetPerformanceCrypto.crypto[asset.name].reverse();
             assetPerformanceCrypto.crypto[asset.name].forEach((day, i) => {
               let openValue = 0;
               let amountSpent = 0;
@@ -589,7 +591,7 @@ const Dashboard = () => {
         });
       })
       console.log("overallProfit: ", overallProfit)
-      overallProfit.reverse();
+      overallProfit.reverse()
       overallProfit.forEach((day, i) => {
         if (i % 2 === 0) {
           data.push({
