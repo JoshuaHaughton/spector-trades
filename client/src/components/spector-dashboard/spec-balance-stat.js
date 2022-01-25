@@ -10,7 +10,11 @@ export const SpecBalanceStat = (props) => {
     props.setActiveStat("spec_money")
   };
   return (
-    <button className="stats" onClick={handleClick}>
+    <button
+    className={
+      !dashboardState.portfolioInfo.live ? 'stats' : 'stats-disabled'
+    }
+    onClick={handleClick}>
         <Card
     sx={{ height: '100%' }}
     {...props}

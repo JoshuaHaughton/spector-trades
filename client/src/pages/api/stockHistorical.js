@@ -27,7 +27,7 @@ function writeFile (savPath, data, ) {
 
 export default async (req, res) => {
   if (!req.body['id']) {
-    return res.status(400).json({error: 'No coin id given'});
+    return res.status(401).json({error: 'No coin id given'});
   }
   const id = req.body['id'];
 

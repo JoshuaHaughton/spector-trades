@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Avatar, Box, Card, CardContent, Grid, Typography, CircularProgress } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
@@ -7,135 +6,33 @@ import {centsToDollars, niceMoney} from '../../utils/toHumanDollars';
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
-  custom: {
+  negative: {
     color: "#FF4B4B",
+    fontWeight: "bold"
+  },
+  positive: {
+    color: "#0F5BFF",
     fontWeight: "bold"
   }
 });
 
 export const StockProfitStat = (props) => {
-  const [state, setState] = useState({
-    profit: 0,
-    lastMonthProfit: 0,
-    profitChange: 0,
-    hasStocks: false,
-    loading: true
-  });
+  const {statsData, activePortfolio} = props;
+  console.log(statsData);
 
   const classes = useStyles();
-//   const {assetPerformance, dashboardState, activePortfolio} = props;
-//   console.log(props)
-//   const assetOrders = [];
-//   const totalInvested = centsToDollars(dashboardState.total_stock_assets);
-//   let currentValue = 0;
-//   const noAssets = false;
-//   let lastMonthValue = 0;
-//   let lastMonthSpent = 0;
-//   let lastMonthProfit = 0;
-//   let existedLastMonth = false;
-//   let currentProfit;
-//   const monthAgo = new Date(new Date().setHours(0, 0, 0, 0))
-//   monthAgo.setMonth(monthAgo.getMonth() - 1);
-//   monthAgo.setDate(monthAgo.getDate() - 2);
-//   console.log("monthAgo: ", monthAgo)
 
-//   if (monthAgo.getTime() > new Date(dashboardState.portfolioInfo.created_at)) {
-//     existedLastMonth = true;
-//   }
-//   dashboardState.assets.forEach(asset => {
-//     if (asset.type === 'Stocks' && assetPerformance.stocks[asset.symbol] != undefined) {
-//       assetOrders.push({
-//         ...asset,
-//         initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
-//         currentPrice: assetPerformance.stocks[asset.symbol][0].close
-//       });
-//       if (asset.sold) {
-//         if (new Date(asset.created_at) <= monthAgo) {
-//           lastMonthValue -= assetPerformance.stocks[asset.symbol][20].close * asset.units;
-//         }
-//         currentValue -= (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
-//       } else {
-//         if (new Date(asset.created_at) <= monthAgo.getTime()) {
-//           lastMonthValue += assetPerformance.stocks[asset.symbol][20].close * asset.units;
-//         }
-//         currentValue += (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
-//       }
-//     }
-//   });
-//   if (assetOrders.length === 0) {
-//     noAssets = true;
-//   }
-//   assetOrders.forEach(asset => {
-//     if (!asset.sold) {
-//       if (new Date(asset.created_at) <= monthAgo.getTime()) {
-//         lastMonthSpent +=  asset.units * asset.price_at_purchase
-//       }
-//     } else {
-//       if (new Date(asset.created_at) <= monthAgo.getTime()) {
-//         lastMonthSpent -=  asset.units * asset.price_at_purchase
-//       }
-//     }
-//   });
-//   lastMonthSpent = centsToDollars(lastMonthSpent);
-//   lastMonthProfit = lastMonthValue - lastMonthSpent;
-//   useEffect(() => {
-//     setState(prev => {
-//       let setHasStocks = false;
-//       let currentProfit;
-//       let makeLoad = false;
-
-//       if (assetOrders.length > 0) {
-//         setHasStocks = true;
-//       }
-//       console.log("IN SETSTATE currentValue: ", currentValue)
-//       console.log("IN SETSTATE totalInvested: ", totalInvested)
-
-//       if (currentValue !== 0) {
-//         let currentProfit = niceMoney(currentValue - centsToDollars(dashboardState.total_stock_assets));
-//       } else {
-//         makeLoad = true;
-//       }
-//       return {
-//         ...prev,
-//         lastMonthProfit: lastMonthProfit,
-//         profitChange: getProfitChange(state.profit, state.lastMonthProfit),
-//         hasStocks: setHasStocks,
-//         profit: currentProfit,
-//         loading: false
-//       }
-//     });
-
-//         // console.log("last month value: ", lastMonthValue)
-//         // console.log("Current profit: ", currentProfit)
-
-//         // console.log("stock assets: ", assetOrders)
-//         // console.log("total invested: ", totalInvested)
-//         // console.log("current evaluation: ", currentValue)
-//         // console.log("props Data", props)
-//         // console.log("state data: ", state)
-//         // console.log("last month spent: ", lastMonthSpent)
-//         // console.log("last month profit: ", lastMonthProfit)
-//         // console.log("Change in profit from last month: ", lastMonthProfit)
-//         // console.log(state)
-
-//   }, [props.activeStat]);
-// console.log(state)
   const handleClick = (e) => {
     e.preventDefault();
     props.setActiveStat("stock-profit")
   };
 
-//   const getProfitChange = (thisMonth, lastMonth) => {
-//     if (thisMonth < 0 && lastMonth < 0) {
-//       return (thisMonth - lastMonth).toFixed(2);
-//     }
-//     if (thisMonth > 0 && lastMonth < 0) {
-//       return -1 * ((thisMonth - lastMonth).toFixed(2));
-//     }
-//     if (thisMonth < 0 && lastMonth > 0) {
-//       return -1 * (thisMonth - lastMonth).toFixed(2);
-//     }
-//   };
+  const getPercentageChange = (oldNumber, newNumber) => {
+    const decreaseValue = oldNumber - newNumber;
+    const result = (decreaseValue / oldNumber) * 100
+    // if (oldNumber < newNumber)
+    return result;
+}
 
   return (
     <button className="stats" onClick={handleClick}>
@@ -159,12 +56,14 @@ export const StockProfitStat = (props) => {
               Stock Profit
             </Typography>
             <Typography
-              className={state.profit < 0 && classes.custom}
+              className={
+                statsData[activePortfolio] &&
+                niceMoney(statsData[activePortfolio].this_month_growth_stocks) < 0 ? classes.negative : classes.positive
+                }
               color="textSecoundary"
               variant="h4"
             >
-            <CircularProgress />
-              {/* {state.loading ? <CircularProgress /> : state.profit} */}
+              {statsData[activePortfolio] && niceMoney(statsData[activePortfolio].this_month_growth_stocks)}
             </Typography>
           </Grid>
           <Grid item>
@@ -186,7 +85,20 @@ export const StockProfitStat = (props) => {
             alignItems: 'center'
           }}
         >
-          {(state.profitChange < 0 ? <ArrowDownwardIcon color="error" /> : <ArrowUpwardIcon color="primary" />)}
+          {
+            statsData[activePortfolio] &&
+            statsData[activePortfolio].total_stock_assets === 0 && ''
+            }
+          {
+            statsData[activePortfolio] &&
+            getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
+                                statsData[activePortfolio].this_month_growth_stocks) < 0 &&
+            <ArrowDownwardIcon color="error" />}
+          {
+            statsData[activePortfolio] &&
+            getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
+              statsData[activePortfolio].this_month_growth_stocks) > 0 &&
+            <ArrowUpwardIcon color="primary" />}
           <Typography
             color="error"
             sx={{
@@ -194,7 +106,15 @@ export const StockProfitStat = (props) => {
             }}
             variant="body2"
           >
-            {/* {state.hasStocks && state.profitChange} */}
+            {
+              statsData[activePortfolio] &&
+              getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
+                statsData[activePortfolio].this_month_growth_stocks) === NaN &&
+              "No Data"}
+            {
+              statsData[activePortfolio] &&
+              niceMoney(statsData[activePortfolio].this_month_growth_stocks) !== 0 &&
+              getPercentageChange(statsData[activePortfolio].last_month_growth_stocks, statsData[activePortfolio].this_month_growth_stocks).toFixed(2)}
           </Typography>
           <Typography
             color="textSecondary"

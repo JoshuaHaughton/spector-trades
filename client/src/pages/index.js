@@ -25,8 +25,12 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
-  const [assetPerformance, setAssetPerformance] = useState(null);
+  const [assetPerformanceCrypto, setAssetPerformanceCrypto] = useState({
+  });
+  const [assetPerformanceStocks, setAssetPerformanceStocks] = useState({
+  });
   const [currencyConversion, setCurrencyConversion] = useState({});
+  const [statsData, setStatsData] = useState({});
   // console.log("activeStat: ", activeStat)
   // console.log("asset performance: ", assetPerformance);
   // console.log("active graph: ", activeGraphData);
@@ -50,13 +54,13 @@ const Dashboard = () => {
     };
     fetchData();
   };
+  const assetData = {};
 
   const getAssetPerformanceData = () => {
     const cryptoAssets = [];
     const stockAssets = [];
     const portfolioData = Object.values(dashboardState);
     const portfolioCreatedAt = [];
-    const assetData = {stocks: {}, crypto: {}};
 
     portfolioData.forEach(portfolio => {
       portfolioCreatedAt.push(portfolio.portfolioInfo.created_at)
@@ -83,7 +87,6 @@ const Dashboard = () => {
         }
       });
     });
-    console.log("STOCK ASSETS: ", stockAssets)
     portfolioCreatedAt.sort(function(a, b) {
       return Date.parse(a) - Date.parse(b);
     });
@@ -97,6 +100,10 @@ const Dashboard = () => {
     }
     axios.post('api/stockHistorical', {id: stockNames})
       .then(res => {
+        console.log(res.data)
+        if (assetData.stocks === undefined) {
+          assetData['stocks'] = {};
+        }
         const stockData = res.data;
         const stockDataKeys = Object.keys(stockData);
         stockDataKeys.forEach(key => {
@@ -106,10 +113,10 @@ const Dashboard = () => {
               assetData.stocks[key] = [];
               stockPriceValues.forEach(price => {
                 price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * Number(price.close);
-                price.high = currencyConversion.CAD * Number(price.high);
-                price.low = currencyConversion.CAD * Number(price.low);
-                price.open = currencyConversion.CAD * Number(price.open);
+                price.close = currencyConversion.CAD * price.close;
+                price.high = currencyConversion.CAD * price.high;
+                price.low = currencyConversion.CAD * price.low;
+                price.open = currencyConversion.CAD * price.open;
                 assetData.stocks[key].push(price);
               });
             } else {
@@ -117,21 +124,24 @@ const Dashboard = () => {
               assetData.stocks[key] = [];
               stockPriceValues.forEach(price => {
                 price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * Number(price.close);
-                price.high = currencyConversion.CAD * Number(price.high);
-                price.low = currencyConversion.CAD * Number(price.low);
-                price.open = currencyConversion.CAD * Number(price.open);
+                price.close = currencyConversion.CAD * price.close;
+                price.high = currencyConversion.CAD * price.high;
+                price.low = currencyConversion.CAD * price.low;
+                price.open = currencyConversion.CAD * price.open;
                 assetData.stocks[key].push(price);
               });
 
             }
           }
         });
+        setAssetPerformanceStocks({...assetPerformanceStocks, stocks: assetData['stocks']})
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
-    cryptoAssets.forEach(asset => {
+      cryptoAssets.forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
-
+        if (assetData.crypto === undefined) {
+          assetData['crypto'] = {};
+        }
         assetData.crypto[asset.name] = [];
         res.data.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
@@ -139,27 +149,35 @@ const Dashboard = () => {
             assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
           }
         });
-
+        setAssetPerformanceCrypto(prev => {
+          return {crypto: assetData.crypto}
+        })
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
+
     })
-    setAssetPerformance(assetData);
-      console.log("assetData: ", assetData)
-      console.log("dashboardState: ", dashboardState)
-      console.log("assetPerformance: ", assetPerformance)
+    console.log("assetData: ", assetData)
+    // setAssetPerformance(assetData);
+      // console.log("assetPerformance: ", assetPerformance)
+      // console.log("dashboardState: ", dashboardState)
+      // console.log("assetPerformance: ", assetPerformance)
     };
 
     useEffect(() => {
+        if (assetPerformanceStocks.stocks !== undefined && assetPerformanceCrypto.crypto !== undefined) {
+          parseStats(assetPerformanceStocks, assetPerformanceCrypto, dashboardState);
+        }
+    }, [assetPerformanceStocks, assetPerformanceCrypto]);
 
 
-        assetPerformance && parseStats(assetPerformance, dashboardState);
-    }, [assetPerformance]);
+  const parseStats = (assetPerformanceStocks, assetPerformanceCrypto, dashboardState) => {
+    // console.log("______________________________________________________")
 
-
-  const parseStats = (assetPerformance, dashboardState) => {
-    const assetData = assetPerformance;
-    console.log("______________________________________________________")
-    console.log("assetPerformance to parseStats: ", assetPerformance['stocks']['BLNK'])
-    console.log("dashboardState to parseStats: ", dashboardState)
+    if (assetPerformanceStocks.stocks === undefined || assetPerformanceCrypto.crypto === undefined) {
+      return;
+    }
+    console.log("assetPerformanceStocks to parseStats: ", assetPerformanceStocks)
+    console.log("assetPerformanceCrypto to parseStats: ", assetPerformanceCrypto)
+    // console.log("dashboardState to parseStats: ", dashboardState)
     const dashboardWithStats = {};
     const monthAgo = new Date(new Date().setHours(0, 0, 0, 0))
     monthAgo.setMonth(monthAgo.getMonth() - 1);
@@ -167,68 +185,114 @@ const Dashboard = () => {
 
     const dashboards = Object.values(dashboardState);
     dashboards.forEach(dashboard => {
-      const assetOrders = [];
-      let totalInvested = 0;
-      let currentValue = 0;
+      const assetOrdersStocks = [];
+      const assetOrdersCrypto = [];
+
       let noAssets = false;
-      let lastMonthValue = 0;
-      let lastMonthSpent = 0;
-      let lastMonthProfit = 0;
+      let totalInvestedStocks = 0;
+      let currentValueStocks = 0;
+      let lastMonthValueStocks = 0;
+      let lastMonthSpentStocks = 0;
+      let lastMonthProfitStocks = 0;
+      let totalInvestedCrypto = 0;
+      let currentValueCrypto = 0;
+      let lastMonthValueCrypto = 0;
+      let lastMonthSpentCrypto = 0;
+      let lastMonthProfitCrypto = 0;
       let existedLastMonth = false;
       let currentProfit;
-      console.log("dashboard: ", dashboard)
+      // console.log("dashboard: ", dashboard)
       // console.log("HERE: ", dashboard.total_stock_assets)
-      totalInvested = centsToDollars(dashboard.total_stock_assets)
+      totalInvestedStocks = centsToDollars(dashboard.total_stock_assets)
       dashboardWithStats[dashboard.portfolioInfo.id] = dashboard;
 
-      assetPerformance && dashboard.assets.forEach(asset => {
-        console.log("asset symbol: ", assetPerformance["stocks"]['BLNK'])
-        console.log("asset performance: ", assetPerformance.stocks)
+      dashboard.assets.forEach(asset => {
+        //console.log("asset symbol: ", assetPerformance["stocks"]['BLNK'])
+        //console.log("asset performance: ", assetPerformance.stocks)
 
-        console.log("asset performance: ", assetPerformance.stocks.BLNK)
-        if (asset.type === 'Stocks') {
-          assetOrders.push({
+        // console.log("asset performance: ", assetPerformance.stocks.BLNK)
+        if (asset.type === 'Stocks' && assetPerformanceStocks.stocks) {
+
+          console.log("_______________HERE: ", assetPerformanceStocks.stocks[asset.symbol][20])
+          assetOrdersStocks.push({
             ...asset,
             initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
-            currentPrice: assetPerformance.stocks[asset.symbol][0].close
+            currentPrice: assetPerformanceStocks.stocks[asset.symbol][0].close
           });
           if (asset.sold) {
             if (new Date(asset.created_at) <= monthAgo.getTime()) {
-              lastMonthValue -= assetPerformance.stocks[asset.symbol][20].close * asset.units;
+              lastMonthValueStocks -= assetPerformanceStocks.stocks[asset.symbol][20].close * asset.units;
             }
-            currentValue -= (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
+            currentValueStocks -= (assetPerformanceStocks.stocks[asset.symbol][0].close) * asset.units;
           } else {
             if (new Date(asset.created_at) <= monthAgo.getTime()) {
-              lastMonthValue += assetPerformance.stocks[asset.symbol][20].close * asset.units;
+              lastMonthValueStocks += assetPerformanceStocks.stocks[asset.symbol][20].close * asset.units;
             }
-            currentValue += (assetPerformance.stocks[asset.symbol][0].close) * asset.units;
+            currentValueStocks += (assetPerformanceStocks.stocks[asset.symbol][0].close) * asset.units;
           }
         }
-        assetOrders.forEach(asset => {
-          if (!asset.sold) {
+        if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto.crypto[asset.name] !== undefined) {
+          // console.log("lastMonthValueCrypto in calc: ",  assetPerformanceCrypto.crypto[asset.name][0])
+          assetOrdersCrypto.push({
+            ...asset,
+            initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
+            currentPrice: assetPerformanceCrypto.crypto[asset.name][0].data
+          });
+          if (asset.sold) {
             if (new Date(asset.created_at) <= monthAgo.getTime()) {
-              lastMonthSpent +=  asset.units * asset.price_at_purchase
+              lastMonthValueCrypto -= assetPerformanceCrypto.crypto[asset.name][20].data * asset.units;
             }
+            currentValueCrypto -= (assetPerformanceCrypto.crypto[asset.name][0].data) * asset.units;
           } else {
             if (new Date(asset.created_at) <= monthAgo.getTime()) {
-              lastMonthSpent -=  asset.units * asset.price_at_purchase
+              lastMonthValueCrypto += assetPerformanceCrypto.crypto[asset.name][20].data * asset.units;
             }
+            currentValueCrypto += (assetPerformanceCrypto.crypto[asset.name][0].data) * asset.units;
           }
-        });
-        console.log(lastMonthValue)
+        }
+        // console.log(lastMonthValue)
       });
-      lastMonthSpent = (lastMonthSpent / 100).toFixed(2);
-      dashboardWithStats[dashboard.portfolioInfo.id]["last_month_growth_stocks"] = lastMonthSpent - lastMonthValue;
-      console.log("FOR DASHBOARD: ", dashboard.portfolioInfo.name)
-      console.log("monthAgo: ", monthAgo)
-      console.log("assetOrders: ", assetOrders)
-      console.log("totalInvested: ", totalInvested)
-      console.log("currentValue: ", currentValue)
-      console.log("lastMonthValue: ", lastMonthValue)
-      console.log("lastMonthSpent: ", lastMonthSpent)
-      console.log("lastMonthProfit: ", lastMonthProfit)
-      console.log("currentProfit: ", currentProfit)
+      assetOrdersStocks.forEach(asset => {
+        if (!asset.sold) {
+          if (new Date(asset.created_at) <= monthAgo.getTime()) {
+            lastMonthSpentStocks +=  asset.units * asset.price_at_purchase
+          }
+        } else {
+          if (new Date(asset.created_at) <= monthAgo.getTime()) {
+            lastMonthSpentStocks -=  asset.units * asset.price_at_purchase
+          }
+        }
+      });
+      assetOrdersCrypto.forEach(asset => {
+        if (!asset.sold) {
+          if (new Date(asset.created_at) <= monthAgo.getTime()) {
+            lastMonthSpentCrypto +=  asset.units * asset.price_at_purchase
+          }
+        } else {
+          if (new Date(asset.created_at) <= monthAgo.getTime()) {
+            lastMonthSpentCrypto -=  asset.units * asset.price_at_purchase
+          }
+        }
+      });
+      lastMonthSpentStocks = (lastMonthSpentStocks / 100).toFixed(2);
+      lastMonthSpentCrypto = (lastMonthSpentCrypto / 100).toFixed(2);
+
+      dashboardWithStats[dashboard.portfolioInfo.id]["current_stocks_value"] = Number(currentValueStocks.toFixed(2));
+      dashboardWithStats[dashboard.portfolioInfo.id]["last_month_growth_stocks"] = Number((lastMonthValueStocks - lastMonthSpentStocks));
+      dashboardWithStats[dashboard.portfolioInfo.id]["this_month_growth_stocks"] = Number((currentValueStocks - (dashboard.total_stock_assets / 100)));
+      dashboardWithStats[dashboard.portfolioInfo.id]["current_crypto_value"] = Number(currentValueCrypto.toFixed(2));
+      dashboardWithStats[dashboard.portfolioInfo.id]["last_month_growth_crypto"] = Number((lastMonthValueCrypto - lastMonthSpentCrypto));
+      dashboardWithStats[dashboard.portfolioInfo.id]["this_month_growth_crypto"] = Number((currentValueCrypto - (dashboard.total_crypto_assets / 100)));
+      // console.log("FOR DASHBOARD: ", dashboard.portfolioInfo.name)
+      // console.log("monthAgo: ", monthAgo)
+      // console.log("assetOrdersCrypto: ", assetOrdersCrypto)
+      // console.log("totalInvestedCrypto: ", totalInvestedCrypto)
+      // console.log("currentValueCrypto: ", currentValueCrypto)
+      // console.log("lastMonthValueCrypto: ", lastMonthValueCrypto)
+      // console.log("lastMonthSpentCrypto: ", lastMonthSpentCrypto)
+      // console.log("lastMonthProfitCrypto: ", lastMonthProfitCrypto)
       console.log("dashboardWithStats: ", dashboardWithStats)
+      setStatsData(dashboardWithStats, () => {console.log(setStatsData)});
     })
   };
 
@@ -335,7 +399,7 @@ const Dashboard = () => {
       }
     });
     // console.log(activeGraphData)
-  }, [activeStat, assetPerformance]);
+  }, [activeStat, assetPerformanceStocks, assetPerformanceCrypto]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -378,7 +442,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getAssetPerformanceData();
-  }, [currencyConversion])
+  }, [dashboardState])
 
   // useEffect, use axios to call the auth endpoint using our jwt token
   // auth endpoint validates the token, if returns true.. setIsAuthorized to true
@@ -498,7 +562,11 @@ const Dashboard = () => {
                 md={6}
                 xl={3}
                 xs={12}>
-                  <PortfolioStats activePortfolio={activePortfolio} dashboardState={dashboardState[activePortfolio]} setActiveStat={setActiveStat} assetPerformance={assetPerformance}/>
+                  <PortfolioStats
+                    activePortfolio={activePortfolio}
+                    dashboardState={dashboardState[activePortfolio]}
+                    setActiveStat={setActiveStat}
+                    statsData={statsData}/>
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
