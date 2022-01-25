@@ -35,7 +35,7 @@ const Dashboard = () => {
   // console.log("asset performance: ", assetPerformanceStocks, assetPerformanceCrypto);
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
-  // console.log("dashboardState: ", dashboardState);
+  console.log("dashboardState: ", dashboardState);
   // console.log("assetPerformance: ", assetPerformance)
   // console.log("activeDashboard: ", dashboardState[activePortfolio]);
   // TODO: REFACTOR!
@@ -100,7 +100,6 @@ const Dashboard = () => {
     }
     axios.post('api/stockHistorical', {id: stockNames})
       .then(res => {
-        console.log(res.data)
         if (assetData.stocks === undefined) {
           assetData['stocks'] = {};
         }
@@ -392,8 +391,8 @@ const Dashboard = () => {
           autoSelected: 'zoom'
         }
       }
-      console.log("Asset performance (stocks): ", assetPerformanceStocks)
-      console.log("statsData activeStat: ", statsData)
+      // console.log("Asset performance (stocks): ", assetPerformanceStocks)
+      // console.log("statsData activeStat: ", statsData)
       let portfolioData = statsData[activePortfolio]
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       let earliestInvestment;
@@ -408,14 +407,14 @@ const Dashboard = () => {
       dates.sort(function(a, b) {
         return Date.parse(a.date) - Date.parse(b.date);
       });
-      console.log("DATES: ", dates)
+      // console.log("DATES: ", dates)
       let graphStartDate;
       assetPerformanceStocks.stocks[dates[0].symbol].forEach((day, i) => {
         if (day.datetime.getTime() === new Date(dates[0].date).getTime()) {
           graphStartDate = i;
         }
       })
-      console.log("Graph start date: ", graphStartDate)
+      // console.log("Graph start date: ", graphStartDate)
       const profitForAsset = {};
       portfolioData.assets.forEach(asset => {
         if (asset.type === 'Stocks') {
@@ -445,7 +444,7 @@ const Dashboard = () => {
         }
 
       })
-      console.log("profitForAsset: ", profitForAsset);
+      // console.log("profitForAsset: ", profitForAsset);
       // console.log("length of profitForAsset: ", Object.values(profitForAsset.BLNK))
 
       const profitForAssetKeys = Object.keys(profitForAsset);
@@ -473,13 +472,130 @@ const Dashboard = () => {
           totalProfitClose
         });
       })
-      console.log("overallProfit: ", overallProfit)
+      // console.log("overallProfit: ", overallProfit)
       overallProfit.forEach(day => {
 
         data.push({
           x: day.date,
           y: [day.totalProfitOpen, day.totalProfitClose]
         })
+      })
+
+    }
+    if (activeStat === "crypto_profit"  &&
+    dashboardState[activePortfolio] !== undefined &&
+    statsData[activePortfolio] !== undefined &&
+    Object.keys(assetPerformanceCrypto.crypto).length > 0
+    ) {
+      yAxis = {
+        labels: {
+          formatter: function (val) {
+            return val.toFixed();
+          },
+        },
+        title: {
+          text: 'Profit'
+        },
+        tooltip: {
+          enabled: true
+        }
+      }
+      xAxis =  {
+        type: 'datetime',
+      }
+      graphType = 'candlestick';
+      graphName = "Crypto profit by day"
+      chartSettings = {
+        type: graphType,
+        height: 350,
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true
+        },
+        toolbar: {
+          autoSelected: 'zoom'
+        }
+      }
+      console.log("Asset performance (crypto): ", assetPerformanceCrypto.crypto)
+      let portfolioData = statsData[activePortfolio]
+      let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
+      const dates = [];
+      portfolioData.assets.forEach(asset => {
+        // console.log(asset)
+        if (asset.type === "Cryptocurrency") {
+          dates.push({symbol: asset.symbol, name: asset.name, date: asset.created_at})
+        }
+      })
+      dates.sort(function(a, b) {
+        return Date.parse(a.date) - Date.parse(b.date);
+      });
+      let graphStartDate;
+      assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
+        if (day.date.getTime() === new Date(dates[0].date).getTime()) {
+          graphStartDate = i;
+        }
+      })
+      const profitForAsset = {};
+      portfolioData.assets.forEach(asset => {
+        if (asset.type === 'Cryptocurrency') {
+          profitForAsset[asset.name] = {};
+          // console.log(asset)
+          if (assetPerformanceCrypto.crypto[asset.name] !== undefined) {
+            assetPerformanceCrypto.crypto[asset.name].forEach((day, i) => {
+              let openValue = 0;
+              let amountSpent = 0;
+              if (i <= graphStartDate) {
+                if (asset.sold) {
+                  openValue -= asset.units * day.data;
+                  amountSpent -= asset.units * (asset.price_at_purchase / 100)
+                } else {
+                  openValue += asset.units * day.data;
+                  amountSpent += asset.units * (asset.price_at_purchase / 100)
+                }
+              }
+              profitForAsset[asset.name][(day.date)] = {
+                  openProfit: openValue - amountSpent,
+                }
+            })
+          } else {
+            return;
+          }
+        }
+
+      })
+      console.log("profitForAsset: ", profitForAsset);
+      // console.log("length of profitForAsset: ", Object.values(profitForAsset.BLNK))
+
+      const profitForAssetKeys = Object.keys(profitForAsset);
+      // console.log("TEST: ", profitForAsset.BLNK[1636351200000])
+      const overallProfit = [];
+
+      assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
+        let totalProfitOpen = 0;
+        if (i <= graphStartDate) {
+          profitForAssetKeys.forEach(asset => {
+
+            if (profitForAsset[asset][new Date(day.date)] !== undefined) {
+              totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
+
+            }
+          })
+        }
+        overallProfit.push({
+          date: day.date,
+          totalProfitOpen,
+        });
+      })
+      console.log("overallProfit: ", overallProfit)
+      overallProfit.forEach((day, i) => {
+        if (i % 2 === 0) {
+          data.push({
+            x: new Date(day.date),
+            y: [day.totalProfitOpen]
+          })
+
+        }
       })
 
     }
