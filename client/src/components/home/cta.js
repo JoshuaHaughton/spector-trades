@@ -61,7 +61,7 @@ function CTA() {
           />
           <Box
             component="img"
-            src="https://images.unsplash.com/photo-1527853787696-f7be74f2e39a?auto=format&fit=crop&w=750&q=80"
+            src="/static/images/ethereum-balloon-hero.svg"
             alt="call to action"
             sx={{
               position: 'absolute',

@@ -37,9 +37,11 @@ export const HomeNavbar = (props) => {
 
 
             <Box sx={{display: 'flex', width: '100%', justifyContent: 'center'}}>
-              <Typography variant="h4">
-                Spector Trades
-              </Typography>
+              <img
+                    src="/static/images/spector-trades-logo-3-cropped.svg"
+                    alt="Spector Trades"
+                    height="50px"
+                  />
             </Box>
 
           { /*

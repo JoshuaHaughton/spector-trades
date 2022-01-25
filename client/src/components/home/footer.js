@@ -48,26 +48,21 @@ export default function Footer() {
     >
       <Container sx={{ my: 8, display: 'flex' }}>
         <Grid container spacing={5} alignItems='end'>
-          <Grid item xs={6} sm={4} md={3}>
-            <Grid
-              container
+          <Grid item xs={6} sm={4} md={3} lg={6}>
+            <Box
               direction="column"
               justifyContent="flex-end"
               spacing={2}
-              sx={{ height: 120 }}
             >
-              <Grid item sx={{ display: 'flex' }}>
-                <Box component="a" href="https://instagram.com/" sx={iconStyle}>
-                  <InstagramIcon sx={{fontSize: '40px', color: 'neutral.700'}} />
+                <Box component="a" href="https://instagram.com/" >
+                  <img
+                      src="/static/images/spector-trades-logo-2-cropped.svg"
+                      alt="Spector Trades"
+                      height="80px"
+                    />
                 </Box>
-                <Box component="a" href="https://linkedin.com/" sx={iconStyle}>
-                  <LinkedInIcon sx={{fontSize: '40px', color: 'neutral.700'}} />
-                </Box>
-              </Grid>
-              <Grid item>
                 <Copyright />
-              </Grid>
-            </Grid>
+            </Box>
           </Grid>
           <Grid item xs={6} sm={4} md={2}>
             <Typography variant="h6" marked="left" gutterBottom>

@@ -5,7 +5,7 @@ import { Button, Typography } from '@mui/material';
 import HeroLayout from './herolayout';
 
 const backgroundImage =
-  'https://images.unsplash.com/photo-1534854638093-bada1813ca19?auto=format&fit=crop&w=1400&q=80';
+  '/static/images/crypto-portfolio.svg';
 
 export default function Hero() {
   return (
@@ -13,7 +13,7 @@ export default function Hero() {
       sxBackground={{
         backgroundImage: `url(${backgroundImage})`,
         backgroundColor: '#7fc7d9', // Average color of the background image.
-        backgroundPosition: 'center',
+        backgroundPosition: 'center top',
       }}
     >
       {/* Increase the network loading priority of the background image. */}
