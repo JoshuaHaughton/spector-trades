@@ -92,8 +92,8 @@ const Dashboard = () => {
     });
 
     const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
+    const stockNames = [];
     if (stockAssets.length > 0) {
-      const stockNames = [];
       stockAssets.forEach((stock) => {
         stockNames.push(stock.name);
       });
