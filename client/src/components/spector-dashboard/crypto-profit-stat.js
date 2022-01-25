@@ -2,8 +2,10 @@ import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material'
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MoneyIcon from '@mui/icons-material/Money';
+import BlurOnIcon from '@material-ui/icons/BlurOn';
 import { makeStyles } from "@material-ui/core/styles";
 import {centsToDollars, niceMoney} from '../../utils/toHumanDollars';
+import { deepPurple } from '@mui/material/colors';
 const useStyles = makeStyles({
   negative: {
     color: "#FF4B4B",
@@ -17,12 +19,10 @@ const useStyles = makeStyles({
 
 export const CryptoProfitStat = (props) => {
   const {statsData, activePortfolio} = props;
-  console.log(statsData);
   const handleClick = (e) => {
     e.preventDefault();
-    props.setActiveStat("crypto-profit")
+    props.setActiveStat("crypto_profit")
   };
-  const initialCost = [];
 
   const getPercentageChange = (oldNumber, newNumber) => {
     const decreaseValue = oldNumber - newNumber;
@@ -32,7 +32,7 @@ export const CryptoProfitStat = (props) => {
   }
   const classes = useStyles();
   return (
-    <button className="stats" onClick={handleClick} disabled={true}>
+    <button className="stats" onClick={handleClick}>
       <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
@@ -65,12 +65,12 @@ export const CryptoProfitStat = (props) => {
           <Grid item>
             <Avatar
               sx={{
-                backgroundColor: 'error.main',
-                height: 56,
-                width: 56
+                backgroundColor: deepPurple[500],
+                height: 30,
+                width: 30
               }}
             >
-              <MoneyIcon />
+              <BlurOnIcon />
             </Avatar>
           </Grid>
         </Grid>

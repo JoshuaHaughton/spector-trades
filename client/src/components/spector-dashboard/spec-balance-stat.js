@@ -7,6 +7,9 @@ export const SpecBalanceStat = (props) => {
   // console.log(dashboardState)
   const handleClick = (e) => {
     e.preventDefault();
+    if (dashboardState.portfolioInfo.live) {
+      return;
+    }
     props.setActiveStat("spec_money")
   };
   return (

@@ -24,7 +24,7 @@ const Dashboard = () => {
     options: {},
     series: []
   });
-  const [activeStat, setActiveStat] = useState("");
+  const [activeStat, setActiveStat] = useState("stock_profit");
   const [assetPerformanceCrypto, setAssetPerformanceCrypto] = useState({
   });
   const [assetPerformanceStocks, setAssetPerformanceStocks] = useState({
@@ -213,7 +213,7 @@ const Dashboard = () => {
         // console.log("asset performance: ", assetPerformance.stocks.BLNK)
         if (asset.type === 'Stocks' && assetPerformanceStocks.stocks) {
 
-          console.log("_______________HERE: ", assetPerformanceStocks.stocks[asset.symbol][20])
+          // console.log("_______________HERE: ", assetPerformanceStocks.stocks[asset.symbol][20])
           assetOrdersStocks.push({
             ...asset,
             initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
@@ -322,8 +322,27 @@ const Dashboard = () => {
       // console.log("Y max: ", yMax);
     }
 
-    if (activeStat === "growth") {
+    if (activeStat === "stock_profit"  &&
+    dashboardState[activePortfolio] !== undefined &&
+    statsData[activePortfolio] !== undefined &&
+    assetPerformanceStocks.stocks !== undefined
+    ) {
+      console.log("Asset performance (stocks): ", assetPerformanceStocks)
+      console.log("assetPerformance under activeStat", assetPerformanceStocks)
+      console.log("statsData activeStat: ", statsData)
+      let portfolioData = statsData[activePortfolio]
+      let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
+      console.log("Portfolio Start date: ", portfolioStartedOn)
+      const dates = [];
+      portfolioData.assets.forEach(asset => {
+        // console.log(asset)
+        if (asset.type === "Stocks") {
+          assetPerformanceStocks.stocks[asset.symbol].forEach(day => {
 
+            console.log(day.datetime.getTime(), portfolioStartedOn.getTime())
+          })
+        }
+      })
     }
     setActiveGraphData({
       series: [{
@@ -357,10 +376,6 @@ const Dashboard = () => {
         },
         markers: {
           size: 0,
-        },
-        title: {
-          text: 'Stock Price Movement',
-          align: 'left'
         },
         fill: {
           type: 'gradient',
@@ -479,10 +494,6 @@ const Dashboard = () => {
         markers: {
           size: 0,
         },
-        title: {
-          text: 'Stock Price Movement',
-          align: 'left'
-        },
         fill: {
           type: 'gradient',
           gradient: {
@@ -575,7 +586,7 @@ const Dashboard = () => {
                 md={6}
                 xl={9}
                 xs={12}>
-                  <HeroGraph {...activeGraphData} />
+                  <HeroGraph {...activeGraphData} activeStat={activeStat} />
               </Grid>
 
               {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}

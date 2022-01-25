@@ -18,13 +18,12 @@ const useStyles = makeStyles({
 
 export const StockProfitStat = (props) => {
   const {statsData, activePortfolio} = props;
-  console.log(statsData);
 
   const classes = useStyles();
 
   const handleClick = (e) => {
     e.preventDefault();
-    props.setActiveStat("stock-profit")
+    props.setActiveStat("stock_profit")
   };
 
   const getPercentageChange = (oldNumber, newNumber) => {
@@ -70,8 +69,8 @@ export const StockProfitStat = (props) => {
             <Avatar
               sx={{
                 backgroundColor: 'error.main',
-                height: 56,
-                width: 56
+                height: 30,
+                width: 30
               }}
             >
               <MoneyIcon />
@@ -100,7 +99,7 @@ export const StockProfitStat = (props) => {
               statsData[activePortfolio].this_month_growth_stocks) > 0 &&
             <ArrowUpwardIcon color="primary" />}
           <Typography
-            color="error"
+            color="error.main"
             sx={{
               mr: 1
             }}
