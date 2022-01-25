@@ -24,7 +24,7 @@ const Dashboard = () => {
     options: {},
     series: []
   });
-  const [activeStat, setActiveStat] = useState("stock_profit");
+  const [activeStat, setActiveStat] = useState("crypto_profit");
   const [assetPerformanceCrypto, setAssetPerformanceCrypto] = useState({
   });
   const [assetPerformanceStocks, setAssetPerformanceStocks] = useState({
@@ -141,7 +141,7 @@ const Dashboard = () => {
         if (assetData.crypto === undefined) {
           assetData['crypto'] = {};
         }
-        const cryptoData = res.data.reverse();
+        const cryptoData = res.data;
         assetData.crypto[asset.name] = [];
         cryptoData.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
@@ -155,7 +155,7 @@ const Dashboard = () => {
       }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
 
     })
-    console.log("assetData: ", assetData)
+    // console.log("assetData: ", assetData)
     // setAssetPerformance(assetData);
       // console.log("assetPerformance: ", assetPerformance)
       // console.log("dashboardState: ", dashboardState)
@@ -589,6 +589,7 @@ const Dashboard = () => {
         });
       })
       console.log("overallProfit: ", overallProfit)
+      overallProfit.reverse();
       overallProfit.forEach((day, i) => {
         if (i % 2 === 0) {
           data.push({
