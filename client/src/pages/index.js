@@ -31,8 +31,8 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  // console.log("activeStat: ", activeStat)
-  // console.log("asset performance: ", assetPerformance);
+  console.log("activeStat: ", activeStat)
+  // console.log("asset performance: ", assetPerformanceStocks, assetPerformanceCrypto);
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
   // console.log("dashboardState: ", dashboardState);
@@ -170,6 +170,7 @@ const Dashboard = () => {
 
 
   const parseStats = (assetPerformanceStocks, assetPerformanceCrypto, dashboardState) => {
+
     // console.log("______________________________________________________")
 
     if (assetPerformanceStocks.stocks === undefined || assetPerformanceCrypto.crypto === undefined) {
@@ -211,7 +212,7 @@ const Dashboard = () => {
         //console.log("asset performance: ", assetPerformance.stocks)
 
         // console.log("asset performance: ", assetPerformance.stocks.BLNK)
-        if (asset.type === 'Stocks' && assetPerformanceStocks.stocks) {
+        if (asset.type === 'Stocks' && Object.keys(assetPerformanceStocks.stocks).length > 0) {
 
           // console.log("_______________HERE: ", assetPerformanceStocks.stocks[asset.symbol][20])
           assetOrdersStocks.push({
@@ -301,8 +302,42 @@ const Dashboard = () => {
     const data = [];
     const xData = [];
     let tmp = [];
-    let yMax;
+    let yMax, yMin;
+    let graphName, graphType, xAxis, yAxis, chartSettings;
     if (activeStat === 'spec_money') {
+      chartSettings = {
+        type: graphType,
+        stacked: false,
+        height: 350,
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true
+        },
+        toolbar: {
+          autoSelected: 'zoom'
+        }
+      }
+      xAxis =  {
+        type: 'datetime',
+        name: 'date',
+        categories: xData
+      }
+      yAxis = {
+        max: yMax,
+        labels: {
+          formatter: function (val) {
+            return val.toFixed();
+          },
+        },
+        title: {
+          text: 'Price'
+        },
+        min: yMin
+      }
+      graphType = 'area';
+      graphName = "Speculative money"
+      yMin = 0;
       yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
       // dashboardState[activePortfolio]
       data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
@@ -325,84 +360,153 @@ const Dashboard = () => {
     if (activeStat === "stock_profit"  &&
     dashboardState[activePortfolio] !== undefined &&
     statsData[activePortfolio] !== undefined &&
-    assetPerformanceStocks.stocks !== undefined
+    Object.keys(assetPerformanceStocks.stocks).length > 0
     ) {
+      yAxis = {
+        labels: {
+          formatter: function (val) {
+            return val.toFixed();
+          },
+        },
+        title: {
+          text: 'Profit'
+        },
+        tooltip: {
+          enabled: true
+        }
+      }
+      xAxis =  {
+        type: 'datetime',
+      }
+      graphType = 'candlestick';
+      graphName = "Stock profit by day"
+      chartSettings = {
+        type: graphType,
+        height: 350,
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true
+        },
+        toolbar: {
+          autoSelected: 'zoom'
+        }
+      }
       console.log("Asset performance (stocks): ", assetPerformanceStocks)
-      console.log("assetPerformance under activeStat", assetPerformanceStocks)
       console.log("statsData activeStat: ", statsData)
       let portfolioData = statsData[activePortfolio]
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
+      let earliestInvestment;
       console.log("Portfolio Start date: ", portfolioStartedOn)
       const dates = [];
       portfolioData.assets.forEach(asset => {
         // console.log(asset)
         if (asset.type === "Stocks") {
-          assetPerformanceStocks.stocks[asset.symbol].forEach(day => {
-
-            console.log(day.datetime.getTime(), portfolioStartedOn.getTime())
-          })
+          dates.push({symbol: asset.symbol, name: asset.name, date: asset.created_at})
         }
       })
+      dates.sort(function(a, b) {
+        return Date.parse(a.date) - Date.parse(b.date);
+      });
+      console.log("DATES: ", dates)
+      let graphStartDate;
+      assetPerformanceStocks.stocks[dates[0].symbol].forEach((day, i) => {
+        if (day.datetime.getTime() === new Date(dates[0].date).getTime()) {
+          graphStartDate = i;
+        }
+      })
+      console.log("Graph start date: ", graphStartDate)
+      const profitForAsset = {};
+      portfolioData.assets.forEach(asset => {
+        if (asset.type === 'Stocks') {
+          profitForAsset[asset.symbol] = {};
+          // console.log(asset)
+          // console.log("HERE: ", assetPerformanceStocks.stocks[asset.symbol])
+          assetPerformanceStocks.stocks[asset.symbol].forEach((day, i) => {
+            let openValue = 0;
+            let closeValue = 0;
+            let amountSpent = 0;
+            if (i <= graphStartDate) {
+              if (asset.sold) {
+                openValue -= asset.units * day.open;
+                closeValue -= asset.units * day.close;
+                amountSpent -= asset.units * (asset.price_at_purchase / 100)
+              } else {
+                openValue += asset.units * day.open;
+                closeValue += asset.units * day.close;
+                amountSpent += asset.units * (asset.price_at_purchase / 100)
+              }
+            }
+            profitForAsset[asset.symbol][(day.datetime)] = {
+                openProfit: openValue - amountSpent,
+                closeProfit: closeValue - amountSpent,
+              }
+          })
+        }
+
+      })
+      console.log("profitForAsset: ", profitForAsset);
+      // console.log("length of profitForAsset: ", Object.values(profitForAsset.BLNK))
+
+      const profitForAssetKeys = Object.keys(profitForAsset);
+      // console.log("TEST: ", profitForAsset.BLNK[1636351200000])
+      const overallProfit = [];
+      assetPerformanceStocks.stocks[dates[0].symbol].forEach((day, i) => {
+        let totalProfitOpen = 0;
+        let totalProfitClose = 0;
+        if (i <= graphStartDate) {
+          profitForAssetKeys.forEach(asset => {
+            // console.log(new Date(day.datetime).getTime())
+            // console.log("LOOK HERE:", asset[new Date(day.datetime)])
+            // console.log("LOOK HERE:", new Date(day.datetime))
+
+            if (profitForAsset[asset][new Date(day.datetime)] !== undefined) {
+              totalProfitOpen += profitForAsset[asset][new Date(day.datetime)].openProfit;
+              totalProfitClose += profitForAsset[asset][new Date(day.datetime)].closeProfit;
+
+            }
+          })
+        }
+        overallProfit.push({
+          date: day.datetime,
+          totalProfitOpen,
+          totalProfitClose
+        });
+      })
+      console.log("overallProfit: ", overallProfit)
+      overallProfit.forEach(day => {
+
+        data.push({
+          x: day.date,
+          y: [day.totalProfitOpen, day.totalProfitClose]
+        })
+      })
+
     }
     setActiveGraphData({
       series: [{
-        name: "Spec money",
+        name: graphName,
         data,
       }],
       options: {
         stroke: {
           show: true,
-          curve: activeStat ? 'straight' : 'smooth',
+          curve: activeStat === 'spec_money' ? 'straight' : 'smooth',
           lineCap: 'butt',
           colors: undefined,
           width: 2,
           dashArray: 0,
         },
-        chart: {
-          type: 'area',
-          stacked: false,
-          height: 350,
-          zoom: {
-            type: 'x',
-            enabled: true,
-            autoScaleYaxis: true
-          },
-          toolbar: {
-            autoSelected: 'zoom'
-          }
-        },
+        chart: chartSettings,
         dataLabels: {
           enabled: false
         },
         markers: {
           size: 0,
         },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shadeIntensity: 1,
-            inverseColors: false,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-            stops: [0, 90, 100]
-          },
-        },
-        yaxis: {
-          max: yMax,
-          labels: {
-            formatter: function (val) {
-              return val.toFixed();
-            },
-          },
-          title: {
-            text: 'Price'
-          },
-        },
-        xaxis: {
-          type: 'datetime',
-          name: 'date',
-          categories: xData
-        },
+
+        yaxis: yAxis,
+        xaxis: xAxis,
         tooltip: {
           shared: false,
           y: {
@@ -468,68 +572,7 @@ const Dashboard = () => {
     //   return <div>Unauthorized user</div>
     // }
 
-  const parseGraphData = (activePortfolio) => {
-    setActiveGraphData({
-      series: [{
-        name: "price",
-        data: [6629.81, 6632.01]
-      }],
-      options: {
-        chart: {
-          type: 'area',
-          stacked: false,
-          height: 350,
-          zoom: {
-            type: 'x',
-            enabled: true,
-            autoScaleYaxis: true
-          },
-          toolbar: {
-            autoSelected: 'zoom'
-          }
-        },
-        dataLabels: {
-          enabled: false
-        },
-        markers: {
-          size: 0,
-        },
-        fill: {
-          type: 'gradient',
-          gradient: {
-            shadeIntensity: 1,
-            inverseColors: false,
-            opacityFrom: 0.5,
-            opacityTo: 0,
-            stops: [0, 90, 100]
-          },
-        },
-        yaxis: {
-          labels: {
-            formatter: function (val) {
-              return val;
-            },
-          },
-          title: {
-            text: 'Price'
-          },
-        },
-        xaxis: {
-          type: 'datetime',
-          name: 'date',
-          categories: ['01-02-2020', '02-01-2022']
-        },
-        tooltip: {
-          shared: false,
-          y: {
-            formatter: function (val) {
-              return (val / 1000000).toFixed(0)
-            }
-          }
-        }
-      }
-    });
-  };
+
 
   const authorizedDashboard = () => {
     if (loading) {
@@ -586,7 +629,11 @@ const Dashboard = () => {
                 md={6}
                 xl={9}
                 xs={12}>
-                  <HeroGraph {...activeGraphData} activeStat={activeStat} />
+                  <HeroGraph
+                    {...activeGraphData}
+                    activeStat={activeStat}
+                    setActiveStat={setActiveStat}
+                  />
               </Grid>
 
               {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}

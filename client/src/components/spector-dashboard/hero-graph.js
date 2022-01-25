@@ -12,6 +12,7 @@ const Chart = dynamic(
   { ssr: false }
 );
 export const HeroGraph = (props) => {
+
   const {activeStat} = props;
   const theme = useTheme();
   let statName = '';
@@ -43,6 +44,12 @@ export const HeroGraph = (props) => {
       height = 30;
       width = 30;
   }
+
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("stock_profit")
+  };
+
 
 // console.log("props graph: ", props)
   return (
@@ -89,8 +96,9 @@ export const HeroGraph = (props) => {
           color="primary"
           endIcon={<ArrowRightIcon fontSize="small" />}
           size="small"
+          onClick={handleClick}
         >
-          Overview
+          Back to stock profit
         </Button>
       </Box>
     </Card>
