@@ -141,8 +141,9 @@ const Dashboard = () => {
         if (assetData.crypto === undefined) {
           assetData['crypto'] = {};
         }
+        const cryptoData = res.data.reverse();
         assetData.crypto[asset.name] = [];
-        res.data.forEach((day, index) => {
+        cryptoData.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
           if (currentDay.getTime() >= oldestDate.getTime()) {
             assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
