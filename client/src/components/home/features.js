@@ -35,12 +35,12 @@ function Features() {
           <Grid item xs={12} md={4}>
             <Box sx={item}>
 
-              <AccountBalanceIcon sx={{ fontSize: '40px'}} />
+              <AccountBalanceIcon sx={{ fontSize: '60px'}} />
 
-              <Typography variant="h6" sx={{ my: 5 }}>
+              <Typography variant="h5" sx={{ my: 5 }}>
                 Invest and Profit
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h6">
                 {
                   'From the latest trendy boutique hotel to the iconic palace with XXL pool'
                 }
@@ -53,11 +53,11 @@ function Features() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <BarChartIcon sx={{ fontSize: '40px'}} />
-              <Typography variant="h6" sx={{ my: 5 }}>
+              <BarChartIcon sx={{ fontSize: '60px'}} />
+              <Typography variant="h5" sx={{ my: 5 }}>
                 Sophisticated Analytics
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h6">
                 {
                   'Privatize a pool, take a Japanese bath or wake up in 900m2 of garden… '
                 }
@@ -68,11 +68,11 @@ function Features() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <Feed sx={{ fontSize: '40px'}} />
-              <Typography variant="h6" sx={{ my: 5 }}>
+              <Feed sx={{ fontSize: '60px'}} />
+              <Typography variant="h5" sx={{ my: 5 }}>
                 Insider knowledge
               </Typography>
-              <Typography variant="h5">
+              <Typography variant="h6">
                 {'By registering, you will access specially negotiated rates '}
                 {'that you will not find anywhere else.'}
               </Typography>
