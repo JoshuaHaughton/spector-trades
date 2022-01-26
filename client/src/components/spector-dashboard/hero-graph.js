@@ -12,7 +12,7 @@ const Chart = dynamic(
   { ssr: false }
 );
 export const HeroGraph = (props) => {
-  console.log("Data sent to graph: ", props.series)
+  console.log("Data sent to graph: ", props.series, props.options)
   const {activeStat} = props;
   const theme = useTheme();
   let statName = '';
@@ -86,7 +86,7 @@ export const HeroGraph = (props) => {
           }}
         >
           {/* INSERT STOCK CHART HERE */}
-          <Chart options={props.options} series={props.series} type={typeOfGraph} height={400} />
+          {props.series && <Chart options={props.options} series={props.series} type={typeOfGraph} height={400} />}
 
         </Box>
       </CardContent>

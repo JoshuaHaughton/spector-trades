@@ -31,7 +31,8 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  console.log("assetPerformanceCrypto", assetPerformanceCrypto)
+  console.log("assetPerformanceCrypto", assetPerformanceCrypto, assetPerformanceStocks)
+  console.log("ACTIVE STAT: ", activeStat)
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -266,12 +267,11 @@ const Dashboard = () => {
       setStatsData(dashboardWithStats);
     })
   };
-
-  const calculateGraphData = () => {
-
-  };
-
   useEffect(() => {
+    if (activeStat === 'stock_profit' && Object.keys(assetPerformanceStocks.stocks).length === 0) {
+      getAssetPerformanceData();
+      return;
+    }
     const data = [];
     const xData = [];
     let tmp = [];
@@ -304,9 +304,8 @@ const Dashboard = () => {
           },
         },
         title: {
-          text: 'Price'
+          text: 'Mount of Spec money'
         },
-        min: yMin
       }
       graphType = 'area';
       graphName = "Speculative money"
@@ -347,7 +346,7 @@ const Dashboard = () => {
       xAxis =  {
         type: 'datetime',
       }
-      graphType = 'candlestick';
+      graphType = 'area';
       graphName = "Stock profit by day"
       chartSettings = {
         type: graphType,
@@ -463,7 +462,7 @@ const Dashboard = () => {
       xAxis =  {
         type: 'datetime',
       }
-      graphType = 'candlestick';
+      graphType = 'area';
       graphName = "Crypto profit by day"
       chartSettings = {
         type: graphType,
@@ -552,7 +551,7 @@ const Dashboard = () => {
       })
 
     }
-    setActiveGraphData({
+    data.length !== 0 && setActiveGraphData({
       series: [{
         name: graphName,
         data,
@@ -561,7 +560,7 @@ const Dashboard = () => {
         stroke: {
           show: true,
           curve: activeStat === 'spec_money' ? 'straight' : 'smooth',
-          lineCap: 'butt',
+        lineCap: 'butt',
           colors: undefined,
           width: 2,
           dashArray: 0,
@@ -586,7 +585,7 @@ const Dashboard = () => {
         }
       }
     });
-  }, [activeStat, assetPerformanceStocks, assetPerformanceCrypto, activePortfolio]);
+  }, [activeStat, assetPerformanceCrypto, assetPerformanceStocks, activePortfolio, statsData]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
 
@@ -619,6 +618,7 @@ const Dashboard = () => {
       axios.get('/api/currencyConversion')
       .then((resp) => {
         setCurrencyConversion(resp.data);
+        getAssetPerformanceData();
       })
       .catch(err => {
         console.log("ERROR in currencyConversion call: ", err)
