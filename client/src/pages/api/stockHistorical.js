@@ -77,11 +77,7 @@ export default async (req, res) => {
   }).then(response => {
     if (response['storedData'] && !needsSearch.includes(true)) {
       console.log("NO SEARCH REQUIRED IN STOCKSHISTORICAL for: ", id)
-      console.log("--------------------------------------------------")
-      console.log("response Data: ", response.storedData)
-      console.log("--------------------------------------------------")
-
-      return res.status(200).json(JSON.stringify(response.storedData));
+      return res.status(200).json(response.storedData);
     }
 
     if (response) {
