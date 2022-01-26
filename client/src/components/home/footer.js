@@ -44,10 +44,10 @@ export default function Footer() {
   return (
     <Typography
       component="footer"
-      sx={{ display: 'flex', bgcolor: 'secondary.light' }}
+      sx={{ display: 'flex', bgcolor: '#242424' }}
     >
       <Container sx={{ my: 8, display: 'flex' }}>
-        <Grid container spacing={5} alignItems='end'>
+        <Grid container spacing={5} sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: "center"}}>
           <Grid item xs={6} sm={4} md={3} lg={6}>
             <Box
               direction="column"
@@ -80,7 +80,7 @@ export default function Footer() {
               </Box>
             </Box>
           </Grid>
-          <Grid item>
+          {/* <Grid item>
             <Typography variant="caption">
               {'Icons made by '}
               <Link href="https://www.freepik.com" rel="sponsored" title="Freepik">
@@ -100,7 +100,7 @@ export default function Footer() {
                 CC 3.0 BY
               </Link>
             </Typography>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Container>
     </Typography>

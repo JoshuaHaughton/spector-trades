@@ -9,7 +9,15 @@ import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import { Feed } from '@mui/icons-material';
 
+
 import {Box, Grid, Container, Typography} from '@mui/material';
+import { makeStyles } from '@mui/styles';
+import { ClassNames } from '@emotion/react';
+
+const useStyles = makeStyles({
+  label: {color: "#514BB8"}, // a nested style rule
+});
+
 
 const item = {
   display: 'flex',
@@ -19,6 +27,7 @@ const item = {
 };
 
 function Features() {
+  const classes = useStyles();
   return (
     <Box
       component="section"
@@ -27,60 +36,61 @@ function Features() {
         <Box
           sx={{textAlign: "center"}}
         >
-          <h2>Learn to trade without breaking the bank!</h2>
+          <h2>Learn to trade without <span className={classes.label}>breaking the bank!</span></h2>
         </Box>
 
       <Container maxWidth="xl" sx={{ mt: 15, mb: 30, display: 'flex', position: 'relative' }}>
         <Box
-          component="img"
-          src="/static/themes/onepirate/productCurvyLines.png"
-          alt="curvy lines"
+          // component="img"
+          // src="/static/themes/onepirate/productCurvyLines.png"
+          // alt="curvy lines"
           sx={{ pointerEvents: 'none', position: 'absolute', top: -180 }}
         />
         <Grid container spacing={5}>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
 
-              <AccountBalanceIcon sx={{ fontSize: '60px'}} />
+              <AccountBalanceIcon sx={{ fontSize: '60px', color: "#514BB8"}} />
 
               <Typography variant="h5" sx={{ my: 5 }}>
-                Invest and Profit
+                Study Your Gains
               </Typography>
-              <Typography variant="h6">
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 {
-                  'From the latest trendy boutique hotel to the iconic palace with XXL pool'
+                  'Spec Money allows you to practice market strategies and skills with no real risk!'
                 }
-
-                {
-                  ', go for a mini-vacation just a few subway stops away from your home.'
-                }
+              </Typography>
+              <br/>
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                'Focus on creating your next plan of action without worrying about going broke.'
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <BarChartIcon sx={{ fontSize: '60px'}} />
+              <BarChartIcon sx={{ fontSize: '60px', color: "#514BB8"}} />
               <Typography variant="h5" sx={{ my: 5 }}>
                 Sophisticated Analytics
               </Typography>
-              <Typography variant="h6">
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
                 {
-                  'Privatize a pool, take a Japanese bath or wake up in 900m2 of garden… '
+                  'With our dynamic charts and historical data, you can accurately track your favourite investment assets without fail.'
                 }
-
-                {'your Sundays will not be alike.'}
               </Typography>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <Feed sx={{ fontSize: '60px'}} />
+              <Feed sx={{ fontSize: '60px', color: "#514BB8"}} />
               <Typography variant="h5" sx={{ my: 5 }}>
                 Insider knowledge
               </Typography>
-              <Typography variant="h6">
-                {'By registering, you will access specially negotiated rates '}
-                {'that you will not find anywhere else.'}
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                {"Through our Newsfeed, you can do things like interact with other experienced traders, as well as see the most recent articles about your specific assets." }
+              </Typography>
+              <br/>
+              <Typography variant="h6" sx={{ textAlign: 'center' }}>
+                {"With a community of skilled investors behind you, you can't go wrong!"}
               </Typography>
             </Box>
           </Grid>

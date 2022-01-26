@@ -1,26 +1,37 @@
 import * as React from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
+import { withStyles } from '@mui/styles';
 
 import HeroLayout from './herolayout';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-const theme = createTheme({
-  status: {
-    danger: '#e53e3e',
+// const theme = createTheme({
+//   status: {
+//     danger: '#e53e3e',
+//   },
+//   palette: {
+//     primary: {
+//       main: '#3832A0',
+//       darker: '#3832A0',
+//     },
+//     neutral: {
+//       main: '#64748B',
+//       contrastText: '#fff',
+//     },
+//   },
+// });
+
+const StyledButton = withStyles({
+  root: {
+    backgroundColor: '#29256A',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#777777',
+      color: '#3c52b2',
   },
-  palette: {
-    primary: {
-      main: '#3832A0',
-      darker: '#3832A0',
-    },
-    neutral: {
-      main: '#64748B',
-      contrastText: '#fff',
-    },
-  },
-});
+}})(Button);
 
 const backgroundImage =
   '/static/images/crypto-portfolio.svg';
@@ -62,7 +73,7 @@ export default function Hero() {
           Enjoy secret offers up to -70% off the best luxury hotels every Sunday.
         </Typography>
         {/* <ThemeProvider theme={theme}> */}
-          <Button
+          <StyledButton
             color="secondary"
             variant="contained"
             size="large"
@@ -71,7 +82,7 @@ export default function Hero() {
             sx={{ minWidth: 200 }}
           >
             Learn More
-          </Button>
+          </StyledButton>
         {/* </ThemeProvider> */}
       </Box>
       {/* <Box

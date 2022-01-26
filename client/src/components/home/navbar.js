@@ -47,10 +47,10 @@ export const HomeNavbar = (props) => {
                     <Link href="/dashboard" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
                       Dashboard
                     </Link>
-                    <Link href="/newsfeed" underline="none" sx={{ marginLeft: '24px'}}>
+                    <Link href="/newsfeed" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
                       Newsfeed
                     </Link>
-                    <Link href="/register" underline="none" sx={{ marginLeft: '24px'}}>
+                    <Link href="/register" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
                       Register
                     </Link>
                   </Box>
