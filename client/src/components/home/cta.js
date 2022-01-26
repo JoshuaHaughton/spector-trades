@@ -1,6 +1,17 @@
 import * as React from 'react';
 
 import {Box, Grid, Typography, Container, TextField, Snackbar, Button, Card} from '@mui/material';
+import { withStyles } from '@mui/styles';
+
+const StyledButton = withStyles({
+  root: {
+    backgroundColor: '#29256a',
+    color: '#fff',
+    '&:hover': {
+      backgroundColor: '#fff',
+      color: '#29256A',
+  },
+}})(Button);
 
 function CTA() {
 
@@ -14,7 +25,7 @@ function CTA() {
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                bgcolor: 'info.light',
+                bgcolor: '#737373',
                 py: 8,
                 px: 3,
               }}
@@ -26,17 +37,17 @@ function CTA() {
                 </Typography>
 
                 <Typography variant="h5">
-                  Taste the holidays of the everyday close to home.
+                  Sign up and trade for free today!
                 </Typography>
 
-                <Button
-                  color="warning"
+                <StyledButton
+                  // color="warning"
                   variant="contained"
                   href="/register"
-                  sx={{ width: '100%', color: 'common.black', marginTop: '4em' }}
+                  sx={{ width: '100%', marginTop: '4em' }}
                 >
                   Sign Up
-                </Button>
+                </StyledButton>
               </Box>
             </Box>
           </Card>

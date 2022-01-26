@@ -14,17 +14,17 @@ export const HomeNavbar = (props) => {
   return (
     <>
       <HomeNavbarRoot
-        sx={{  position: 'relative',     }}
+        sx={{  position: 'relative', height: 80 }}
         {...other}>
         <Toolbar
           disableGutters
           sx={{
-            minHeight: '64px',
+            height: 80,
             left: 0,
             px: 2
           }}
         >
-          <IconButton
+          {/* <IconButton
             onClick={onSidebarOpen}
             sx={{
               display: {
@@ -33,24 +33,27 @@ export const HomeNavbar = (props) => {
             }}
           >
             <MenuIcon fontSize="small" />
-          </IconButton>
+          </IconButton> */}
 
 
-            <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px'}}>
+            <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center'}}>
+              <Box sx={{marginLeft: 8}}>
               <img
-                    src="/static/images/spector-trades-logo-2-cropped.svg"
+                    src="/static/images/Spector-Trades-logo-4.svg"
                     alt="Spector Trades"
-                    height="36px"
-                    // sx={{marginTop: '24px'}}
+                    height="50px"
+
                   />
+
+              </Box>
                   <Box sx={{width: '30%', display: 'flex'}}>
-                    <Link href="/dashboard" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
+                    <Link href="/dashboard" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Dashboard
                     </Link>
-                    <Link href="/newsfeed" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
+                    <Link href="/newsfeed" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Newsfeed
                     </Link>
-                    <Link href="/register" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
+                    <Link href="/register" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Register
                     </Link>
                   </Box>

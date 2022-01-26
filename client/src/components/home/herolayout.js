@@ -67,8 +67,12 @@ function HeroLayout(props) {
           alt="arrow down"
           sx={{ position: 'absolute', bottom: 32 }}
         >
-          <IconButton size="large" sx={{color: 'white'}}>
-            <DoubleArrowIcon sx={{ transform: 'rotate(90deg)', fontSize: '40px'}} />
+          <IconButton href="#features" size="large" sx={{color: 'white', transition: "all 300ms ease", scrollBehavior: "smooth"}}>
+            <DoubleArrowIcon sx={{
+              transform: 'rotate(90deg)',
+              fontSize: '40px',
+              }}
+              />
           </IconButton>
         </Box>
       </Container>

@@ -1,11 +1,15 @@
 import * as React from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
-import { withStyles } from '@mui/styles';
+import { withStyles, makeStyles } from '@mui/styles';
 
 import HeroLayout from './herolayout';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const useStyles = makeStyles({
+  label: {color: "#29256A"}, // a nested style rule
+});
 
 // const theme = createTheme({
 //   status: {
@@ -25,11 +29,11 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const StyledButton = withStyles({
   root: {
-    backgroundColor: '#29256A',
+    backgroundColor: '#29256a',
     color: '#fff',
     '&:hover': {
-      backgroundColor: '#777777',
-      color: '#3c52b2',
+      backgroundColor: '#fff',
+      color: '#29256A',
   },
 }})(Button);
 
@@ -37,6 +41,7 @@ const backgroundImage =
   '/static/images/crypto-portfolio.svg';
 
 export default function Hero() {
+  const classes = useStyles();
   return (
     <HeroLayout
       sxBackground={{
@@ -62,23 +67,23 @@ export default function Hero() {
       }}
       >
         <Typography color="inherit" align="center" variant="h2" marked="center">
-          Upgrade your Stonks
+          Make huge trades, without the risk.
         </Typography>
         <Typography
           color="inherit"
           align="center"
           variant="h5"
-          sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}
+          sx={{ mb: 6, mt: { sx: 4, sm: 10 } }}
         >
-          Enjoy secret offers up to -70% off the best luxury hotels every Sunday.
+          At Spector Trades, <span className={classes.label}>you're</span> in the big leagues!
         </Typography>
         {/* <ThemeProvider theme={theme}> */}
           <StyledButton
-            color="secondary"
+            // color="secondary"
             variant="contained"
             size="large"
             component="a"
-            href="/register"
+            href="#features"
             sx={{ minWidth: 200 }}
           >
             Learn More

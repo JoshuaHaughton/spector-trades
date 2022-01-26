@@ -21,14 +21,15 @@ const Title = (props) =>  {
               textAlign: 'center',
               // zIndex: "10",
               backgroundColor: "transparent",
-              width: '75%',
+              width: '80%',
               // justifySelf: 'center',
               flexWrap: 'wrap',
               mb: 10
             }}
           >
-            At Spector, we're serious about <span className={classes.label}>driving results.</span> Check it out:
+            At Spector, we're serious about <span className={classes.label}>driving results.</span>  Check it out:
           </Typography>
+
 )};
 
 const Likes = (props) => (

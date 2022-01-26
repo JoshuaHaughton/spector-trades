@@ -31,6 +31,7 @@ function Features() {
   return (
     <Box
       component="section"
+      id="features"
       sx={{ display: 'flex', overflow: 'hidden', bgcolor: 'white', flexDirection: 'column', pt: 8, fontSize: "24px" }}
     >
         <Box

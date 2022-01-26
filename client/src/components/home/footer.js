@@ -6,13 +6,13 @@ import LinkedInIcon from '@mui/icons-material/LinkedIn';
 
 function Copyright() {
   return (
-    <React.Fragment>
+    <Box sx={{display: "flex", justifyContent: "space-evenly", width: "25%"}}>
+      <Link color="secondary" href="https://github.com/JoshuaHaughton/spector-trades/">
       {'© '}
-      <Link color="inherit" href="https://github.com/JoshuaHaughton/spector-trades/">
-        Spector Trades
-      </Link>{' '}
+      {`Spector Trades `}
       {new Date().getFullYear()}
-    </React.Fragment>
+      </Link>{' '}
+    </Box>
   );
 }
 
@@ -41,14 +41,17 @@ const LANGUAGES = [
 ];
 
 export default function Footer() {
+
   return (
     <Typography
       component="footer"
       sx={{ display: 'flex', bgcolor: '#242424' }}
     >
-      <Container sx={{ my: 8, display: 'flex' }}>
-        <Grid container spacing={5} sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: "center"}}>
-          <Grid item xs={6} sm={4} md={3} lg={6}>
+      <Container sx={{ my: 8, display: 'flex', justifyContent: "center" }}>
+        <Grid container sx={{display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: "center", width: "75%"}}>
+          <Grid item sx={{ display: "flex", flexDirection: 'column', justifyContent: 'center', alignItems: "center", padding: 0, width: "100%"}} xs={12} sm={12} md={12} lg={12}>
+
+
             <Box
               direction="column"
               justifyContent="flex-end"
@@ -56,15 +59,49 @@ export default function Footer() {
             >
                 <Box component="a" href="https://instagram.com/" >
                   <img
-                      src="/static/images/spector-trades-logo-2-cropped.svg"
+                      src="/static/images/Find-Investments-Find-Wealth.svg"
                       alt="Spector Trades"
-                      height="80px"
+                      height="150px"
                     />
                 </Box>
-                <Copyright />
             </Box>
+
+                <Copyright />
+
+
+            <Box sx={{display: "flex", flexDirection: "row", alignItems: "center", mt: 2}}>
+
+
+            <Typography variant="h6" marked="left" gutterBottom>
+              Team:
+            </Typography>
+
+            <Box component="ul" sx={{ m: 0, listStyle: 'none', p: 0, ml: 3 }}>
+
+              <Box component="li" sx={{ py: 0.1 }}>
+                <Link href="https://github.com/Drumshtick">Erik</Link>
+              </Box>
+              <Box component="li" sx={{ py: 0.1 }}>
+                <Link href="https://github.com/JoshuaHaughton">Josh</Link>
+              </Box>
+              <Box component="li" sx={{ py: 0.1 }}>
+                <Link href="https://github.com/kencruz">Ken</Link>
+              </Box>
+
+
+              </Box>
+
+
+
+            </Box>
+
+
           </Grid>
-          <Grid item xs={6} sm={4} md={2}>
+
+
+
+
+          {/* <Grid item xs={6} sm={4} md={2}>
             <Typography variant="h6" marked="left" gutterBottom>
               Team
             </Typography>
@@ -79,7 +116,7 @@ export default function Footer() {
                 <Link href="https://github.com/kencruz">Ken</Link>
               </Box>
             </Box>
-          </Grid>
+          </Grid> */}
           {/* <Grid item>
             <Typography variant="caption">
               {'Icons made by '}
