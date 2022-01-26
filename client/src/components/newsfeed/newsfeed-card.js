@@ -31,7 +31,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
   const [cookies, setCookie] = useCookies();
   const [liked, setLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState("Loading");
+  const [totalLikes, setTotalLikes] = useState(0);
   const [state, setState] = useState(() => {
 
     //First conditional sets up variables so that regardless of the name of the variables

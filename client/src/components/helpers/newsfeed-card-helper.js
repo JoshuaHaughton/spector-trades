@@ -112,8 +112,10 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
 
         //save retrieved article
         const savedArticle = media.data.data.article;
+        console.log('EXISTS!!!!!!')
 
       } else {
+        console.log('CREATING!!!!!!')
 
         //create article
         await api({
@@ -127,7 +129,9 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
         })
       }
 
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
 
   };
 

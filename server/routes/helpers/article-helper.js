@@ -36,7 +36,7 @@ const insertArticle = async (article, db) => {
 
   //Create new article if it doesnt exist already
 
-  articleResponse = await db
+   let response = await db
     .query(
       `
     INSERT INTO articles (url, original_id, created_at) 
@@ -45,17 +45,8 @@ const insertArticle = async (article, db) => {
     `,
       [article.link, article._id, article.published_date],
     )
-    .then((resp) => {
-
-      res.status(200).json({
-        status: "success",
-        results: resp.length,
-        data: {
-          article: resp.rows[0],
-        },
-      });
-      return resp.rows;
-    });
+    return response;
+    
 };
 
 module.exports = { getArticleByOldId, insertArticle };

@@ -12,12 +12,21 @@ module.exports = (db) => {
     const article = JSON.parse(req.body.config.data).media;
     console.log("CREATE ARTICLE", article);
 
-    let articleResponse = "";
 
     try {
-      insertArticle(article, db);
+      insertArticle(article, db)
+      .then((resp) => {
 
-      return articleResponse.rows;
+        res.status(200).json({
+          status: "success",
+          results: resp.length,
+          data: {
+            article: resp.rows[0],
+          },
+        });
+        console.log("FIXED!!!")
+        return resp.rows;
+      })
 
     } catch (err) {
       //Maybe article already exists?
