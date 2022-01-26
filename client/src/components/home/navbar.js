@@ -53,8 +53,8 @@ export const HomeNavbar = (props) => {
                     <Link href="/newsfeed" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Newsfeed
                     </Link>
-                    <Link href="/register" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
-                      Register
+                    <Link href="/login" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
+                      Login
                     </Link>
                   </Box>
             </Box>
