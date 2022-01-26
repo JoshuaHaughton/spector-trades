@@ -21,8 +21,68 @@ const Dashboard = () => {
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
   const [activeGraphData, setActiveGraphData] = useState({
-    options: {},
-    series: []
+    series: [{
+      name: "price",
+      data: [0, 0]
+    }],
+    options: {
+      chart: {
+        type: 'area',
+        stacked: false,
+        height: 350,
+        zoom: {
+          type: 'x',
+          enabled: true,
+          autoScaleYaxis: true
+        },
+        toolbar: {
+          autoSelected: 'zoom'
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      markers: {
+        size: 0,
+      },
+      title: {
+        text: 'Asset Price Movement',
+        align: 'left'
+      },
+      fill: {
+        type: 'gradient',
+        gradient: {
+          shadeIntensity: 1,
+          inverseColors: false,
+          opacityFrom: 0.5,
+          opacityTo: 0,
+          stops: [0, 90, 100]
+        },
+      },
+      yaxis: {
+        labels: {
+          formatter: function (val) {
+            return val;
+          },
+        },
+        title: {
+          text: 'Price'
+        },
+      },
+      xaxis: {
+        type: 'datetime',
+        name: 'date',
+        categories: ['01-02-2020', '02-01-2022']
+      },
+      tooltip: {
+        shared: false,
+        y: {
+          formatter: function (val) {
+            return val
+          }
+        }
+      }
+    }
   });
   const [activeStat, setActiveStat] = useState("");
   const [plusMinus, setPlusMinus] = useState({stock: {}, crypto: {}});
