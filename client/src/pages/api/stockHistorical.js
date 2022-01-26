@@ -52,7 +52,7 @@ export default async (req, res) => {
 
     if (needsSearch.includes(true)) {
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!MAKING API CALL TO TWELVE-DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log("MAKING REQUEST TO twelve-data-api for: ", needsSearch);
+      console.log("MAKING REQUEST TO twelve-data-api for: ", id);
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!MAKING API CALL TO TWELVE-DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       axios.request(options).then(resp => {
         const reply = {};
@@ -77,7 +77,11 @@ export default async (req, res) => {
   }).then(response => {
     if (response['storedData'] && !needsSearch.includes(true)) {
       console.log("NO SEARCH REQUIRED IN STOCKSHISTORICAL for: ", id)
-      return res.status(200).json(response.storedData);
+      console.log("--------------------------------------------------")
+      console.log("response Data: ", response.storedData)
+      console.log("--------------------------------------------------")
+
+      return res.status(200).json(JSON.stringify(response.storedData));
     }
 
     if (response) {

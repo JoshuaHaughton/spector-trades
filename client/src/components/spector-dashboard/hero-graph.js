@@ -12,7 +12,7 @@ const Chart = dynamic(
   { ssr: false }
 );
 export const HeroGraph = (props) => {
-
+  console.log("Data sent to graph: ", props.series)
   const {activeStat} = props;
   const theme = useTheme();
   let statName = '';

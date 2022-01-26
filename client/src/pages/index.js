@@ -31,7 +31,7 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  console.log(activeGraphData)
+  console.log("assetPerformanceCrypto", assetPerformanceCrypto)
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -101,6 +101,8 @@ const Dashboard = () => {
           assetData['stocks'] = {};
         }
         const stockData = res.data;
+        console.log("stockData FROM API call: ", stockData)
+
         const stockDataKeys = Object.keys(stockData);
         stockDataKeys.forEach(key => {
           if (stockNames.includes(key)) {
@@ -109,10 +111,10 @@ const Dashboard = () => {
               assetData.stocks[key] = [];
               stockPriceValues.forEach(price => {
                 price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * price.close;
-                price.high = currencyConversion.CAD * price.high;
-                price.low = currencyConversion.CAD * price.low;
-                price.open = currencyConversion.CAD * price.open;
+                price.close = currencyConversion.CAD * Number(price.close);
+                price.high = currencyConversion.CAD * Number(price.high);
+                price.low = currencyConversion.CAD * Number(price.low);
+                price.open = currencyConversion.CAD * Number(price.open);
                 assetData.stocks[key].push(price);
               });
             } else {
@@ -130,7 +132,8 @@ const Dashboard = () => {
             }
           }
         });
-        setAssetPerformanceStocks({...assetPerformanceStocks, stocks: assetData['stocks']})
+        console.log("assetData in stocks API call: ", assetData.stocks)
+        setAssetPerformanceStocks({stocks: assetData['stocks']})
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
       cryptoAssets.forEach(asset => {
@@ -259,8 +262,8 @@ const Dashboard = () => {
       dashboardWithStats[dashboard.portfolioInfo.id]["current_crypto_value"] = Number(currentValueCrypto.toFixed(2));
       dashboardWithStats[dashboard.portfolioInfo.id]["last_month_growth_crypto"] = Number((lastMonthValueCrypto - lastMonthSpentCrypto));
       dashboardWithStats[dashboard.portfolioInfo.id]["this_month_growth_crypto"] = Number((currentValueCrypto - (dashboard.total_crypto_assets / 100)));
-      console.log("dashboardWithStats: ", dashboardWithStats)
-      setStatsData(dashboardWithStats, () => {console.log(setStatsData)});
+
+      setStatsData(dashboardWithStats);
     })
   };
 
@@ -372,7 +375,7 @@ const Dashboard = () => {
       dates.sort(function(a, b) {
         return Date.parse(a.date) - Date.parse(b.date);
       });
-
+      if (!dates[0]) return;
       let graphStartDate;
       assetPerformanceStocks.stocks[dates[0].symbol].forEach((day, i) => {
         if (day.datetime.getTime() === new Date(dates[0].date).getTime()) {
@@ -538,7 +541,6 @@ const Dashboard = () => {
           totalProfitOpen,
         });
       })
-      console.log("overallProfit: ", overallProfit)
       overallProfit.forEach((day, i) => {
         if (i % 2 === 0) {
           data.push({
@@ -595,7 +597,6 @@ const Dashboard = () => {
         const config = {
           headers: { Authorization: `Bearer ${token}`}
         };
-        console.log( config )
         api.get('/dashboard', config).then(response => {
           if (response.status === 200) {
             setDashboardState(response.data);
@@ -630,7 +631,74 @@ const Dashboard = () => {
   }, [dashboardState])
 
 
-
+  const createAssetGraphData = (data) => {
+    setActiveGraphData({
+      series: [{
+        name: "price",
+        data: data,
+      }],
+      options: {
+        chart: {
+          type: 'area',
+          stacked: false,
+          height: 350,
+          zoom: {
+            type: 'x',
+            enabled: true,
+            autoScaleYaxis: true
+          },
+          toolbar: {
+            autoSelected: 'zoom'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        markers: {
+          size: 0,
+        },
+        title: {
+          text: 'Asset Price Movement',
+          align: 'left'
+        },
+        fill: {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 1,
+            inverseColors: false,
+            opacityFrom: 0.5,
+            opacityTo: 0,
+            stops: [0, 90, 100]
+          },
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              if (val < 1) {
+                return val.toFixed(20).match(/^-?\d*\.?0*\d{0,2}/)[0];
+              }
+              return val;
+            },
+          },
+          title: {
+            text: 'Price'
+          },
+        },
+        xaxis: {
+          type: 'datetime',
+          name: 'date',
+        },
+        tooltip: {
+          shared: false,
+          y: {
+            formatter: function (val) {
+              return val
+            }
+          }
+        }
+      }
+    });
+  };
 
   const authorizedDashboard = () => {
     if (loading) {
