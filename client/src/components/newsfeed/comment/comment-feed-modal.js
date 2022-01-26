@@ -1,11 +1,13 @@
-import { Box, Grid, Dialog } from "@mui/material";
+import { Box, Grid, Dialog, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { fetchCommentArray } from "src/components/helpers/comment-feed-helpers";
 import { CommentCard } from "./comment-card";
+import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
   width: "100%",
   maxWidth: 600,
+  pt: 4,
 };
 
 export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
@@ -37,7 +39,20 @@ export const CommentFeedModal = ({ open, handleClose, media, parentState }) => {
       aria-describedby="modal-modal-description"
       scroll={"body"}
     >
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
       <Box sx={style}>
+
         <Grid container spacing={3}>
           {comments.map((comment) => (
             // <Grid item key={comment.id} lg={12} md={12} xs={12}>

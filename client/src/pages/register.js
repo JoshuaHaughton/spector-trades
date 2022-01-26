@@ -132,7 +132,7 @@ React.useEffect(() => {
     <>
       <Head>
         <title>
-          Register | Material Kit
+          Register | Spector Trades
         </title>
       </Head>
       <Box
@@ -146,14 +146,14 @@ React.useEffect(() => {
       >
         <Container maxWidth="sm">
           <NextLink
-            href="/"
+            href="/home"
             passHref
           >
             <Button
               component="a"
               startIcon={<ArrowBackIcon fontSize="small" />}
             >
-              Dashboard
+              Home
             </Button>
           </NextLink>
           <form onSubmit={formik.handleSubmit}>
