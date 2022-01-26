@@ -163,7 +163,7 @@ export const DashboardSidebar = (props) => {
               </a>
             </NextLink>
           </Box>
-          
+
           {user && (
             <Box sx={{ px: 2 }}>
               <Box
