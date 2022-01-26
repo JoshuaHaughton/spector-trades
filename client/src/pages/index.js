@@ -126,6 +126,7 @@ const Dashboard = () => {
     if (activeStat === "growth") {
 
     }
+    /* TEMPORARY DISABLE
     setActiveGraphData({
       series: [{
         name: "Spec money",
@@ -199,6 +200,8 @@ const Dashboard = () => {
         }
       }
     });
+    */
+
     // console.log(activeGraphData)
   }, [activeStat]);
   // /auth endpoint returns {success: true, token}
@@ -224,7 +227,7 @@ const Dashboard = () => {
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             
             setLoading(false);
-            parseGraphData(activePortfolio);
+            // parseGraphData(activePortfolio); TEMPORARY DISABLE
 
             return response.data;
           }
@@ -267,13 +270,43 @@ const Dashboard = () => {
               }));
             }
 
-            
-
-
             // END OF GET + / - DATA
+            return response;
           }
 
-        }).catch(() => {
+        }).then( response => {
+
+          // GET THE FIRST ASSET AND MAKE THE GRAPH FOR IT
+          if (response) {
+            const assets = Object.values(response).map(p => p.assets).flat();
+            if (assets.length > 0) {
+              const firstAsset = assets[0];
+  
+              if (firstAsset.type === "Cryptocurrency") {
+          
+                axios.post('/api/crypto-history', {id: firstAsset.name.toLowerCase()}).then(res => {
+                  if (res.data['prices']) {
+                    createAssetGraphData(res.data.prices, firstAsset.symbol);
+                  }
+                });
+          
+              }
+          
+              if (firstAsset.type === "Stocks") {
+                axios.post('/api/stock-history', {symbol: firstAsset.symbol}).then(res => {
+                  if (res.data['values']) {
+                    const dataSeries = res.data.values.map(v => {
+                      //return [Math.round((new Date(v.datetime)) / 1000), Number(v.close)];
+                      return [v.datetime, Number(v.close)];
+                    });
+                    createAssetGraphData(dataSeries, firstAsset.symbol);
+                  }
+                });
+              }
+            }
+          }
+        }
+        ).catch(() => {
           // Response rejected
           setTimeout(() => {setLoading(false)}, 1000);
         });
@@ -361,7 +394,11 @@ const Dashboard = () => {
     });
   };
 
-  const createAssetGraphData = (data) => {
+  const createAssetGraphData = (data, name) => {
+    let nameLabel = 'Asset';
+    if (name) {
+      nameLabel = name;
+    }
     setActiveGraphData({
       series: [{
         name: "price",
@@ -388,7 +425,7 @@ const Dashboard = () => {
           size: 0,
         },
         title: {
-          text: 'Asset Price Movement',
+          text: `${nameLabel} Price Movement`,
           align: 'left'
         },
         fill: {

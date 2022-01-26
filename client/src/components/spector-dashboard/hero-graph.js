@@ -13,6 +13,7 @@ export const HeroGraph = (props) => {
 // console.log("props graph: ", props)
   return (
     <Card {...props}>
+      { /*
       <CardHeader
         action={(
           <Button
@@ -25,20 +26,25 @@ export const HeroGraph = (props) => {
         title="Latest Sales"
       />
       <Divider />
+      
+      */}
+
       <CardContent>
         <Box
           sx={{
-            height: 400,
+            height: 550,
             position: 'relative'
           }}
         >
           {/* INSERT STOCK CHART HERE */}
-          <Chart options={props.options} series={props.series} type='area' height={400} />
+          <Chart options={props.options} series={props.series} type='area' height={550} />
 
         </Box>
       </CardContent>
+      
+{    /*  
       <Divider />
-      <Box
+        <Box
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
@@ -52,7 +58,7 @@ export const HeroGraph = (props) => {
         >
           Overview
         </Button>
-      </Box>
+      </Box> */}
     </Card>
   );
 };

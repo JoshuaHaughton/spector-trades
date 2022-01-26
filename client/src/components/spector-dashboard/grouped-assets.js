@@ -84,7 +84,7 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
 
       axios.post('/api/crypto-history', {id: asset.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
-          createAssetGraphData(res.data.prices);
+          createAssetGraphData(res.data.prices, asset.symbol);
         }
       });
     }
@@ -97,7 +97,7 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
           const dataSeries = res.data.values.map(v => {
             return [v.datetime, Number(v.close)];
           });
-          createAssetGraphData(dataSeries);
+          createAssetGraphData(dataSeries, asset.symbol);
         }
       });
     }

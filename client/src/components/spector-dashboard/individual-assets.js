@@ -108,7 +108,7 @@ export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
 
       axios.post('/api/crypto-history', {id: row.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
-          createAssetGraphData(res.data.prices);
+          createAssetGraphData(res.data.prices, row.symbol);
         }
       });
 
@@ -123,7 +123,7 @@ export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
             //return [Math.round((new Date(v.datetime)) / 1000), Number(v.close)];
             return [v.datetime, Number(v.close)];
           });
-          createAssetGraphData(dataSeries);
+          createAssetGraphData(dataSeries, row.symbol);
         }
       });
     }
