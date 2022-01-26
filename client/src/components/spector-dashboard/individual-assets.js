@@ -62,7 +62,7 @@ const columns = [
     label: '+ / -',
     minWidth: 100,
     align: 'right',
-    format: (value) => Number(value).toFixed(2),
+    format: (value) => value,
   },
   {
     id: 'timestamp',
@@ -80,7 +80,7 @@ function createData(name, symbol, type, priceAtPurchase, quantity, createdAt, pl
 }
 
 function getPlusMinus(asset, plusMinus) {
-  let plusMinusToday = "-";
+  let plusMinusToday = '-';
   if (asset.type === 'Cryptocurrency' && plusMinus.crypto[asset.name]) {
     plusMinusToday = plusMinus.crypto[asset.name];
   }
@@ -89,7 +89,7 @@ function getPlusMinus(asset, plusMinus) {
     plusMinusToday = plusMinus.stock[asset.symbol];
   }
  
-  return plusMinusToday;
+  return plusMinusToday === '-' ? plusMinusToday : Number(plusMinusToday).toFixed(2);
 }
 
 export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
