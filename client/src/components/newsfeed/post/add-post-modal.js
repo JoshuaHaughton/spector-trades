@@ -1,4 +1,5 @@
 import {
+  Alert,
   Avatar,
   Box,
   Button,
@@ -8,7 +9,10 @@ import {
   Typography,
   Modal,
   TextField,
+  IconButton,
+  Snackbar,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -32,6 +36,23 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
   const [charColour, setCharColour] = useState('textSecondary')
+
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setSnackbarOpen(false);
+  }
+  const handleSnackbarMessage = (message, severity) => {
+    setSnackbarOpen(true);
+    setSnackbarMessage(message);
+    setSnackbarSeverity(severity);
+  };
+
 
   const formik = useFormik({
     initialValues: {
@@ -79,6 +100,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
           }).then(resp => {
             console.log(resp.data)
             if(resp.data.status === 200 || resp.data.status === 304) {
+              handleSnackbarMessage('Successfully created a post!', 'success');
               handleClose();
               triggerReload();
             }
@@ -93,74 +115,93 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
 
 
   return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Card
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-        }}
+    <>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
       >
-        <form onSubmit={formik.handleSubmit}>
-          <Box sx={style}>
-            <Box sx={{ p: 2 }}>
-              <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-                <Grid
-                  item
+        <Card
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <form onSubmit={formik.handleSubmit}>
+            <Box sx={style}>
+              <Box sx={{ p: 2 }}>
+                <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
+                  <Grid
+                    item
+                    sx={{
+                      alignItems: "center",
+                      display: "flex",
+                    }}
+                  >
+                    <Avatar alt="Product" variant="square" />
+                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                      You
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <IconButton
+                  aria-label="close"
+                  onClick={handleClose}
                   sx={{
-                    alignItems: "center",
-                    display: "flex",
+                    position: 'absolute',
+                    right: 8,
+                    top: 8,
+                    color: (theme) => theme.palette.grey[500],
                   }}
                 >
-                  <Avatar alt="Product" variant="square" />
-                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                    You
-                  </Typography>
+                  <CloseIcon />
+                </IconButton>
+              </Box>
+              <Divider />
+              <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
+                formik.handleChange(e);
+                setCharLeft(140 - e.target.value.length);
+                ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
+              }} />
+              <Divider />
+              <Box sx={{ p: 2 }}>
+                <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
+                  <Grid
+                    item
+                    sx={{
+                      alignItems: "center",
+                      display: "flex",
+                    }}
+                  >
+                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                      <Button variant="outlined" type="submit">
+                        Add Post
+                      </Button>
+                    </Typography>
+                  </Grid>
+                  <Grid
+                    item
+                    sx={{
+                      alignItems: "center",
+                      display: "flex",
+                    }}
+                  >
+                    <Typography color={charColour} display="inline" sx={{ pl: 1 }} variant="body2">
+                      {charLeft}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
+              </Box>
             </Box>
-            <Divider />
-            <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
-              formik.handleChange(e);
-              setCharLeft(140 - e.target.value.length);
-              ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
-            }} />
-            <Divider />
-            <Box sx={{ p: 2 }}>
-              <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-                <Grid
-                  item
-                  sx={{
-                    alignItems: "center",
-                    display: "flex",
-                  }}
-                >
-                  <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                    <Button variant="outlined" type="submit">
-                      Add Post
-                    </Button>
-                  </Typography>
-                </Grid>
-                <Grid
-                  item
-                  sx={{
-                    alignItems: "center",
-                    display: "flex",
-                  }}
-                >
-                  <Typography color={charColour} display="inline" sx={{ pl: 1 }} variant="body2">
-                    {charLeft}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Box>
-          </Box>
-        </form>
-      </Card>
-    </Modal>
+          </form>
+        </Card>
+      </Modal>
+      <Snackbar open={snackbarOpen} autoHideDuration={5000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          { snackbarMessage }
+        </Alert>
+      </Snackbar>
+    </>
   );
 };

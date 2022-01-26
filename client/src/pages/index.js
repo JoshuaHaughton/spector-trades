@@ -14,6 +14,7 @@ import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
+import axios from 'axios';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 import centsToDollars from '../utils/toHumanDollars';
 const Dashboard = () => {
@@ -28,6 +29,8 @@ const Dashboard = () => {
     series: []
   });
   const [activeStat, setActiveStat] = useState("");
+  const [plusMinus, setPlusMinus] = useState({stock: {}, crypto: {}});
+
   console.log("activeStat: ", activeStat)
   // console.log("active graph: ", activeGraphData);
   // console.log("activePortfolio: ", activePortfolio);
@@ -48,8 +51,52 @@ const Dashboard = () => {
               // Set activePortfolio to the first one
               setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
             }
+            return response.data;
           }
-        })
+        }).then(response => {
+          // Check if need to make plusMinus update
+          const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
+          const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
+          
+          const cryptoReduce = cryptoAssets.reduce((prev, curr) => {
+            const newObj = {...prev};
+            newObj[curr.name] = 0;
+            return newObj;
+          }, {});
+
+          const stockReduce = stockAssets.reduce((prev, curr) => {
+            const newObj = {...prev};
+            newObj[curr.symbol] = 0;
+            return newObj;
+          }, {});
+
+          const cryptoDifference = Object.keys(cryptoReduce).filter(x => Object.keys(plusMinus.crypto).indexOf(x) === -1);
+          const stockDifference = Object.keys(stockReduce).filter(x => Object.keys(plusMinus.stock).indexOf(x) === -1);
+          console.log('cryptoDifference', cryptoDifference, 'stockDifference', stockDifference);
+
+          if (cryptoDifference.length > 0) {
+            axios.post('/api/crypto-plus-minus', {id: cryptoDifference}).
+            then(res => setPlusMinus(prev => {
+              const newCopy = {...prev};
+              for (const name in res.data) {
+                newCopy.crypto[name] = res.data[name]; 
+              }
+              return newCopy;
+            }));
+          }
+
+          if (stockDifference.length > 0) {
+            axios.post('/api/stock-plus-minus', {id: stockDifference}).
+            then(res => setPlusMinus(prev => {
+              const newCopy = {...prev};
+              for (const symbol in res.data) {
+                newCopy.stock[symbol] = res.data[symbol]; 
+              }
+              return newCopy;
+            }));
+          }
+
+        });
     };
     fetchData();
   };
@@ -172,6 +219,9 @@ const Dashboard = () => {
         api.get('/dashboard', config).then(response => {
           // console.log("auth data", response.data)
           if (response.status === 200) {
+            
+
+
             setDashboardState(response.data);
             setIsAuthorized(true);
             // get id of first portfolio
@@ -179,7 +229,54 @@ const Dashboard = () => {
             
             setLoading(false);
             parseGraphData(activePortfolio);
+
+            return response.data;
           }
+        }).then(response => {
+
+          if (response) {
+            // START OF GET + / - DATA
+            const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
+            const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
+            
+            const cryptoReduce = cryptoAssets.reduce((prev, curr) => {
+              const newObj = {...prev};
+              newObj[curr.name] = 0;
+              return newObj;
+            }, {});
+
+            const stockReduce = stockAssets.reduce((prev, curr) => {
+              const newObj = {...prev};
+              newObj[curr.symbol] = 0;
+              return newObj;
+            }, {});
+
+            console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
+
+            if (Object.keys(cryptoReduce).length > 0) {
+              axios.post('/api/crypto-plus-minus', {id: Object.keys(cryptoReduce)}).
+              then(res => setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.crypto = res.data;
+                return newCopy;
+              }));
+            }
+
+            if (Object.keys(stockReduce).length > 0) {
+              axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
+              then(res => setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.stock = res.data;
+                return newCopy;
+              }));
+            }
+
+            
+
+
+            // END OF GET + / - DATA
+          }
+
         }).catch(() => {
           // Response rejected
 
@@ -421,7 +518,7 @@ const Dashboard = () => {
                 md={6}
                 xl={8}
                 xs={12}>
-                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
+                  {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} plusMinus={plusMinus} />}
               </Grid>
             </Grid>
           </Container>

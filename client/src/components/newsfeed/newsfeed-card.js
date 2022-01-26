@@ -53,7 +53,6 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
     //Posts here have an id key of "id"
   } else if (media.id && !media._id) {
-    console.log('POST', media)
 
     return {
       mediaPublish: media.created_at,
@@ -62,7 +61,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
       media,
       type: `post_id`,
       username: media.username,
-      profileSrc: ''
+      profileSrc: 'http://localhost:3001/public/avatars/' + media.avatar_url
     }
   }
 
@@ -107,7 +106,8 @@ export const NewsfeedCard = ({ media, ...rest }) => {
               display: "flex",
             }}
           >
-            <Avatar alt="Article Image" src={state.media.media || state.profileSrc} variant="rounded" />
+            { ( media.avatar_url ? <Avatar alt={media.username} src={'http://localhost:3001/public/avatars/' + media.avatar_url } variant="rounded" />
+            : <Avatar alt="Article Image" src={state.media.media} variant="rounded" /> ) }
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com), and for posts it displays the username */}
               <strong>{media._id ? (media.author || media.clean_url) :`- @${media.username}`}</strong>{" "}

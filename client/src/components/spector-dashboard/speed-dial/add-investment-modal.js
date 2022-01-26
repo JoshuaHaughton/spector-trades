@@ -268,7 +268,7 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
         </Card>
       </Modal>
 
-      <Snackbar open={snackbarOpen} autoHideDuration={3000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
+      <Snackbar open={snackbarOpen} autoHideDuration={5000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
           { snackbarMessage }
         </Alert>

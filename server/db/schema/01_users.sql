@@ -7,5 +7,5 @@ CREATE TABLE users (
   email VARCHAR(255) NOT NULL,
   password_digest VARCHAR(255) NOT NULL,
   avatar_url TEXT,
-  created_at DATE NOT NULL DEFAULT NOW()
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
