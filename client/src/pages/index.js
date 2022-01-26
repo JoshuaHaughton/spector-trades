@@ -18,8 +18,6 @@ const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [axiosLoading, setAxiosLoading] = useState(false);
-
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
   const [activeGraphData, setActiveGraphData] = useState({
@@ -33,7 +31,7 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  // console.log("assetPerformance", assetPerformanceCrypto)
+  console.log("assetPerformanceCrypto", assetPerformanceCrypto)
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -97,7 +95,6 @@ const Dashboard = () => {
         stockNames.push(stock.name);
       });
     }
-
     axios.post('api/stockHistorical', {id: stockNames})
       .then(res => {
         if (assetData.stocks === undefined) {
@@ -131,11 +128,12 @@ const Dashboard = () => {
                 price.open = currencyConversion.CAD * price.open;
                 assetData.stocks[key].push(price);
               });
+
             }
           }
         });
-        setAssetPerformanceStocks({stocks: assetData['stocks']})
         console.log("assetData in stocks API call: ", assetData.stocks)
+        setAssetPerformanceStocks({stocks: assetData['stocks']})
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
       cryptoAssets.forEach(asset => {
@@ -269,6 +267,9 @@ const Dashboard = () => {
     })
   };
 
+  const calculateGraphData = () => {
+
+  };
 
   useEffect(() => {
     const data = [];
@@ -487,9 +488,6 @@ const Dashboard = () => {
       dates.sort(function(a, b) {
         return Date.parse(a.date) - Date.parse(b.date);
       });
-      if (dates.length === 0) {
-        return;
-      }
       let graphStartDate;
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         if (day.date.getTime() === new Date(dates[0].date).getTime()) {
