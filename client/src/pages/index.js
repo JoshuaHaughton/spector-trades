@@ -399,6 +399,7 @@ const Dashboard = () => {
     if (name) {
       nameLabel = name;
     }
+    //const dataDates = data.map(d => [new Date(d[0]), d[1]]);
     setActiveGraphData({
       series: [{
         name: "price",
@@ -454,6 +455,14 @@ const Dashboard = () => {
         xaxis: {
           type: 'datetime',
           name: 'date',
+          labels: {
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: 'MMM \'yy',
+              day: 'dd MMM',
+              hour: 'HH:mm'
+            }
+          }
         },
         tooltip: {
           shared: false,
