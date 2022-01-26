@@ -8,7 +8,9 @@ import {
   Typography,
   Modal,
   TextField,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -122,6 +124,18 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                   </Typography>
                 </Grid>
               </Grid>
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: (theme) => theme.palette.grey[500],
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
             </Box>
             <Divider />
             <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
