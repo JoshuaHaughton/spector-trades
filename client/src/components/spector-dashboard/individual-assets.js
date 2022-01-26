@@ -62,7 +62,7 @@ const columns = [
     label: '+ / -',
     minWidth: 100,
     align: 'right',
-    format: (value) => (value / 100).toFixed(2),
+    format: (value) => (value).toFixed(2),
   },
   {
     id: 'timestamp',
@@ -71,16 +71,26 @@ const columns = [
   },
 ];
 
-function createData(name, symbol, type, priceAtPurchase, quantity, createdAt) {
+function createData(name, symbol, type, priceAtPurchase, quantity, createdAt, plusMinusToday) {
   const timestamp = new Date(createdAt).toLocaleString("en-US");
   const totalValue = priceAtPurchase * quantity;
   const avgPrice = priceAtPurchase;
-  const plusMinusToday = 0; // Placeholder
+
   return { name, symbol, type, totalValue, quantity, avgPrice, plusMinusToday, timestamp };
 }
 
-export const IndividualAssets = ({assets, createAssetGraphData}) => {
-  const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at));
+function getPlusMinus(type, name, plusMinus) {
+  let plusMinusToday = "-";
+  if (type === 'Cryptocurrency' && plusMinus.crypto[name]) {
+    plusMinusToday = plusMinus.crypto[name];
+  }
+ 
+  return plusMinusToday;
+}
+
+export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
+  console.log(plusMinus);
+  const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a.type, a.name, plusMinus)));
   const handleClick = (row) => {
     if (row.type === "Cryptocurrency") {
       console.log(row);
