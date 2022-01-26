@@ -14,13 +14,13 @@ const Likes = (props) => (
             gutterBottom
             variant="overline"
           >
-            Posts Liked
+            Portfolios Created
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            $23k
+            2493
           </Typography>
         </CardContent>
         <CardMedia
@@ -43,13 +43,13 @@ const PortfoliosCreated = (props) => (
             gutterBottom
             variant="overline"
           >
-            Portfolios Created
+            Spec Bucks Generated
           </Typography>
           <Typography
             color="textPrimary"
             variant="h4"
           >
-            $23k
+            $500m
           </Typography>
         </CardContent>
         <CardMedia
@@ -78,7 +78,7 @@ const SpecBucksSpent = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            $23k
+            $424m
           </Typography>
         </CardContent>
         <CardMedia
@@ -107,7 +107,7 @@ const AssetsTracked = (props) => (
             color="textPrimary"
             variant="h4"
           >
-            $23k
+            8,124
           </Typography>
         </CardContent>
         <CardMedia
@@ -125,7 +125,7 @@ const AssetsTracked = (props) => (
 
 export default function HomeStats() {
   return (
-    <Grid container spacing={3} sx={{p: 3}}>
+    <Grid container spacing={3} sx={{pt: 18, pb: 12, backgroundColor: '#514BB8'}}>
       <Grid item lg={3} sm={6} xl={3} xs={12}>
         <AssetsTracked sx={{ height: '100%' }} />
       </Grid>

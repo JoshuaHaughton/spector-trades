@@ -10,8 +10,10 @@ const HeroLayoutRoot = styled('section')(({ theme }) => ({
   position: 'relative',
   display: 'flex',
   alignItems: 'center',
+  // justifyContent: 'space-between',
   [theme.breakpoints.up('sm')]: {
-    height: '80vh',
+    width: '100%',
+    height: 'calc(100vh - 64px)',
     minHeight: 500,
     maxHeight: 1300,
   },
@@ -32,13 +34,18 @@ function HeroLayout(props) {
   const { sxBackground, children } = props;
 
   return (
-    <HeroLayoutRoot>
-      <Container
+    <HeroLayoutRoot
+      // sx={{width: 100vw}}
+    >
+      <Container maxWidth='xl'
         sx={{
           mt: 3,
           mb: 14,
+          // maxWidth: '100vw',
           display: 'flex',
-          flexDirection: 'column',
+          justifyContent: 'space-around',
+          flexDirection: 'row',
+          flexWrap: 'wrap',
           alignItems: 'center',
         }}
       >
@@ -50,8 +57,8 @@ function HeroLayout(props) {
             right: 0,
             top: 0,
             bottom: 0,
-            backgroundColor: 'common.black',
-            opacity: 0.5,
+            backgroundColor: '#514BB8',
+            opacity: 1,
             zIndex: -1,
           }}
         />

@@ -6,7 +6,7 @@ function CTA() {
 
 
   return (
-    <Container component="section" sx={{ mt: 10, mb:10, display: 'flex' }}>
+    <Container component="section" sx={{ mt: 10, mb:10, display: 'flex', backgroundColor: '#514BB8' }}>
       <Grid container>
         <Grid item xs={12} md={6} sx={{ zIndex: 1 }}>
           <Card>
@@ -20,9 +20,9 @@ function CTA() {
               }}
             >
               <Box sx={{ maxWidth: 400 }}>
-                
+
                 <Typography variant="h2" component="h2" gutterBottom>
-                  Rest and Vest
+                  Invest with Peace of Mind
                 </Typography>
 
                 <Typography variant="h5">

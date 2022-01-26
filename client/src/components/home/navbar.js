@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import { AppBar, Box, Toolbar, IconButton, Typography} from '@mui/material';
+import { AppBar, Box, Toolbar, IconButton, Typography, Link} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 
 const HomeNavbarRoot = styled(AppBar)(({ theme }) => ({
@@ -19,7 +19,7 @@ export const HomeNavbar = (props) => {
         <Toolbar
           disableGutters
           sx={{
-            minHeight: 64,
+            minHeight: '64px',
             left: 0,
             px: 2
           }}
@@ -36,12 +36,24 @@ export const HomeNavbar = (props) => {
           </IconButton>
 
 
-            <Box sx={{display: 'flex', width: '100%', justifyContent: 'center'}}>
+            <Box sx={{display: 'flex', width: '100%', justifyContent: 'space-between', alignItems: 'center', marginTop: '8px'}}>
               <img
-                    src="/static/images/spector-trades-logo-3-cropped.svg"
+                    src="/static/images/spector-trades-logo-2-cropped.svg"
                     alt="Spector Trades"
-                    height="50px"
+                    height="36px"
+                    // sx={{marginTop: '24px'}}
                   />
+                  <Box sx={{width: '30%', display: 'flex'}}>
+                    <Link href="/dashboard" underline="none" sx={{ marginLeft: '24px', fontWeight: 'bold'}}>
+                      Dashboard
+                    </Link>
+                    <Link href="/newsfeed" underline="none" sx={{ marginLeft: '24px'}}>
+                      Newsfeed
+                    </Link>
+                    <Link href="/register" underline="none" sx={{ marginLeft: '24px'}}>
+                      Register
+                    </Link>
+                  </Box>
             </Box>
 
           { /*

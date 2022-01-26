@@ -1,8 +1,26 @@
 import * as React from 'react';
 
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import HeroLayout from './herolayout';
+
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  status: {
+    danger: '#e53e3e',
+  },
+  palette: {
+    primary: {
+      main: '#3832A0',
+      darker: '#3832A0',
+    },
+    neutral: {
+      main: '#64748B',
+      contrastText: '#fff',
+    },
+  },
+});
 
 const backgroundImage =
   '/static/images/crypto-portfolio.svg';
@@ -11,41 +29,82 @@ export default function Hero() {
   return (
     <HeroLayout
       sxBackground={{
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundColor: '#7fc7d9', // Average color of the background image.
+        // backgroundImage: `url(${backgroundImage})`,
+        backgroundColor: '#5048E5', // Average color of the background image.
         backgroundPosition: 'center top',
       }}
     >
       {/* Increase the network loading priority of the background image. */}
       <img
         style={{ display: 'none' }}
-        src={backgroundImage}
+        // src={backgroundImage}
         alt="increase priority"
       />
-      <Typography color="inherit" align="center" variant="h2" marked="center">
-        Upgrade your Stonks
-      </Typography>
-      <Typography
-        color="inherit"
-        align="center"
-        variant="h5"
-        sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}
+      <Box
+      sx={{
+        width: '45%',
+        display: 'flex',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        textAlign: 'left',
+        alignItems: 'center'
+      }}
       >
-        Enjoy secret offers up to -70% off the best luxury hotels every Sunday.
-      </Typography>
-      <Button
-        color="primary"
-        variant="contained"
-        size="large"
-        component="a"
-        href="/register"
-        sx={{ minWidth: 200 }}
+        <Typography color="inherit" align="center" variant="h2" marked="center">
+          Upgrade your Stonks
+        </Typography>
+        <Typography
+          color="inherit"
+          align="center"
+          variant="h5"
+          sx={{ mb: 4, mt: { sx: 4, sm: 10 } }}
+        >
+          Enjoy secret offers up to -70% off the best luxury hotels every Sunday.
+        </Typography>
+        {/* <ThemeProvider theme={theme}> */}
+          <Button
+            color="secondary"
+            variant="contained"
+            size="large"
+            component="a"
+            href="/register"
+            sx={{ minWidth: 200 }}
+          >
+            Learn More
+          </Button>
+        {/* </ThemeProvider> */}
+      </Box>
+      {/* <Box
+        sx={{
+          width: '5%',
+          // // display: 'flex',
+          // // flexWrap: 'wrap',
+          // justifyContent: 'center',
+          // textAlign: 'left',
+          // alignItems: 'center'
+        }}
+      ></Box> */}
+
+      <Box
+        sx={{
+          width: '45%',
+          // display: 'flex',
+          // flexWrap: 'wrap',
+          justifyContent: 'center',
+          textAlign: 'left',
+          alignItems: 'center'
+        }}
       >
-        Register
-      </Button>
-      <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
+        <img
+          src={backgroundImage}
+          alt="increase priority"
+          width="100%"
+          >
+        </img>
+      </Box>
+      {/* <Typography variant="body2" color="inherit" sx={{ mt: 2 }}>
         Discover the experience
-      </Typography>
+      </Typography> */}
     </HeroLayout>
   );
 }

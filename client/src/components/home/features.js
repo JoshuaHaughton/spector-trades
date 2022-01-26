@@ -22,9 +22,15 @@ function Features() {
   return (
     <Box
       component="section"
-      sx={{ display: 'flex', overflow: 'hidden', bgcolor: 'secondary.light' }}
+      sx={{ display: 'flex', overflow: 'hidden', bgcolor: 'white', flexDirection: 'column', pt: 8, fontSize: "24px" }}
     >
-      <Container sx={{ mt: 15, mb: 30, display: 'flex', position: 'relative' }}>
+        <Box
+          sx={{textAlign: "center"}}
+        >
+          <h2>Learn to trade without breaking the bank!</h2>
+        </Box>
+
+      <Container maxWidth="xl" sx={{ mt: 15, mb: 30, display: 'flex', position: 'relative' }}>
         <Box
           component="img"
           src="/static/themes/onepirate/productCurvyLines.png"
