@@ -31,8 +31,6 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  console.log("assetPerformanceCrypto", assetPerformanceCrypto, assetPerformanceStocks)
-  console.log("ACTIVE STAT: ", activeStat)
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -102,8 +100,6 @@ const Dashboard = () => {
           assetData['stocks'] = {};
         }
         const stockData = res.data;
-        console.log("stockData FROM API call: ", stockData)
-
         const stockDataKeys = Object.keys(stockData);
         stockDataKeys.forEach(key => {
           if (stockNames.includes(key)) {
@@ -133,7 +129,6 @@ const Dashboard = () => {
             }
           }
         });
-        console.log("assetData in stocks API call: ", assetData.stocks)
         setAssetPerformanceStocks({stocks: assetData['stocks']})
       })
       .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
@@ -278,6 +273,28 @@ const Dashboard = () => {
     let yMax, yMin;
     let graphName, graphType, xAxis, yAxis, chartSettings;
     if (activeStat === 'spec_money') {
+      graphType = 'area';
+      graphName = "Speculative money"
+      yMin = 0;
+      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
+      data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
+      xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
+      console.log("HERE: ", dashboardState[activePortfolio].assets)
+      const purchasedAssets = dashboardState[activePortfolio].assets;
+      purchasedAssets.sort(function(a, b) {
+        return Date.parse(a.created_at) - Date.parse(b.created_at);
+      });
+      console.log("HERE AFTER: ", purchasedAssets)
+      purchasedAssets.forEach((item, i) => {
+        if (!item.sold) {
+          data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
+        }
+
+        if (item.sold) {
+          data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
+        }
+        xData.push(item.created_at)
+      });
       chartSettings = {
         type: graphType,
         stacked: false,
@@ -297,7 +314,6 @@ const Dashboard = () => {
         categories: xData
       }
       yAxis = {
-        max: yMax,
         labels: {
           formatter: function (val) {
             return val.toFixed();
@@ -307,22 +323,6 @@ const Dashboard = () => {
           text: 'Mount of Spec money'
         },
       }
-      graphType = 'area';
-      graphName = "Speculative money"
-      yMin = 0;
-      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
-      data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
-      xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
-      dashboardState[activePortfolio].assets.forEach((item, i) => {
-        if (!item.sold) {
-          data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
-        }
-
-        if (item.sold) {
-          data.push((data[i] + ((item.price_at_purchase * item.units) / 100)))
-        }
-        xData.push(item.created_at)
-      });
     }
 
     if (activeStat === "stock_profit"  &&
