@@ -65,15 +65,20 @@ const Newsfeed = () => {
           <NewsfeedListToolbar triggerReload={triggerReload} />
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3}>
-              {newsFeed[tabValue].map((article) => (
-                <Grid item key={article._id ? article._id : article.id} lg={12} md={12} xs={12}>
-                  {article._id ? (
-                    <NewsfeedCard key={article._id} media={article} />
-                  ) : (
-                    <NewsfeedCard key={article.id} media={article} />
-                  )}
-                </Grid>
-              ))}
+              {newsFeed[tabValue].map((article) => {
+                if (article._id) {
+                  return (
+                    <Grid item key={article._id} lg={12} md={12} xs={12}>
+                      <NewsfeedCard key={article._id} media={article} />
+                    </Grid>
+                  );
+                }
+                return (
+                    <Grid item key={article.id} lg={12} md={12} xs={12}>
+                      <NewsfeedCard key={article.id} media={article} />
+                    </Grid>
+                );
+              })}
             </Grid>
           </Box>
           <Box

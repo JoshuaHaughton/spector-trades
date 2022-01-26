@@ -9,7 +9,7 @@ module.exports = (db) => {
 app.get('/', async (req, res) => {
   try {
     const posts = await db.query(`
-    SELECT * FROM posts;
+    SELECT posts.*, users.avatar_url FROM posts JOIN users ON users.id = user_id;
     `);
 
     res.status(200).json({
