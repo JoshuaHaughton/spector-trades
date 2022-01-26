@@ -60,19 +60,38 @@ const Dashboard = () => {
             return newObj;
           }, {});
 
-          const difference = Object.keys(cryptoReduce).filter(x => Object.keys(plusMinus.crypto).indexOf(x) === -1);
-          console.log('difference', difference);
+          const stockReduce = stockAssets.reduce((prev, curr) => {
+            const newObj = {...prev};
+            newObj[curr.symbol] = 0;
+            return newObj;
+          }, {});
 
-          if (difference.length > 0) {
-            axios.post('/api/crypto-plus-minus', {id: difference}).
+          const cryptoDifference = Object.keys(cryptoReduce).filter(x => Object.keys(plusMinus.crypto).indexOf(x) === -1);
+          const stockDifference = Object.keys(stockReduce).filter(x => Object.keys(plusMinus.stock).indexOf(x) === -1);
+          console.log('cryptoDifference', cryptoDifference, 'stockDifference', stockDifference);
+
+          if (cryptoDifference.length > 0) {
+            axios.post('/api/crypto-plus-minus', {id: cryptoDifference}).
             then(res => setPlusMinus(prev => {
-              const newCopy = {...plusMinus};
+              const newCopy = {...prev};
               for (const name in res.data) {
                 newCopy.crypto[name] = res.data[name]; 
               }
               return newCopy;
             }));
           }
+
+          if (stockDifference.length > 0) {
+            axios.post('/api/stock-plus-minus', {id: stockDifference}).
+            then(res => setPlusMinus(prev => {
+              const newCopy = {...prev};
+              for (const symbol in res.data) {
+                newCopy.stock[symbol] = res.data[symbol]; 
+              }
+              return newCopy;
+            }));
+          }
+
         });
     };
     fetchData();
@@ -221,14 +240,35 @@ const Dashboard = () => {
               newObj[curr.name] = 0;
               return newObj;
             }, {});
+
+            const stockReduce = stockAssets.reduce((prev, curr) => {
+              const newObj = {...prev};
+              newObj[curr.symbol] = 0;
+              return newObj;
+            }, {});
+
             console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
 
-            axios.post('/api/crypto-plus-minus', {id: Object.keys(cryptoReduce)}).
+            if (Object.keys(cryptoReduce).length > 0) {
+              axios.post('/api/crypto-plus-minus', {id: Object.keys(cryptoReduce)}).
               then(res => setPlusMinus(prev => {
                 const newCopy = {...prev};
                 newCopy.crypto = res.data;
                 return newCopy;
               }));
+            }
+
+            if (Object.keys(stockReduce).length > 0) {
+              axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
+              then(res => setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.stock = res.data;
+                return newCopy;
+              }));
+            }
+
+            
+
 
             // END OF GET + / - DATA
           }
