@@ -17,7 +17,7 @@ function CTA() {
 
 
   return (
-    <Container component="section" sx={{ mt: 10, mb:10, display: 'flex', backgroundColor: '#514BB8' }}>
+    <Container component="section" sx={{ mt: 10, mb:8, display: 'flex', backgroundColor: '#514BB8', borderRadius: '32px' }}>
       <Grid container>
         <Grid item xs={12} md={6} sx={{ zIndex: 1 }}>
           <Card>
@@ -25,14 +25,14 @@ function CTA() {
               sx={{
                 display: 'flex',
                 justifyContent: 'center',
-                bgcolor: '#737373',
+                bgcolor: '#8c8c8c',
                 py: 8,
                 px: 3,
               }}
             >
               <Box sx={{ maxWidth: 400 }}>
 
-                <Typography variant="h2" component="h2" gutterBottom>
+                <Typography color="#514BB8" variant="h2" component="h2" gutterBottom>
                   Invest with Peace of Mind
                 </Typography>
 

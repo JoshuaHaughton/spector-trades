@@ -46,8 +46,8 @@ export const HomeNavbar = (props) => {
                   />
 
               </Box>
-                  <Box sx={{width: '30%', display: 'flex'}}>
-                    <Link href="/dashboard" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mr: 10}}>
+                    <Link href="/" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Dashboard
                     </Link>
                     <Link href="/newsfeed" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>

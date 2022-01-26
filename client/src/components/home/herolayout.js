@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { Box, Container, IconButton } from '@mui/material';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
+import { Link } from 'react-scroll';
 
 
 const HeroLayoutRoot = styled('section')(({ theme }) => ({
@@ -35,6 +36,7 @@ function HeroLayout(props) {
 
   return (
     <HeroLayoutRoot
+    id="top"
       // sx={{width: 100vw}}
     >
       <Container maxWidth='xl'
@@ -67,13 +69,15 @@ function HeroLayout(props) {
           alt="arrow down"
           sx={{ position: 'absolute', bottom: 32 }}
         >
-          <IconButton href="#features" size="large" sx={{color: 'white', transition: "all 300ms ease", scrollBehavior: "smooth"}}>
-            <DoubleArrowIcon sx={{
-              transform: 'rotate(90deg)',
-              fontSize: '40px',
-              }}
-              />
-          </IconButton>
+          <Link to="features" spy={true} smooth={true} duration={1000}>
+            <IconButton size="large" sx={{color: 'white', transition: "all 300ms ease", scrollBehavior: "smooth"}}>
+              <DoubleArrowIcon sx={{
+                transform: 'rotate(90deg)',
+                fontSize: '40px',
+                }}
+                />
+            </IconButton>
+          </Link>
         </Box>
       </Container>
     </HeroLayoutRoot>
