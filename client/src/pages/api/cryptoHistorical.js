@@ -37,7 +37,8 @@ export default async (req, res) => {
           // console.log(json);
         }
       });
-      response.data.id.reverse()
+      console.log(response.data);
+      response.data.reverse()
       return res.status(200).json(response.data);
     }).catch(function (error) {
       console.log("RESPONSE FROM COINGECKO:", error)

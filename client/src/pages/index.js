@@ -33,7 +33,7 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  // console.log("assetPerformance", assetPerformanceCrypto)
+  console.log("assetPerformance", assetPerformanceCrypto)
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -621,6 +621,7 @@ const Dashboard = () => {
       axios.get('/api/currencyConversion')
       .then((resp) => {
         setCurrencyConversion(resp.data);
+        getAssetPerformanceData()
       })
       .catch(err => {
         console.log("ERROR in currencyConversion call: ", err)
