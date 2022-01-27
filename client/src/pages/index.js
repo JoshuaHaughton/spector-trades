@@ -411,7 +411,6 @@ const Dashboard = () => {
       let portfolioData = statsData[activePortfolio]
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       let earliestInvestment;
-
       const dates = [];
       portfolioData.assets.forEach(asset => {
 
@@ -425,7 +424,8 @@ const Dashboard = () => {
       if (!dates[0]) return;
       let graphStartDate;
       assetPerformanceStocks.stocks[dates[0].symbol].forEach((day, i) => {
-        if (day.datetime.getTime() === new Date(dates[0].date).getTime()) {
+        let testDate = new Date(new Date(dates[0].date).setHours(0, 0, 0, 0))
+        if (day.datetime.getTime() === testDate.getTime()) {
           graphStartDate = i;
         }
       })
@@ -537,7 +537,9 @@ const Dashboard = () => {
       });
       let graphStartDate;
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
-        if (day.date.getTime() === new Date(dates[0].date).getTime()) {
+        let testDate = new Date(new Date(dates[0].date).setHours(0, 0, 0, 0))
+        // testDate.setDate(testDate.getDate() - 1)
+        if (day.date.getTime() === testDate.getTime()) {
           graphStartDate = i;
         }
       })
@@ -568,16 +570,17 @@ const Dashboard = () => {
         }
 
       })
-
       const profitForAssetKeys = Object.keys(profitForAsset);
       const overallProfit = [];
-
+      console.log("assetperformance: ", assetPerformanceCrypto, assetPerformanceStocks)
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let totalProfitOpen = 0;
+        console.log("CHECK123: ", graphStartDate)
         if (i <= graphStartDate) {
           profitForAssetKeys.forEach(asset => {
-
+            console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
             if (profitForAsset[asset][new Date(day.date)] !== undefined) {
+              console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
               totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
 
             }
@@ -588,6 +591,7 @@ const Dashboard = () => {
           totalProfitOpen,
         });
       })
+
       overallProfit.forEach((day, i) => {
         if (i % 2 === 0) {
           data.push({
@@ -597,8 +601,8 @@ const Dashboard = () => {
 
         }
       })
-
     }
+    console.log("setting activeGraphData with: ", data, xData)
     data.length !== 0 && setActiveGraphData({
       series: [{
         name: graphName,
