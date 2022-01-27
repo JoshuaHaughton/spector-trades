@@ -8,21 +8,14 @@ import { PortfolioStats } from '../components/spector-dashboard/portfolio-stats'
 import { HeroGraph } from '../components/spector-dashboard/hero-graph';
 import { GroupedAssets } from '../components/spector-dashboard/grouped-assets';
 import { IndividualAssets } from '../components/spector-dashboard/individual-assets';
-<<<<<<< HEAD
-=======
 import {centsToDollars, niceMoney} from '../utils/toHumanDollars';
->>>>>>> main-dev
 import { DashboardLayout } from '../components/dashboard-layout';
 import { useCookies } from 'react-cookie';
 import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
-<<<<<<< HEAD
-
-=======
 import axios from 'axios';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
->>>>>>> main-dev
 const Dashboard = () => {
   const router = useRouter();
   const [cookies, setCookie] = useCookies(['spector_jwt']);
@@ -590,8 +583,6 @@ const Dashboard = () => {
           }
         }
 
-<<<<<<< HEAD
-=======
       })
       const profitForAssetKeys = Object.keys(profitForAsset);
       const overallProfit = [];
@@ -658,21 +649,16 @@ const Dashboard = () => {
     setTimeout(() => {setStatsLoading(false)}, 1500)
   }, [activeStat, assetPerformanceCrypto, assetPerformanceStocks, activePortfolio, statsData]);
   // /auth endpoint returns {success: true, token}
->>>>>>> main-dev
   useEffect(() => {
 
     const fetchData = async () => {
       try {
-<<<<<<< HEAD
-        const response = await api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
-=======
         const token = cookies.spector_jwt;
         const config = {
           headers: { Authorization: `Bearer ${token}`}
         };
         api.get('/dashboard', config).then(response => {
           if (response.status === 200) {
->>>>>>> main-dev
 
 
 
@@ -682,23 +668,14 @@ const Dashboard = () => {
             setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
 
             setLoading(false);
-<<<<<<< HEAD
-          } else {
-            setTimeout(() => {setLoading(false)}, 1000);
-=======
             parseGraphData(activePortfolio);
 
->>>>>>> main-dev
 
 
 
             return response.data;
           }
-<<<<<<< HEAD
-        })
-=======
         }).then(response => {
->>>>>>> main-dev
 
           if (response) {
 
@@ -776,8 +753,6 @@ const Dashboard = () => {
     refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     getAssetPerformanceData();
   }, [dashboardState])
@@ -888,7 +863,6 @@ const Dashboard = () => {
     setActiveGraphData(seriesOptions);
   };
 
->>>>>>> main-dev
   const authorizedDashboard = () => {
     if (loading) {
       return(
@@ -912,13 +886,6 @@ const Dashboard = () => {
     if (isAuthorized) {
       return (
         <>
-<<<<<<< HEAD
-          <Container maxWidth={false}>
-            <PortfolioTabs />
-          </Container>
-
-
-=======
           {/* THIS IS THE SPEED DIAL ACTION BUTTON */}
           <SpectorSpeedDial
             refreshDashboardState={refreshDashboardState}
@@ -940,26 +907,17 @@ const Dashboard = () => {
               />
           </Container>
 
->>>>>>> main-dev
           <Container maxWidth={false}>
             <Grid
               container
               spacing={3}
             >
-<<<<<<< HEAD
-=======
               {/* THIS IS THE PORTFOLIO STATS COMPONENT */}
->>>>>>> main-dev
               <Grid item
                 lg={4}
                 md={6}
                 xl={3}
                 xs={12}>
-<<<<<<< HEAD
-                  <PortfolioStats />
-              </Grid>
-
-=======
                   <PortfolioStats
                     graphData={activeGraphData}
                     activePortfolio={activePortfolio}
@@ -972,17 +930,11 @@ const Dashboard = () => {
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
->>>>>>> main-dev
               <Grid item
                 lg={8}
                 md={6}
                 xl={9}
                 xs={12}>
-<<<<<<< HEAD
-                  <HeroGraph />
-              </Grid>
-
-=======
                   <HeroGraph
                     {...activeGraphData}
                     activeStat={activeStat}
@@ -992,32 +944,21 @@ const Dashboard = () => {
               </Grid>
 
               {/* THIS IS THE GROUPED ASSET STATS COMPONENT */}
->>>>>>> main-dev
               <Grid item
                 lg={5}
                 md={6}
                 xl={4}
                 xs={12}>
-<<<<<<< HEAD
-                  <GroupedAssets />
-              </Grid>
-
-=======
                   {activePortfolio !== 0 && <GroupedAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} />}
               </Grid>
 
               {/* THIS IS THE INDIVIDUAL ASSET STATS COMPONENT */}
->>>>>>> main-dev
               <Grid item
                 lg={7}
                 md={6}
                 xl={8}
                 xs={12}>
-<<<<<<< HEAD
-                  <IndividualAssets />
-=======
                   {activePortfolio !== 0 && <IndividualAssets assets={dashboardState[activePortfolio].assets} createAssetGraphData={createAssetGraphData} plusMinus={plusMinus} />}
->>>>>>> main-dev
               </Grid>
             </Grid>
           </Container>

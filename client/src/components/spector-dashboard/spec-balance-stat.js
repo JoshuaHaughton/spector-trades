@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-import { Avatar, Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
-import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
-
-export const SpecBalanceStat = (props) => (
-  <Card
-=======
 import { Box, Card, CardContent, Grid, LinearProgress, Typography } from '@mui/material';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
@@ -25,7 +18,6 @@ export const SpecBalanceStat = (props) => {
     }
     onClick={handleClick}>
         <Card
->>>>>>> main-dev
     sx={{ height: '100%' }}
     {...props}
   >
@@ -34,10 +26,6 @@ export const SpecBalanceStat = (props) => {
         container
         spacing={3}
         sx={{ justifyContent: 'space-between' }}
-<<<<<<< HEAD
-=======
-
->>>>>>> main-dev
       >
         <Grid item>
           <Typography
@@ -51,15 +39,6 @@ export const SpecBalanceStat = (props) => {
             color="textPrimary"
             variant="h4"
           >
-<<<<<<< HEAD
-            $2810
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Avatar
-            sx={{
-              backgroundColor: 'warning.main',
-=======
             ${centsToDollars(dashboardState.spec_money_left)}
           </Typography>
           <Typography
@@ -74,35 +53,22 @@ export const SpecBalanceStat = (props) => {
             sx={{
               backgroundColor: 'none',
               colorPrimary: 'primary',
->>>>>>> main-dev
               height: 56,
               width: 56
             }}
           >
             <InsertChartIcon />
-<<<<<<< HEAD
-          </Avatar>
-=======
           </AccountBalanceIcon>
->>>>>>> main-dev
         </Grid>
       </Grid>
       <Box sx={{ pt: 3 }}>
         <LinearProgress
-<<<<<<< HEAD
-          value={75.5}
-=======
           color='primary'
           value={Number((dashboardState.spec_money_left)/dashboardState.portfolioInfo.spec_money * 100)}
->>>>>>> main-dev
           variant="determinate"
         />
       </Box>
     </CardContent>
   </Card>
-<<<<<<< HEAD
-);
-=======
     </button>
 )};
->>>>>>> main-dev
