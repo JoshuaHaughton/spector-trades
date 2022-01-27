@@ -1,6 +1,10 @@
-import { Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, useTheme, CircularProgress } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
+import { deepPurple } from '@mui/material/colors';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import MoneyIcon from '@mui/icons-material/Money';
+import BlurOnIcon from '@material-ui/icons/BlurOn';
 // Required to get react-apexcharts to work
 import dynamic from 'next/dynamic'
 const Chart = dynamic(
@@ -8,21 +12,68 @@ const Chart = dynamic(
   { ssr: false }
 );
 export const HeroGraph = (props) => {
+  const {activeStat} = props;
   const theme = useTheme();
+  let statName = '';
+  let color= '';
+  let height = 30;
+  let width = 30;
+  let typeOfGraph;
+  switch(activeStat) {
+    case "spec_money":
+      statName = "Speculative Cash";
+      color = 'none';
+      height = 30;
+      width = 30;
+      typeOfGraph = 'area';
+      break;
+    case "stock_profit":
+      statName = "Stock profit";
+      color = 'error.main';
+      height = 30;
+      width = 30;
+      typeOfGraph = 'area';
+      break;
+    case "crypto_profit":
+      statName = "Cryptocurrency profit";
+      color = deepPurple[500];
+      height = 30;
+      width = 30;
+      typeOfGraph = 'area';
+      break;
+    default:
+      statName = "Cryptocurrency profit";
+      color = deepPurple[500];
+      height = 30;
+      width = 30;
+      typeOfGraph = 'area';
+      break;
+  }
 
-// console.log("props graph: ", props)
+  const handleClick = (e) => {
+    e.preventDefault();
+    props.setActiveStat("stock_profit")
+  };
+
+
   return (
     <Card {...props}>
       <CardHeader
+        title={statName}
         action={(
-          <Button
-            endIcon={<ArrowDropDownIcon fontSize="small" />}
-            size="small"
+          <Avatar
+            sx={{
+              backgroundColor: color,
+              colorPrimary: 'primary',
+              height: height,
+              width: width
+            }}
           >
-            Last 7 days
-          </Button>
+            {statName === "Stock profit" && <MoneyIcon />}
+            {statName === "Cryptocurrency profit" && <BlurOnIcon />}
+            {statName === "Speculative Cash" && <AccountBalanceIcon />}
+          </Avatar>
         )}
-        title="Latest Sales"
       />
       <Divider />
       <CardContent>
@@ -33,8 +84,17 @@ export const HeroGraph = (props) => {
           }}
         >
           {/* INSERT STOCK CHART HERE */}
-          <Chart options={props.options} series={props.series} type='area' height={400} />
-
+          {props.statsLoading === false && props.series && <Chart options={props.options} series={props.series} type={typeOfGraph} height={400} />}
+          {props.statsLoading === true && (
+            <Box
+              height={400}
+              display='flex'
+              alignItems='center'
+              justifyContent='center'
+            >
+            <CircularProgress size={100}/>
+            </Box>
+          )}
         </Box>
       </CardContent>
       <Divider />
@@ -49,8 +109,9 @@ export const HeroGraph = (props) => {
           color="primary"
           endIcon={<ArrowRightIcon fontSize="small" />}
           size="small"
+          onClick={handleClick}
         >
-          Overview
+          Back to stock profit
         </Button>
       </Box>
     </Card>

@@ -24,7 +24,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  
+
   // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
@@ -32,16 +32,16 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const columns = [
-  { id: 'quantity', 
-    label: 'Quantity', 
+  { id: 'quantity',
+    label: 'Quantity',
     minWidth: 100,
     align: 'right',
     format: (value) => value.toLocaleString('en-US'),
   },
-  { id: 'buyPrice', 
-    label: 'Price', 
+  { id: 'buyPrice',
+    label: 'Price',
     minWidth: 90,
-    align: 'right', 
+    align: 'right',
     format: (value) => (value / 100).toFixed(2),
   },
   {
@@ -74,13 +74,13 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
   const [rows, setRows] = useState([]);
 
   const handleClick = (row) => {
-    console.log(row);
+    // console.log(row);
   };
 
   const handleCreateAssetGraphData = (name) => {
     const asset = grouped[name][0];
     if (asset.type === "Cryptocurrency") {
-      console.log(asset);
+      // console.log(asset);
 
       axios.post('/api/crypto-history', {id: asset.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
@@ -90,7 +90,7 @@ export const GroupedAssets = ({assets, createAssetGraphData}) => {
     }
 
     if (asset.type === "Stocks") {
-      console.log(asset);
+      // console.log(asset);
 
       axios.post('/api/stock-history', {symbol: asset.symbol}).then(res => {
         if (res.data['values']) {

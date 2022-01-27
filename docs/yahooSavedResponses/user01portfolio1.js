@@ -164,3 +164,4 @@
   "5. volume":"59503044.01250000"
   "6. market cap (USD)":"59503044.01250000"
   }
+// for stocks https://rapidapi.com/twelvedata/api/twelve-data1/
