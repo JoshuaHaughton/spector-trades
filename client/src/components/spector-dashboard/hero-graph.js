@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, useTheme } from '@mui/material';
+import { Avatar, Box, Button, Card, CardContent, CardHeader, Divider, useTheme, CircularProgress } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { deepPurple } from '@mui/material/colors';
@@ -12,7 +12,6 @@ const Chart = dynamic(
   { ssr: false }
 );
 export const HeroGraph = (props) => {
-  console.log("Data sent to graph: ", props.series, props.options)
   const {activeStat} = props;
   const theme = useTheme();
   let statName = '';
@@ -57,7 +56,6 @@ export const HeroGraph = (props) => {
   };
 
 
-// console.log("props graph: ", props)
   return (
     <Card {...props}>
       <CardHeader
@@ -86,8 +84,17 @@ export const HeroGraph = (props) => {
           }}
         >
           {/* INSERT STOCK CHART HERE */}
-          {props.series && <Chart options={props.options} series={props.series} type={typeOfGraph} height={400} />}
-
+          {props.statsLoading === false && props.series && <Chart options={props.options} series={props.series} type={typeOfGraph} height={400} />}
+          {props.statsLoading === true && (
+            <Box
+              height={400}
+              display='flex'
+              alignItems='center'
+              justifyContent='center'
+            >
+            <CircularProgress size={100}/>
+            </Box>
+          )}
         </Box>
       </CardContent>
       <Divider />
