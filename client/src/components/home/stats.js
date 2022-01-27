@@ -1,10 +1,7 @@
 import { Avatar, Box, Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { makeStyles, withStyles } from '@mui/styles';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import MoneyIcon from '@mui/icons-material/Money';
-import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
-import PeopleIcon from '@mui/icons-material/PeopleOutlined';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+
 
 const useStyles = makeStyles({
   label: {color: "#A3A3A3"}, // a nested style rule
@@ -149,27 +146,42 @@ const AssetsTracked = (props) => (
 );
 
 
+const hover = {
+  tr: {
+    color: "#514BB8",
+    transition: "all 275ms ease-in-out",
+    '&:hover': {
+      transform: "scale(1.1)",
+      filter: "brightness(80%)",
+      opacity: "0.86",
+      cursor: "pointer"
+    }
+  }
+};
 
-export default function HomeStats() {
+
+function HomeStats(props) {
   return (
     <>
-    <Grid container spacing={3} sx={{mt: 0, pt: 4, pb: 12, backgroundColor: '#514BB8'}}>
+    <Grid container spacing={3} sx={{mt: 0, pt: 4, pb: 12, px: 8, backgroundColor: '#514BB8'}}>
       <Grid item lg={12} sm={12} xl={12} xs={12} sx={{display: 'flex', justifyContent: 'center'}}>
         <Title />
       </Grid>
       <Grid item lg={3} sm={6} xl={3} xs={12}>
-        <AssetsTracked sx={{ height: '100%' }} />
+        <AssetsTracked className={props.classes.tr} sx={{ height: '100%' }} />
       </Grid>
       <Grid item lg={3} sm={6} xl={3} xs={12}>
-        <SpecBucksSpent sx={{ height: '100%' }} />
+        <SpecBucksSpent className={props.classes.tr} sx={{ height: '100%' }} />
       </Grid>
       <Grid item lg={3} sm={6} xl={3} xs={12} >
-        <PortfoliosCreated sx={{ height: '100%' }} />
+        <PortfoliosCreated className={props.classes.tr} sx={{ height: '100%' }} />
       </Grid>
       <Grid item lg={3} sm={6} xl={3} xs={12}>
-        <Likes sx={{ height: '100%' }} />
+        <Likes className={props.classes.tr} sx={{ height: '100%' }} />
       </Grid>
     </Grid>
     </>
   );
 }
+
+export default withStyles(hover)(HomeStats);

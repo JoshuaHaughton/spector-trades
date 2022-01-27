@@ -2,6 +2,7 @@ import * as React from 'react';
 import PropTypes from 'prop-types';
 import { styled } from '@mui/material/styles';
 import { Box, Container, IconButton } from '@mui/material';
+import { withStyles } from '@mui/styles';
 import DoubleArrowIcon from '@mui/icons-material/DoubleArrow';
 import { Link } from 'react-scroll';
 
@@ -20,6 +21,20 @@ const HeroLayoutRoot = styled('section')(({ theme }) => ({
   },
 }));
 
+const hover = {
+  tr: {
+    color: "#fff",
+    transition: "all 275ms ease-in-out",
+    '&:hover': {
+      // transform: "scale(1.1)",
+      // transform: "rotate(90deg)",
+      filter: "brightness(80%)",
+      opacity: "0.80",
+      cursor: "pointer"
+    }
+  }
+};
+
 const Background = styled(Box)({
   position: 'absolute',
   left: 0,
@@ -36,7 +51,6 @@ function HeroLayout(props) {
 
   return (
     <HeroLayoutRoot
-    id="top"
       // sx={{width: 100vw}}
     >
       <Container maxWidth='xl'
@@ -69,12 +83,13 @@ function HeroLayout(props) {
           alt="arrow down"
           sx={{ position: 'absolute', bottom: 32 }}
         >
-          <Link to="features" spy={true} smooth={true} duration={1000}>
+          <Link className={props.classes.tr} to="features" spy={true} smooth={true} duration={1000}>
             <IconButton size="large" sx={{color: 'white', transition: "all 300ms ease", scrollBehavior: "smooth"}}>
               <DoubleArrowIcon sx={{
                 transform: 'rotate(90deg)',
                 fontSize: '40px',
                 }}
+                className={props.classes.tr}
                 />
             </IconButton>
           </Link>
@@ -95,4 +110,4 @@ HeroLayout.propTypes = {
   ]),
 };
 
-export default HeroLayout;
+export default withStyles(hover)(HeroLayout);

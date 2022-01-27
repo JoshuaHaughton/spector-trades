@@ -11,13 +11,12 @@ import { Feed } from '@mui/icons-material';
 
 
 import {Box, Grid, Container, Typography} from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { makeStyles, withStyles } from '@mui/styles';
 import { ClassNames } from '@emotion/react';
 
 const useStyles = makeStyles({
   label: {color: "#514BB8"}, // a nested style rule
 });
-
 
 const item = {
   display: 'flex',
@@ -26,7 +25,20 @@ const item = {
   px: 5,
 };
 
-function Features() {
+const hover = {
+  tr: {
+    color: "#514BB8",
+    transition: "all 275ms ease-in-out",
+    '&:hover': {
+      transform: "scale(1.1)",
+      filter: "brightness(80%)",
+      opacity: "0.86",
+      cursor: "pointer"
+    }
+  }
+};
+
+function Features(props) {
   const classes = useStyles();
   return (
     <Box
@@ -51,7 +63,7 @@ function Features() {
           <Grid item xs={12} md={4}>
             <Box sx={item}>
 
-              <AccountBalanceIcon sx={{ fontSize: '60px', color: "#514BB8"}} />
+              <AccountBalanceIcon className={props.classes.tr} sx={{ fontSize: '60px', color: "#514BB8", }} />
 
               <Typography variant="h5" sx={{ my: 5 }}>
                 Study Your Gains
@@ -69,7 +81,7 @@ function Features() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <BarChartIcon sx={{ fontSize: '60px', color: "#514BB8"}} />
+              <BarChartIcon className={props.classes.tr} sx={{ fontSize: '60px', color: "#514BB8"}} />
               <Typography variant="h5" sx={{ my: 5, textAlign: "center" }}>
                 Sophisticated Analytics
               </Typography>
@@ -87,7 +99,7 @@ function Features() {
           </Grid>
           <Grid item xs={12} md={4}>
             <Box sx={item}>
-              <Feed sx={{ fontSize: '60px', color: "#514BB8"}} />
+              <Feed className={props.classes.tr} sx={{ fontSize: '60px', color: "#514BB8"}} />
               <Typography variant="h5" sx={{ my: 5 }}>
                 Insider knowledge
               </Typography>
@@ -113,4 +125,4 @@ function Features() {
   );
 }
 
-export default Features;
+export default withStyles(hover)(Features);
