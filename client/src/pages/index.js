@@ -84,6 +84,14 @@ const Dashboard = () => {
             //   }
             //   return newCopy;
             // }));
+            cryptoDifference.forEach(name => {
+              setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.crypto[name] = (-1 * Math.random() * 10 + 1).toPrecision(5);
+                return newCopy;
+              });
+            })
+
           }
 
           if (stockDifference.length > 0) {
@@ -575,12 +583,12 @@ const Dashboard = () => {
       console.log("assetperformance: ", assetPerformanceCrypto, assetPerformanceStocks)
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let totalProfitOpen = 0;
-        console.log("CHECK123: ", graphStartDate)
+        //console.log("CHECK123: ", graphStartDate)
         if (i <= graphStartDate) {
           profitForAssetKeys.forEach(asset => {
-            console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
+            // console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
             if (profitForAsset[asset][new Date(day.date)] !== undefined) {
-              console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
+              //console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
               totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
 
             }
@@ -662,11 +670,16 @@ const Dashboard = () => {
             setLoading(false);
             parseGraphData(activePortfolio);
 
+       
+
+
             return response.data;
           }
         }).then(response => {
 
           if (response) {
+
+            console.log('why dont u work');
             // START OF GET + / - DATA
             const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
             const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
@@ -683,18 +696,24 @@ const Dashboard = () => {
               return newObj;
             }, {});
 
-            console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
+            // console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
 
             if (Object.keys(cryptoReduce).length > 0) {
+              console.log("SHOULD FAKE THE DATA here");
+              Object.keys(cryptoReduce).forEach(id => {
+                // axios.post('/api/crypto-plus-minus', {id}).
+                // then(res => setPlusMinus(prev => {
+                //   const newCopy = {...prev};
+                //   newCopy.crypto[id] = res.data.plusMinus;
+                //   return newCopy;
+                // }));
+                setPlusMinus(prev => {
+                    const newCopy = {...prev};
+                    newCopy.crypto[id] = (-1 * Math.random() * 10 + 1).toPrecision(5);
+                    return newCopy;
+                  });
 
-              // Object.keys(cryptoReduce).forEach(id => {
-              //   axios.post('/api/crypto-plus-minus', {id}).
-              //   then(res => setPlusMinus(prev => {
-              //     const newCopy = {...prev};
-              //     newCopy.crypto[id] = res.data.plusMinus;
-              //     return newCopy;
-              //   }));
-              // })
+              })
 
             }
 
@@ -706,11 +725,8 @@ const Dashboard = () => {
                 return newCopy;
               }));
             }
-
-
-
-
             // END OF GET + / - DATA
+
           }
 
         }).catch(() => {
@@ -733,6 +749,8 @@ const Dashboard = () => {
         console.log("ERROR in currencyConversion call: ", err)
       });
     });
+    
+    refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
 
   useEffect(() => {
