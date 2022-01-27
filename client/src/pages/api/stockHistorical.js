@@ -55,7 +55,7 @@ export default async (req, res) => {
       console.log("MAKING REQUEST TO twelve-data-api for: ", id);
       console.log("!!!!!!!!!!!!!!!!!!!!!!!!!MAKING API CALL TO TWELVE-DATA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
       axios.request(options).then(resp => {
-        const reply = {};
+        let reply = {};
         let newData = {};
         if (id.length === 1) {
           reply[id[0]] = resp.data.values
