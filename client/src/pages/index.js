@@ -86,14 +86,14 @@ const Dashboard = () => {
           }
 
           if (stockDifference.length > 0) {
-            // axios.post('/api/stock-plus-minus', {id: stockDifference}).
-            // then(res => setPlusMinus(prev => {
-            //   const newCopy = {...prev};
-            //   for (const symbol in res.data) {
-            //     newCopy.stock[symbol] = res.data[symbol]; 
-            //   }
-            //   return newCopy;
-            // }));
+            axios.post('/api/stock-plus-minus', {id: stockDifference}).
+            then(res => setPlusMinus(prev => {
+              const newCopy = {...prev};
+              for (const symbol in res.data) {
+                newCopy.stock[symbol] = res.data[symbol]; 
+              }
+              return newCopy;
+            }));
           }
 
         });
@@ -267,12 +267,12 @@ const Dashboard = () => {
             }
 
             if (Object.keys(stockReduce).length > 0) {
-              // axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
-              // then(res => setPlusMinus(prev => {
-              //   const newCopy = {...prev};
-              //   newCopy.stock = res.data;
-              //   return newCopy;
-              // }));
+              axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
+              then(res => setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.stock = res.data;
+                return newCopy;
+              }));
             }
 
             
