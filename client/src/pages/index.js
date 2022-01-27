@@ -524,6 +524,8 @@ const Dashboard = () => {
           autoSelected: 'zoom'
         }
       }
+      console.log("ACTIVEPORTFOLIO: ", activePortfolio)
+      console.log("DASHBOARDSTATE: ", dashboardState)
       let portfolioData = statsData[activePortfolio]
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       const dates = [];
@@ -572,15 +574,11 @@ const Dashboard = () => {
       })
       const profitForAssetKeys = Object.keys(profitForAsset);
       const overallProfit = [];
-      console.log("assetperformance: ", assetPerformanceCrypto, assetPerformanceStocks)
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let totalProfitOpen = 0;
-        console.log("CHECK123: ", graphStartDate)
         if (i <= graphStartDate) {
           profitForAssetKeys.forEach(asset => {
-            console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
             if (profitForAsset[asset][new Date(day.date)] !== undefined) {
-              console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
               totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
 
             }
@@ -602,7 +600,6 @@ const Dashboard = () => {
         }
       })
     }
-    console.log("setting activeGraphData with: ", data, xData)
     data.length !== 0 && setActiveGraphData({
       series: [{
         name: graphName,
@@ -849,7 +846,7 @@ const Dashboard = () => {
               portfolios={
                 Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
               }
-              {...{activePortfolio, setActivePortfolio}}
+              {...{activePortfolio, setActivePortfolio, getAssetPerformanceData}}
               />
           </Container>
 
