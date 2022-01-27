@@ -142,7 +142,6 @@ export const CryptoAutoComplete = ({setAssetSelection}) => {
     renderGroup={(params) => params}
     onChange={(_event, value) => {
       if (value !== null) {
-        console.log(value)
         axios.post('/api/crypto', {id: value.id}).then(res => {
           const price = Object.values(res.data)[0]['cad'];
           value.price = price * 100;

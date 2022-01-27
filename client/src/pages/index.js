@@ -73,7 +73,6 @@ const Dashboard = () => {
 
           const cryptoDifference = Object.keys(cryptoReduce).filter(x => Object.keys(plusMinus.crypto).indexOf(x) === -1);
           const stockDifference = Object.keys(stockReduce).filter(x => Object.keys(plusMinus.stock).indexOf(x) === -1);
-          console.log('cryptoDifference', cryptoDifference, 'stockDifference', stockDifference);
 
           if (cryptoDifference.length > 0) {
             // axios.post('/api/crypto-plus-minus', {id: cryptoDifference}).
@@ -535,10 +534,7 @@ const Dashboard = () => {
           autoSelected: 'zoom'
         }
       }
-      console.log("ACTIVEPORTFOLIO: ", activePortfolio)
-      console.log("DASHBOARDSTATE: ", dashboardState)
       let portfolioData = statsData[activePortfolio]
-      console.log("CHECH HERE: ", portfolioData)
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       const dates = [];
       portfolioData.assets.forEach(asset => {
@@ -550,6 +546,9 @@ const Dashboard = () => {
         return Date.parse(a.date) - Date.parse(b.date);
       });
       let graphStartDate;
+      if (dates[0] === undefined) {
+        return;
+      }
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let testDate = new Date(new Date(dates[0].date).setHours(0, 0, 0, 0))
         // testDate.setDate(testDate.getDate() - 1)
@@ -679,7 +678,6 @@ const Dashboard = () => {
 
           if (response) {
 
-            console.log('why dont u work');
             // START OF GET + / - DATA
             const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
             const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
@@ -696,10 +694,8 @@ const Dashboard = () => {
               return newObj;
             }, {});
 
-            // console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
 
             if (Object.keys(cryptoReduce).length > 0) {
-              console.log("SHOULD FAKE THE DATA here");
               Object.keys(cryptoReduce).forEach(id => {
                 // axios.post('/api/crypto-plus-minus', {id}).
                 // then(res => setPlusMinus(prev => {
@@ -841,7 +837,6 @@ const Dashboard = () => {
 
 
     if (exitPoint && exitPoint > 0) {
-      console.log('there is an exit point');
       seriesOptions.options['annotations'] = {
         yaxis: [
           {

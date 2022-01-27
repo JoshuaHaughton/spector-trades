@@ -38,7 +38,6 @@ const organizeForState = (arr, symbol, setNewsFeed) => {
     return b_date - a_date;
   });
 
-  console.log("ORGANIZED COMPLETE", sortedArray);
   setNewsFeed((prev) => {
     const newNewsFeed = prev;
 
@@ -78,7 +77,6 @@ const cleanResponses = async function (newsParams, setNewsFeed) {
 
     const cleaned = cleanFetchQuery(res.data.articles);
 
-    console.log("this is the symbol:", newsParams[i].symbol);
     organizeForState(cleaned, newsParams[i].symbol, setNewsFeed);
   }
 };
@@ -103,7 +101,6 @@ const fetchFeedData = async (setSymbols, setNewsFeed, cookies) => {
     });
 
     let user_id = getUser.data.data.user;
-    console.log("user id FOR NEW CALLS", user_id);
 
     //get a list of all user assets
     let getAssets = await api({
@@ -126,8 +123,6 @@ const fetchFeedData = async (setSymbols, setNewsFeed, cookies) => {
       asset_symbols[a.symbol] = { name: a.name, symbol: a.symbol };
     });
 
-    console.log("ASSETS FOR NEW API CALLS", Object.keys(asset_symbols), asset_symbols, user_assets);
-
     //Render the tabs
     setSymbols(["posts", ...Object.keys(asset_symbols)]);
 
@@ -135,7 +130,6 @@ const fetchFeedData = async (setSymbols, setNewsFeed, cookies) => {
     for (let asset of Object.values(asset_symbols)) {
       newsParams.push(asset);
     }
-    console.log("QUERY LIST", newsParams);
 
     await cleanResponses(newsParams, setNewsFeed);
     return;

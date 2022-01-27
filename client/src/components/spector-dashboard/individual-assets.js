@@ -100,11 +100,9 @@ function getPlusMinus(asset, plusMinus) {
 }
 
 export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
-  console.log('the assets', assets);
   const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a, plusMinus), a.sold, a.exit_point));
   const handleClick = (row) => {
     if (row.type === "Cryptocurrency") {
-      console.log(row);
 
       axios.post('/api/crypto-history', {id: row.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
@@ -115,7 +113,6 @@ export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
     }
 
     if (row.type === "Stocks") {
-      console.log(row);
 
       axios.post('/api/stock-history', {symbol: row.symbol}).then(res => {
         if (res.data['values']) {

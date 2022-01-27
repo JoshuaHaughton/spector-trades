@@ -32,7 +32,6 @@ const Newsfeed = () => {
     fetchFeedData(setSymbols, setNewsFeed, cookies);
 
     return () => {
-      console.log("unmounts");
     };
   }, [reloadFeed]);
 

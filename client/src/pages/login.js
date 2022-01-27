@@ -44,7 +44,6 @@ const Login = () => {
 
 
 
-      console.log(values)
 
 
 
@@ -195,7 +194,6 @@ const Login = () => {
               </Button>
               <Button onClick={() => {
 
-                console.log(cookies.spector_jwt)
 
                 api.post('/auth', {jwt_token: cookies.spector_jwt})
 

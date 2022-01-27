@@ -41,7 +41,7 @@ const Dashboard = () => {
         })
         // set(response.data.data.restaurants)
 
-        console.log(response.data)
+        // console.log(response.data)
 
 
       } catch(err) {

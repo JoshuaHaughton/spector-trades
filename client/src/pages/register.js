@@ -65,7 +65,6 @@ const Register = () => {
         )
     }),
     onSubmit: async (values) => {
-      console.log(values)
 
 
       var bodyFormData = new FormData();
@@ -98,14 +97,12 @@ const Register = () => {
               setSeverity(severityObj.success)
               setMessage(messageObj.OK)
               setOpen(true);
-              console.log(response.data.spector_jwt)
               setCookie('spector_jwt', respData.spector_jwt);
               setTimeout(() => {router.push('/')}, 2000)
               return;
           }
 
             setOpen(true);
-          console.log("success in axios register", response);
         })
         .catch(function (response) {
           setSeverity(severityObj.error)
