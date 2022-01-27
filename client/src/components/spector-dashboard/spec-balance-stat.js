@@ -4,7 +4,6 @@ import InsertChartIcon from '@mui/icons-material/InsertChartOutlined';
 import {centsToDollars} from '../../utils/toHumanDollars';
 export const SpecBalanceStat = (props) => {
   const {dashboardState} = props;
-  // console.log(dashboardState)
   const handleClick = (e) => {
     e.preventDefault();
     if (dashboardState.portfolioInfo.live) {

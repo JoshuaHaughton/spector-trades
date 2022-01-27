@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, CardContent, Grid, Typography } from '@mui/material';
+import { Avatar, Box, Card, CardContent, Grid, Typography, CircularProgress } from '@mui/material';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import MoneyIcon from '@mui/icons-material/Money';
@@ -16,14 +16,19 @@ const useStyles = makeStyles({
     fontWeight: "bold"
   }
 });
-
 export const CryptoProfitStat = (props) => {
-  const {statsData, activePortfolio} = props;
+  const {statsData, activePortfolio, dashboardState} = props;
   const handleClick = (e) => {
     e.preventDefault();
     props.setActiveStat("crypto_profit")
   };
+  let display = true;
 
+  dashboardState && dashboardState.assets.forEach(asset => {
+      if (asset.type === 'Cryptocurrency') {
+        display = false;
+      }
+    })
   const getPercentageChange = (oldNumber, newNumber) => {
     const decreaseValue = oldNumber - newNumber;
     const result = (decreaseValue / oldNumber) * 100;
@@ -32,7 +37,10 @@ export const CryptoProfitStat = (props) => {
   }
   const classes = useStyles();
   return (
-    <button className="stats" onClick={handleClick}>
+    <button
+      className={display !== true ? 'stats' : 'stats-disabled'}
+      onClick={handleClick}
+    >
       <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
@@ -53,13 +61,18 @@ export const CryptoProfitStat = (props) => {
             </Typography>
             <Typography
               className={
+                props.statsLoading === false &&
                 statsData[activePortfolio] &&
                 niceMoney(statsData[activePortfolio].this_month_growth_crypto) < 0 ? classes.negative : classes.positive
                 }
               color="textPrimary"
               variant="h4"
             >
-              {statsData[activePortfolio] && niceMoney(statsData[activePortfolio].this_month_growth_crypto)}
+              {props.statsLoading === true && <CircularProgress />}
+              {
+                props.statsLoading === false &&
+                statsData[activePortfolio] &&
+                niceMoney(statsData[activePortfolio].this_month_growth_crypto)}
             </Typography>
           </Grid>
           <Grid item>
@@ -82,15 +95,18 @@ export const CryptoProfitStat = (props) => {
           }}
         >
                     {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             statsData[activePortfolio].total_crypto_assets === 0 && ''
             }
           {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             getPercentageChange(statsData[activePortfolio].last_month_growth_crypto,
                                 statsData[activePortfolio].this_month_growth_crypto) < 0 &&
             <ArrowDownwardIcon color="error" />}
           {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             getPercentageChange(statsData[activePortfolio].last_month_growth_crypto,
               statsData[activePortfolio].this_month_growth_crypto) > 0 &&
@@ -102,12 +118,9 @@ export const CryptoProfitStat = (props) => {
             }}
             variant="body2"
           >
-                        {
-              statsData[activePortfolio] &&
-              getPercentageChange(statsData[activePortfolio].last_month_growth_crypto,
-                statsData[activePortfolio].this_month_growth_crypto) === NaN &&
-              "No Data"}
+
             {
+              props.statsLoading === false &&
               statsData[activePortfolio] &&
               niceMoney(statsData[activePortfolio].this_month_growth_crypto) !== 0 &&
               getPercentageChange(statsData[activePortfolio].last_month_growth_crypto, statsData[activePortfolio].this_month_growth_crypto).toFixed(2)}

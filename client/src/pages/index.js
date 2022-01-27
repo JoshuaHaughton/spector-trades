@@ -21,6 +21,8 @@ const Dashboard = () => {
   const [cookies, setCookie] = useCookies(['spector_jwt']);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
   const [activeGraphData, setActiveGraphData] = useState({
@@ -211,7 +213,6 @@ const Dashboard = () => {
 
   const parseStats = (assetPerformanceStocks, assetPerformanceCrypto, dashboardState) => {
 
-
     if (assetPerformanceStocks.stocks === undefined || assetPerformanceCrypto.crypto === undefined) {
       return;
     }
@@ -328,12 +329,10 @@ const Dashboard = () => {
       yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
       data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
       xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
-      console.log("HERE: ", dashboardState[activePortfolio].assets)
       const purchasedAssets = dashboardState[activePortfolio].assets;
       purchasedAssets.sort(function(a, b) {
         return Date.parse(a.created_at) - Date.parse(b.created_at);
       });
-      console.log("HERE AFTER: ", purchasedAssets)
       purchasedAssets.forEach((item, i) => {
         if (!item.sold) {
           data.push((data[i] - ((item.price_at_purchase * item.units) / 100)))
@@ -634,6 +633,7 @@ const Dashboard = () => {
         }
       }
     });
+    setTimeout(() => {setStatsLoading(false)}, 1500)
   }, [activeStat, assetPerformanceCrypto, assetPerformanceStocks, activePortfolio, statsData]);
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
@@ -861,10 +861,14 @@ const Dashboard = () => {
                 xl={3}
                 xs={12}>
                   <PortfolioStats
+                    graphData={activeGraphData}
                     activePortfolio={activePortfolio}
                     dashboardState={dashboardState[activePortfolio]}
                     setActiveStat={setActiveStat}
-                    statsData={statsData}/>
+                    statsData={statsData}
+                    statsLoading={statsLoading}
+                    {...activeGraphData}
+                  />
               </Grid>
 
               {/* THIS IS THE HERO GRAPH COMPONENT */}
@@ -877,6 +881,7 @@ const Dashboard = () => {
                     {...activeGraphData}
                     activeStat={activeStat}
                     setActiveStat={setActiveStat}
+                    statsLoading={statsLoading}
                   />
               </Grid>
 

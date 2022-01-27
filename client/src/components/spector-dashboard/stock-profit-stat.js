@@ -17,7 +17,15 @@ const useStyles = makeStyles({
 });
 
 export const StockProfitStat = (props) => {
-  const {statsData, activePortfolio} = props;
+  const {statsData, activePortfolio, dashboardState} = props;
+
+  let display = true;
+
+  dashboardState && dashboardState.assets.forEach(asset => {
+      if (asset.type === 'Stocks') {
+        display = false;
+      }
+    })
 
   const classes = useStyles();
 
@@ -34,7 +42,10 @@ export const StockProfitStat = (props) => {
 }
 
   return (
-    <button className="stats" onClick={handleClick}>
+    <button
+    className={display !== true ? 'stats' : 'stats-disabled'}
+    onClick={handleClick}
+    >
       <Card
       sx={{ height: '100%', width: '100%' }}
       {...props}
@@ -56,13 +67,18 @@ export const StockProfitStat = (props) => {
             </Typography>
             <Typography
               className={
+                props.statsLoading === false &&
                 statsData[activePortfolio] &&
                 niceMoney(statsData[activePortfolio].this_month_growth_stocks) < 0 ? classes.negative : classes.positive
                 }
               color="textSecoundary"
               variant="h4"
             >
-              {statsData[activePortfolio] && niceMoney(statsData[activePortfolio].this_month_growth_stocks)}
+              {props.statsLoading === true && <CircularProgress />}
+              {
+                props.statsLoading === false &&
+                statsData[activePortfolio] &&
+                niceMoney(statsData[activePortfolio].this_month_growth_stocks)}
             </Typography>
           </Grid>
           <Grid item>
@@ -85,15 +101,18 @@ export const StockProfitStat = (props) => {
           }}
         >
           {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             statsData[activePortfolio].total_stock_assets === 0 && ''
             }
           {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
                                 statsData[activePortfolio].this_month_growth_stocks) < 0 &&
             <ArrowDownwardIcon color="error" />}
           {
+            props.statsLoading === false &&
             statsData[activePortfolio] &&
             getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
               statsData[activePortfolio].this_month_growth_stocks) > 0 &&
@@ -106,11 +125,13 @@ export const StockProfitStat = (props) => {
             variant="body2"
           >
             {
+              props.statsLoading === false &&
               statsData[activePortfolio] &&
               getPercentageChange(statsData[activePortfolio].last_month_growth_stocks,
                 statsData[activePortfolio].this_month_growth_stocks) === NaN &&
               "No Data"}
             {
+              props.statsLoading === false &&
               statsData[activePortfolio] &&
               niceMoney(statsData[activePortfolio].this_month_growth_stocks) !== 0 &&
               getPercentageChange(statsData[activePortfolio].last_month_growth_stocks, statsData[activePortfolio].this_month_growth_stocks).toFixed(2)}
