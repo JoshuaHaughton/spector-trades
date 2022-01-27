@@ -18,7 +18,8 @@ module.exports = (db) => {
         if (result) {
           console.log("success!")
 
-          const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email} , process.env.JWT_SECRET);
+          // Generate an access token
+          const accessToken = jwt.sign({user_id: resp.id, user_email: resp.email, user_name: resp.username, user_avatar_url: resp.avatar_url} , process.env.JWT_SECRET);
           return res.send({status: 200, spector_jwt: accessToken})
         } else {
           return res.send({status: 401, message: "bad password"})

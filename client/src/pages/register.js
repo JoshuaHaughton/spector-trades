@@ -27,6 +27,7 @@ const Register = () => {
   const [message, setMessage] = React.useState('');
   const [severity, setSeverity] = React.useState(severityObj.OK);
   const [cookies, setCookie] = useCookies(['spector_jwt']);
+  const [avatarFileNameText, setAvatarFileNameText] = React.useState('');
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -131,7 +132,7 @@ React.useEffect(() => {
     <>
       <Head>
         <title>
-          Register | Material Kit
+          Register | Spector Trades
         </title>
       </Head>
       <Box
@@ -145,14 +146,14 @@ React.useEffect(() => {
       >
         <Container maxWidth="sm">
           <NextLink
-            href="/"
+            href="/home"
             passHref
           >
             <Button
               component="a"
               startIcon={<ArrowBackIcon fontSize="small" />}
             >
-              Dashboard
+              Home
             </Button>
           </NextLink>
           <form onSubmit={formik.handleSubmit}>
@@ -209,12 +210,73 @@ React.useEffect(() => {
               value={formik.values.password}
               variant="outlined"
             />
-              <Stack direction="row" alignItems="center" spacing={2}>
-              <input id="file" name="avatar" type="file" onChange={(event) => {
+              <Stack sx={{my: 1}} direction="row" alignItems="center" spacing={2}>
+
+              <label htmlFor="contained-button-file">
+                <Input sx={{display: 'none'}} accept="image/*" id="contained-button-file" multiple type="file" onChange={(event) => {
+                  setAvatarFileNameText(event.currentTarget.files[0].name);
+                  formik.setFieldValue("avatar", event.currentTarget.files[0]);
+                }} />
+                <Button variant="contained" component="span">
+                  Upload avatar
+                </Button>
+              </label>
+
+              <Typography
+                color="textSecondary"
+                gutterBottom
+                variant="body2"
+              >
+                { avatarFileNameText }
+              </Typography>
+
+            </Stack>
+            {/*
+
+                          <input id="file" name="avatar" type="file" onChange={(event) => {
+                console.log(event.currentTarget.files[0]);
                 formik.setFieldValue("avatar", event.currentTarget.files[0]);
               }} />
 
-            </Stack>
+
+
+            <Box
+              sx={{
+                alignItems: 'center',
+                display: 'flex',
+                ml: -1
+              }}
+            >
+              <Checkbox
+                checked={formik.values.policy}
+                name="policy"
+                onChange={formik.handleChange}
+              />
+              <Typography
+                color="textSecondary"
+                variant="body2"
+              >
+                I have read the
+                {' '}
+                <NextLink
+                  href="#"
+                  passHref
+                >
+                  <Link
+                    color="primary"
+                    underline="always"
+                    variant="subtitle2"
+                  >
+                    Terms and Conditions
+                  </Link>
+                </NextLink>
+              </Typography>
+            </Box> */}
+            {/* {Boolean(formik.touched.policy && formik.errors.policy) && (
+              <FormHelperText error>
+                {formik.errors.policy}
+              </FormHelperText> */}
+            {/* )} */}
             <Box sx={{ py: 2 }}>
               <Button
                 color="primary"

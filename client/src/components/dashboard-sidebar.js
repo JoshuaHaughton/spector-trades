@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import PropTypes from 'prop-types';
-import { Box, Button, Divider, Drawer, Typography, useMediaQuery } from '@mui/material';
+import { Avatar, Box, Button, Divider, Drawer, Typography, useMediaQuery } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { ChartBar as ChartBarIcon } from '../icons/chart-bar';
 import { Cog as CogIcon } from '../icons/cog';
@@ -17,7 +17,9 @@ import { Logo } from './logo';
 import { NavItem } from './nav-item';
 import { useCookies } from 'react-cookie';
 import api from "../apis/api";
+import axios from 'axios';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import { UserCircle } from 'src/icons/user-circle';
 let items = [
   {
     href: '/',
@@ -57,6 +59,8 @@ const itemsAuthorized = [
 export const DashboardSidebar = (props) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(['spector_jwt']);
+  const [user, setUser] = useState(null);
+  const [avatarImageUrl, setAvatarImageUrl] = useState(null);
 
   const { open, onClose } = props;
   const router = useRouter();
@@ -84,9 +88,14 @@ export const DashboardSidebar = (props) => {
 
     //originally async
     const fetchData = async () => {
-        api.post('/auth', {jwt_token: cookies.spector_jwt}).then(response => {
+      const token = cookies.spector_jwt;
+      const config = {
+        headers: { Authorization: `Bearer ${token}`}
+      };
+        api.get('/auth', config).then(response => {
           if (response.data['success']) {
             setIsAuthorized(true);
+            setUser(response.data.user);
           }
         }).catch(err => {
           console.log(err);
@@ -96,10 +105,19 @@ export const DashboardSidebar = (props) => {
     fetchData();
 
   }, []);
+
+  useEffect(() => {
+    if (user && user['avatar_url']) {
+      axios.post('/api/avatar-url', {avatar_url: user.avatar_url}).then(res => {
+        setAvatarImageUrl(res.data.avatar_image_url);
+      });
+    }
+  }, [user])
+
   function handleClick(e) {
     e.preventDefault();
-    console.log('The link was clicked.');
     removeCookie(["spector_jwt"]);
+    setUser(null);
     setTimeout(() => {router.push('/login')}, 1000)
   }
   const content = (
@@ -127,44 +145,52 @@ export const DashboardSidebar = (props) => {
               </a>
             </NextLink>
           </Box>
-          <Box sx={{ px: 2 }}>
-            <Box
-              sx={{
-                alignItems: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                cursor: 'pointer',
-                display: 'flex',
-                justifyContent: 'space-between',
-                px: 3,
-                py: '11px',
-                borderRadius: 1
-              }}
-            >
-              <div>
-                <Typography
-                  color="inherit"
-                  variant="subtitle1"
-                >
-                  Acme Inc
-                </Typography>
-                <Typography
-                  color="neutral.400"
-                  variant="body2"
-                >
-                  Your tier
-                  {' '}
-                  : Premium
-                </Typography>
-              </div>
-              <SelectorIcon
+
+          {user && (
+            <Box sx={{ px: 2 }}>
+              <Box
                 sx={{
-                  color: 'neutral.500',
-                  width: 14,
-                  height: 14
+                  alignItems: 'center',
+                  backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  px: 2,
+                  py: '11px',
+                  borderRadius: 1
                 }}
-              />
+              >
+                <Avatar
+                  sx={{
+                    height: 40,
+                    width: 40,
+                    ml: 1
+                  }}
+                  src={ avatarImageUrl }
+                >
+                  <UserCircle fontSize="small" />
+                </Avatar>
+
+                <div>
+
+                  <Typography
+                    color="inherit"
+                    variant="subtitle1"
+                  >
+                    Welcome {user.name}!
+                  </Typography>
+                  <Typography
+                    color="neutral.400"
+                    variant="body2"
+                  >
+                    {user.email}
+                  </Typography>
+                </div>
+              </Box>
             </Box>
-          </Box>
+          )}
+
+
         </div>
         <Divider
           sx={{

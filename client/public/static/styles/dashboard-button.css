@@ -1,0 +1,11 @@
+button.stats {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button.stats-disabled {
+  border: none;
+  background: none;
+  opacity: 0.1;
+}

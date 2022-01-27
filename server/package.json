@@ -5,13 +5,14 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "db:reset": "psql -f bin/create_db.sql && node bin/resetdb.js",
+    "db:reset": "psql -f bin/create_db.sql && node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
     "local": "./node_modules/.bin/nodemon --delay 500ms -L --ignore public/"
   },
   "author": "Lighthouse Labs",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "bluebird": "^3.7.2",
     "body-parser": "^1.19.1",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
@@ -23,6 +24,7 @@
     "morgan": "^1.9.1",
     "multer": "^1.4.4",
     "pg": "^8.7.1",
+    "pg-promise": "^10.11.1",
     "sass": "^1.35.1"
   },
   "devDependencies": {
