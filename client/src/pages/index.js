@@ -584,18 +584,9 @@ const Dashboard = () => {
       const overallProfit = [];
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let totalProfitOpen = 0;
-<<<<<<< HEAD
         if (i <= graphStartDate) {
           profitForAssetKeys.forEach(asset => {
             if (profitForAsset[asset][new Date(day.date)] !== undefined) {
-=======
-        //console.log("CHECK123: ", graphStartDate)
-        if (i <= graphStartDate) {
-          profitForAssetKeys.forEach(asset => {
-            // console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
-            if (profitForAsset[asset][new Date(day.date)] !== undefined) {
-              //console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
->>>>>>> 29644e23139ff76ca8f147e9fed340eb284b80ca
               totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
 
             }
@@ -676,7 +667,7 @@ const Dashboard = () => {
             setLoading(false);
             parseGraphData(activePortfolio);
 
-       
+
 
 
             return response.data;
@@ -755,7 +746,7 @@ const Dashboard = () => {
         console.log("ERROR in currencyConversion call: ", err)
       });
     });
-    
+
     refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
 
@@ -845,7 +836,7 @@ const Dashboard = () => {
       }
     };
 
-    
+
     if (exitPoint && exitPoint > 0) {
       console.log('there is an exit point');
       seriesOptions.options['annotations'] = {
