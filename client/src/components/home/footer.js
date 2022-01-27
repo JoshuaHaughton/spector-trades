@@ -3,11 +3,12 @@ import * as React from 'react';
 import {Box, Grid, Link, Container, Typography, TextField } from '@mui/material'
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Link as LinkS } from 'react-scroll';
 
 function Copyright() {
   return (
-    <Box sx={{display: "flex", justifyContent: "space-evenly", width: "25%"}}>
-      <Link color="secondary" href="https://github.com/JoshuaHaughton/spector-trades/">
+    <Box sx={{display: "flex", justifyContent: "space-evenly", width: "25%", textAlign: "center"}}>
+      <Link color="#777777" href="https://github.com/JoshuaHaughton/spector-trades/">
       {'© '}
       {`Spector Trades `}
       {new Date().getFullYear()}
@@ -57,13 +58,15 @@ export default function Footer() {
               justifyContent="flex-end"
               spacing={2}
             >
-                <Box component="a" href="https://instagram.com/" >
+              <LinkS to="top" spy={true} smooth={true} duration={1000}>
+                <Box component="a" href="#" >
                   <img
                       src="/static/images/Find-Investments-Find-Wealth.svg"
                       alt="Spector Trades"
                       height="150px"
                     />
                 </Box>
+              </LinkS>
             </Box>
 
                 <Copyright />
@@ -72,20 +75,20 @@ export default function Footer() {
             <Box sx={{display: "flex", flexDirection: "row", alignItems: "center", mt: 2}}>
 
 
-            <Typography variant="h6" marked="left" gutterBottom>
+            <Typography variant="h6" marked="left" color="#777777" gutterBottom>
               Team:
             </Typography>
 
             <Box component="ul" sx={{ m: 0, listStyle: 'none', p: 0, ml: 3 }}>
 
-              <Box component="li" sx={{ py: 0.1 }}>
-                <Link href="https://github.com/Drumshtick">Erik</Link>
+              <Box component="li" sx={{ py: 0.1, textDecoration: 'none' }}>
+                <Link underline="hover" href="https://github.com/Drumshtick">Erik</Link>
+              </Box>
+              <Box component="li" sx={{ py: 0.1, textDecoration: 'none' }}>
+                <Link underline="hover" href="https://github.com/JoshuaHaughton">Josh</Link>
               </Box>
               <Box component="li" sx={{ py: 0.1 }}>
-                <Link href="https://github.com/JoshuaHaughton">Josh</Link>
-              </Box>
-              <Box component="li" sx={{ py: 0.1 }}>
-                <Link href="https://github.com/kencruz">Ken</Link>
+                <Link underline="hover" href="https://github.com/kencruz">Ken</Link>
               </Box>
 
 

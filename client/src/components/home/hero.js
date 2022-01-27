@@ -6,6 +6,7 @@ import { withStyles, makeStyles } from '@mui/styles';
 import HeroLayout from './herolayout';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { Link } from 'react-scroll';
 
 const useStyles = makeStyles({
   label: {color: "#29256A"}, // a nested style rule
@@ -58,7 +59,7 @@ export default function Hero() {
       />
       <Box
       sx={{
-        width: '45%',
+        width: '40%',
         display: 'flex',
         flexWrap: 'wrap',
         justifyContent: 'center',
@@ -78,16 +79,17 @@ export default function Hero() {
           At Spector Trades, <span className={classes.label}>you're</span> in the big leagues!
         </Typography>
         {/* <ThemeProvider theme={theme}> */}
+        <Link to="features" spy={true} smooth={true} duration={1000}>
           <StyledButton
             // color="secondary"
             variant="contained"
             size="large"
             component="a"
-            href="#features"
             sx={{ minWidth: 200 }}
           >
             Learn More
           </StyledButton>
+        </Link>
         {/* </ThemeProvider> */}
       </Box>
       {/* <Box

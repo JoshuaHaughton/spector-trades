@@ -14,6 +14,7 @@ export const HomeNavbar = (props) => {
   return (
     <>
       <HomeNavbarRoot
+        id="top"
         sx={{  position: 'relative', height: 80 }}
         {...other}>
         <Toolbar
@@ -46,7 +47,7 @@ export const HomeNavbar = (props) => {
                   />
 
               </Box>
-                  <Box sx={{width: '30%', display: 'flex'}}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mr: 10}}>
                     <Link href="/" underline="none" sx={{ marginLeft: '32px', fontWeight: 'bold'}}>
                       Dashboard
                     </Link>

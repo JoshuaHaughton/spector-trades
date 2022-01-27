@@ -28,7 +28,7 @@ export default async (req, res) => {
   }
   
   for (const symbol in response.data) {
-    plusMinus[symbol] = response.data.symbol.percent_change;
+    plusMinus[symbol] = response.data[symbol].percent_change;
   }
   
   res.status(200).json( plusMinus )

@@ -4,7 +4,22 @@ export default async (req, res) => {
   if (!req.body['id']) {
      return res.status(400).json({error: 'No coin id given'});
   }
-  const URL = `https://api.coingecko.com/api/v3/coins/${req.body.id}/market_chart?vs_currency=cad&days=90&interval=daily`;
-  const response = await axios.get(URL);
-  res.status(200).json( response.data )
+
+  const options = {
+    method: 'GET',
+    url: `https://coingecko.p.rapidapi.com/coins/${req.body.id}/market_chart`,
+    params: {days: '90', vs_currency: 'cad'},
+    headers: {
+      'x-rapidapi-host': process.env.COIN_GECKO_HOST,
+      'x-rapidapi-key': process.env.INDIVIDUAL_ASSET_COIN_GECKO_SECRET
+    }
+  };
+
+  axios.request(options).then( response => {
+    return res.status(200).json( response.data );
+  }).catch( err => {
+    console.log(err);
+    return res.status(500).send(err.message);
+  });
+  
 }

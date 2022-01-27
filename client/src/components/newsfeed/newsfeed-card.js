@@ -143,7 +143,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
           <br />
           <br />
           {media._id &&
-          <Link href={media.link} color="inherit">
+          <Link href={media.link} target="_blank" color="inherit">
             Click here to learn more
           </Link>
           }
