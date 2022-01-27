@@ -102,8 +102,8 @@ export const AddInvestmentModal = ({ open, handleClose, portfolios, refreshDashb
       setInfo({visibility: 'visible', severity: 'error', message: 'Asset quantity must be at least 1!'});
     } else if (totalValue < 1) {
       setInfo({visibility: 'visible', severity: 'error', message: 'Total purchase must be at least 1 cent!'});
-    } else if (exitPoint > 0 && exitPoint * 100 <= totalValue) {
-      setInfo({visibility: 'visible', severity: 'error', message: 'Exit point must be greater than total purchase!'});
+    } else if (exitPoint > 0 && exitPoint * 100 <= assetSelection.price) {
+      setInfo({visibility: 'visible', severity: 'error', message: 'Exit point must be greater than asset price!'});
     } else {
       const data = {
         name: portfolioSelection.label, 

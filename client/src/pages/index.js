@@ -371,8 +371,13 @@ const Dashboard = () => {
     });
   };
 
-  const createAssetGraphData = (data) => {
-    setActiveGraphData({
+  const createAssetGraphData = (data, name, exitPoint) => {
+    let nameLabel = 'Asset';
+    if (name) {
+      nameLabel = name;
+    }
+
+    const seriesOptions = {
       series: [{
         name: "price",
         data: data,
@@ -398,7 +403,7 @@ const Dashboard = () => {
           size: 0,
         },
         title: {
-          text: 'Asset Price Movement',
+          text: `${nameLabel} Price Movement`,
           align: 'left'
         },
         fill: {
@@ -427,6 +432,14 @@ const Dashboard = () => {
         xaxis: {
           type: 'datetime',
           name: 'date',
+          labels: {
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: 'MMM \'yy',
+              day: 'dd MMM',
+              hour: 'HH:mm'
+            }
+          }
         },
         tooltip: {
           shared: false,
@@ -437,7 +450,30 @@ const Dashboard = () => {
           }
         }
       }
-    });
+    };
+
+    
+    if (exitPoint && exitPoint > 0) {
+      console.log('there is an exit point');
+      seriesOptions.options['annotations'] = {
+        yaxis: [
+          {
+            y: (exitPoint / 100),
+            borderColor: '#00E396',
+            label: {
+              borderColor: '#00E396',
+              style: {
+                color: '#fff',
+                background: '#00E396'
+              },
+              text: `Exit point @ ${exitPoint / 100}`
+            }
+          }
+        ]
+      }
+    }
+    //const dataDates = data.map(d => [new Date(d[0]), d[1]]);
+    setActiveGraphData(seriesOptions);
   };
 
   const authorizedDashboard = () => {
