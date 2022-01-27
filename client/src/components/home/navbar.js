@@ -14,6 +14,7 @@ export const HomeNavbar = (props) => {
   return (
     <>
       <HomeNavbarRoot
+        id="top"
         sx={{  position: 'relative', height: 80 }}
         {...other}>
         <Toolbar
