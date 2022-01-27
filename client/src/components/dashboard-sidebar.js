@@ -108,7 +108,6 @@ export const DashboardSidebar = (props) => {
         headers: { Authorization: `Bearer ${token}`}
       };
         api.get('/auth', config).then(response => {
-          console.log('user info: ', response.data);
           if (response.data['success']) {
             setIsAuthorized(true);
             setUser(response.data.user);
@@ -125,7 +124,6 @@ export const DashboardSidebar = (props) => {
   useEffect(() => {
     if (user && user['avatar_url']) {
       axios.post('/api/avatar-url', {avatar_url: user.avatar_url}).then(res => {
-        console.log(res.data.avatar_image_url);
         setAvatarImageUrl(res.data.avatar_image_url);
       });
     }
@@ -133,7 +131,6 @@ export const DashboardSidebar = (props) => {
 
   function handleClick(e) {
     e.preventDefault();
-    console.log('The link was clicked.');
     removeCookie(["spector_jwt"]);
     setUser(null);
     setTimeout(() => {router.push('/login')}, 1000)

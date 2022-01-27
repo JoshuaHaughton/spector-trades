@@ -351,6 +351,9 @@ const Dashboard = () => {
         }
         xData.push(item.created_at)
       });
+      xData.sort(function(a, b) {
+        return Date.parse(a) - Date.parse(b);
+      });
       chartSettings = {
         type: graphType,
         stacked: false,
@@ -535,6 +538,7 @@ const Dashboard = () => {
       console.log("ACTIVEPORTFOLIO: ", activePortfolio)
       console.log("DASHBOARDSTATE: ", dashboardState)
       let portfolioData = statsData[activePortfolio]
+      console.log("CHECH HERE: ", portfolioData)
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       const dates = [];
       portfolioData.assets.forEach(asset => {

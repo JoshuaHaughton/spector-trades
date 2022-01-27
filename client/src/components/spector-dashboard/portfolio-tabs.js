@@ -4,7 +4,6 @@ import { useState } from 'react';
 export const PortfolioTabs = ({portfolios, activePortfolio, setActivePortfolio, getAssetPerformanceData}) => {
     const handleChange = (event, newValue) => {
       setActivePortfolio(newValue);
-      getAssetPerformanceData()
     };
 
     return (
