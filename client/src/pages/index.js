@@ -84,6 +84,14 @@ const Dashboard = () => {
             //   }
             //   return newCopy;
             // }));
+            cryptoDifference.forEach(name => {
+              setPlusMinus(prev => {
+                const newCopy = {...prev};
+                newCopy.crypto[name] = (-1 * Math.random() * 10 + 1).toPrecision(5);
+                return newCopy;
+              });
+            })
+
           }
 
           if (stockDifference.length > 0) {
@@ -576,9 +584,18 @@ const Dashboard = () => {
       const overallProfit = [];
       assetPerformanceCrypto.crypto[dates[0].name] && assetPerformanceCrypto.crypto[dates[0].name].forEach((day, i) => {
         let totalProfitOpen = 0;
+<<<<<<< HEAD
         if (i <= graphStartDate) {
           profitForAssetKeys.forEach(asset => {
             if (profitForAsset[asset][new Date(day.date)] !== undefined) {
+=======
+        //console.log("CHECK123: ", graphStartDate)
+        if (i <= graphStartDate) {
+          profitForAssetKeys.forEach(asset => {
+            // console.log("CHECK: ", profitForAsset[asset][new Date(day.date)] !== undefined)
+            if (profitForAsset[asset][new Date(day.date)] !== undefined) {
+              //console.log("here: ", profitForAsset[asset][new Date(day.date)].openProfit)
+>>>>>>> 29644e23139ff76ca8f147e9fed340eb284b80ca
               totalProfitOpen += profitForAsset[asset][new Date(day.date)].openProfit;
 
             }
@@ -659,11 +676,16 @@ const Dashboard = () => {
             setLoading(false);
             parseGraphData(activePortfolio);
 
+       
+
+
             return response.data;
           }
         }).then(response => {
 
           if (response) {
+
+            console.log('why dont u work');
             // START OF GET + / - DATA
             const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
             const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
@@ -680,18 +702,24 @@ const Dashboard = () => {
               return newObj;
             }, {});
 
-            console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
+            // console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
 
             if (Object.keys(cryptoReduce).length > 0) {
+              console.log("SHOULD FAKE THE DATA here");
+              Object.keys(cryptoReduce).forEach(id => {
+                // axios.post('/api/crypto-plus-minus', {id}).
+                // then(res => setPlusMinus(prev => {
+                //   const newCopy = {...prev};
+                //   newCopy.crypto[id] = res.data.plusMinus;
+                //   return newCopy;
+                // }));
+                setPlusMinus(prev => {
+                    const newCopy = {...prev};
+                    newCopy.crypto[id] = (-1 * Math.random() * 10 + 1).toPrecision(5);
+                    return newCopy;
+                  });
 
-              // Object.keys(cryptoReduce).forEach(id => {
-              //   axios.post('/api/crypto-plus-minus', {id}).
-              //   then(res => setPlusMinus(prev => {
-              //     const newCopy = {...prev};
-              //     newCopy.crypto[id] = res.data.plusMinus;
-              //     return newCopy;
-              //   }));
-              // })
+              })
 
             }
 
@@ -703,11 +731,8 @@ const Dashboard = () => {
                 return newCopy;
               }));
             }
-
-
-
-
             // END OF GET + / - DATA
+
           }
 
         }).catch(() => {
@@ -730,6 +755,8 @@ const Dashboard = () => {
         console.log("ERROR in currencyConversion call: ", err)
       });
     });
+    
+    refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
 
   useEffect(() => {
@@ -737,8 +764,13 @@ const Dashboard = () => {
   }, [dashboardState])
 
 
-  const createAssetGraphData = (data) => {
-    setActiveGraphData({
+  const createAssetGraphData = (data, name, exitPoint) => {
+    let nameLabel = 'Asset';
+    if (name) {
+      nameLabel = name;
+    }
+
+    const seriesOptions = {
       series: [{
         name: "price",
         data: data,
@@ -764,7 +796,7 @@ const Dashboard = () => {
           size: 0,
         },
         title: {
-          text: 'Asset Price Movement',
+          text: `${nameLabel} Price Movement`,
           align: 'left'
         },
         fill: {
@@ -793,6 +825,14 @@ const Dashboard = () => {
         xaxis: {
           type: 'datetime',
           name: 'date',
+          labels: {
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: 'MMM \'yy',
+              day: 'dd MMM',
+              hour: 'HH:mm'
+            }
+          }
         },
         tooltip: {
           shared: false,
@@ -803,7 +843,30 @@ const Dashboard = () => {
           }
         }
       }
-    });
+    };
+
+    
+    if (exitPoint && exitPoint > 0) {
+      console.log('there is an exit point');
+      seriesOptions.options['annotations'] = {
+        yaxis: [
+          {
+            y: (exitPoint / 100),
+            borderColor: '#00E396',
+            label: {
+              borderColor: '#00E396',
+              style: {
+                color: '#fff',
+                background: '#00E396'
+              },
+              text: `Exit point @ ${exitPoint / 100}`
+            }
+          }
+        ]
+      }
+    }
+    //const dataDates = data.map(d => [new Date(d[0]), d[1]]);
+    setActiveGraphData(seriesOptions);
   };
 
   const authorizedDashboard = () => {

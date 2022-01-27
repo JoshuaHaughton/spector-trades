@@ -78,12 +78,12 @@ const columns = [
   },
 ];
 
-function createData(name, symbol, type, priceAtPurchase, quantity, createdAt, plusMinusToday, sold) {
+function createData(name, symbol, type, priceAtPurchase, quantity, createdAt, plusMinusToday, sold, exitPoint) {
   const timestamp = new Date(createdAt).toLocaleString("en-US");
   const totalValue = priceAtPurchase * quantity;
   const avgPrice = priceAtPurchase;
   const soldFormat = sold ? 'Yes' : 'No';
-  return { name, symbol, type, totalValue, quantity, avgPrice, plusMinusToday, timestamp, soldFormat };
+  return { name, symbol, type, totalValue, quantity, avgPrice, plusMinusToday, timestamp, soldFormat, exitPoint };
 }
 
 function getPlusMinus(asset, plusMinus) {
@@ -101,14 +101,14 @@ function getPlusMinus(asset, plusMinus) {
 
 export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
   console.log('the assets', assets);
-  const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a, plusMinus), a.sold));
+  const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a, plusMinus), a.sold, a.exit_point));
   const handleClick = (row) => {
     if (row.type === "Cryptocurrency") {
       console.log(row);
 
       axios.post('/api/crypto-history', {id: row.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
-          createAssetGraphData(res.data.prices);
+          createAssetGraphData(res.data.prices, row.symbol, row.exitPoint);
         }
       });
 
@@ -123,7 +123,7 @@ export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
             //return [Math.round((new Date(v.datetime)) / 1000), Number(v.close)];
             return [v.datetime, Number(v.close)];
           });
-          createAssetGraphData(dataSeries);
+          createAssetGraphData(dataSeries, row.symbol, row.exitPoint);
         }
       });
     }
