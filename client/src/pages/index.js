@@ -34,7 +34,6 @@ const Dashboard = () => {
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
-  const [activeStat, setActiveStat] = useState("");
   const [plusMinus, setPlusMinus] = useState({stock: {}, crypto: {}});
 
   // TODO: REFACTOR!
@@ -709,7 +708,7 @@ const Dashboard = () => {
         }).catch(() => {
           // Response rejected
 
-          router.push('/home');
+          // router.push('/home');
           setTimeout(() => {setLoading(false)}, 1000);
         });
       } catch(err) {
