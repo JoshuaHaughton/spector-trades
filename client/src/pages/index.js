@@ -15,6 +15,7 @@ import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import axios from 'axios';
+import { parseCryptoStats } from '../components/helpers/graphDataProfit'
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
   const router = useRouter();
@@ -153,44 +154,44 @@ const Dashboard = () => {
         stockNames.push(stock.name);
       });
     }
-    axios.post('api/stockHistorical', {id: stockNames})
-      .then(res => {
-        if (assetData.stocks === undefined) {
-          assetData['stocks'] = {};
-        }
-        const stockData = res.data;
-        const stockDataKeys = Object.keys(stockData);
-        stockDataKeys.forEach(key => {
-          if (stockNames.includes(key)) {
-            if (stockNames.length === 1) {
-              const stockPriceValues = stockData[key];
-              assetData.stocks[key] = [];
-              stockPriceValues.forEach(price => {
-                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * Number(price.close);
-                price.high = currencyConversion.CAD * Number(price.high);
-                price.low = currencyConversion.CAD * Number(price.low);
-                price.open = currencyConversion.CAD * Number(price.open);
-                assetData.stocks[key].push(price);
-              });
-            } else {
-              const stockPriceValues = stockData[key].values;
-              assetData.stocks[key] = [];
-              stockPriceValues.forEach(price => {
-                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * price.close;
-                price.high = currencyConversion.CAD * price.high;
-                price.low = currencyConversion.CAD * price.low;
-                price.open = currencyConversion.CAD * price.open;
-                assetData.stocks[key].push(price);
-              });
+    // axios.post('api/stockHistorical', {id: stockNames})
+    //   .then(res => {
+    //     if (assetData.stocks === undefined) {
+    //       assetData['stocks'] = {};
+    //     }
+    //     const stockData = res.data;
+    //     const stockDataKeys = Object.keys(stockData);
+    //     stockDataKeys.forEach(key => {
+    //       if (stockNames.includes(key)) {
+    //         if (stockNames.length === 1) {
+    //           const stockPriceValues = stockData[key];
+    //           assetData.stocks[key] = [];
+    //           stockPriceValues.forEach(price => {
+    //             price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
+    //             price.close = currencyConversion.CAD * Number(price.close);
+    //             price.high = currencyConversion.CAD * Number(price.high);
+    //             price.low = currencyConversion.CAD * Number(price.low);
+    //             price.open = currencyConversion.CAD * Number(price.open);
+    //             assetData.stocks[key].push(price);
+    //           });
+    //         } else {
+    //           const stockPriceValues = stockData[key].values;
+    //           assetData.stocks[key] = [];
+    //           stockPriceValues.forEach(price => {
+    //             price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
+    //             price.close = currencyConversion.CAD * price.close;
+    //             price.high = currencyConversion.CAD * price.high;
+    //             price.low = currencyConversion.CAD * price.low;
+    //             price.open = currencyConversion.CAD * price.open;
+    //             assetData.stocks[key].push(price);
+    //           });
 
-            }
-          }
-        });
-        setAssetPerformanceStocks({stocks: assetData['stocks']})
-      })
-      .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
+    //         }
+    //       }
+    //     });
+    //     setAssetPerformanceStocks({stocks: assetData['stocks']})
+    //   })
+    //   .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
       cryptoAssets.forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
         if (assetData.crypto === undefined) {
@@ -204,6 +205,8 @@ const Dashboard = () => {
             assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
           }
         });
+        console.log(assetData)
+        const parsedAssetData = parseCryptoStats(assetData.crypto, dashboardState);
         setAssetPerformanceCrypto(prev => {
           return {crypto: assetData.crypto}
         })
@@ -535,10 +538,10 @@ const Dashboard = () => {
           autoSelected: 'zoom'
         }
       }
-      console.log("ACTIVEPORTFOLIO: ", activePortfolio)
-      console.log("DASHBOARDSTATE: ", dashboardState)
+      // console.log("ACTIVEPORTFOLIO: ", activePortfolio)
+      // console.log("DASHBOARDSTATE: ", dashboardState)
       let portfolioData = statsData[activePortfolio]
-      console.log("CHECH HERE: ", portfolioData)
+      // console.log("CHECH HERE: ", portfolioData)
       let portfolioStartedOn = new Date(new Date(dashboardState[activePortfolio].portfolioInfo.created_at).setHours(0, 0, 0, 0))
       const dates = [];
       portfolioData.assets.forEach(asset => {
