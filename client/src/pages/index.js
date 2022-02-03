@@ -16,6 +16,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import axios from 'axios';
 import { parseCryptoStats } from '../components/helpers/graphDataProfit'
+import { getCryptoData } from '../components/helpers/assetData';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
   const router = useRouter();
@@ -74,7 +75,7 @@ const Dashboard = () => {
 
           const cryptoDifference = Object.keys(cryptoReduce).filter(x => Object.keys(plusMinus.crypto).indexOf(x) === -1);
           const stockDifference = Object.keys(stockReduce).filter(x => Object.keys(plusMinus.stock).indexOf(x) === -1);
-          console.log('cryptoDifference', cryptoDifference, 'stockDifference', stockDifference);
+          // console.log('cryptoDifference', cryptoDifference, 'stockDifference', stockDifference);
 
           if (cryptoDifference.length > 0) {
             // axios.post('/api/crypto-plus-minus', {id: cryptoDifference}).
@@ -112,104 +113,12 @@ const Dashboard = () => {
   };
   const assetData = {};
 
-  const getAssetPerformanceData = () => {
-    const cryptoAssets = [];
-    const stockAssets = [];
-    const portfolioData = Object.values(dashboardState);
-    const portfolioCreatedAt = [];
-
-    portfolioData.forEach(portfolio => {
-      portfolioCreatedAt.push(portfolio.portfolioInfo.created_at)
-      const assets = Object.values(portfolio.assets);
-
-      assets.forEach(asset => {
-        if (asset.type === 'Cryptocurrency') {
-          cryptoAssets.push({
-            name: asset.name,
-            units: asset.units,
-            price_at_purchase: asset.price_at_purchase,
-            sold: asset.sold,
-            start_date: asset.created_at
-          });
-        }
-
-        if (asset.type === 'Stocks') {
-          stockAssets.push({
-            name: asset.symbol,
-            units: asset.units,
-            price_at_purchase: asset.price_at_purchase,
-            sold: asset.sold
-          });
-        }
-      });
-    });
-    portfolioCreatedAt.sort(function(a, b) {
-      return Date.parse(a) - Date.parse(b);
-    });
-
-    const oldestDate = new Date(new Date(portfolioCreatedAt[0]).setHours(0, 0, 0, 0));
-    const stockNames = [];
-    if (stockAssets.length > 0) {
-      stockAssets.forEach((stock) => {
-        stockNames.push(stock.name);
-      });
+  useEffect(() => {
+    if (Object.keys(dashboardState).length !== 0) {
+      getCryptoData(dashboardState)
     }
-    axios.post('api/stockHistorical', {id: stockNames})
-      .then(res => {
-        if (assetData.stocks === undefined) {
-          assetData['stocks'] = {};
-        }
-        const stockData = res.data;
-        const stockDataKeys = Object.keys(stockData);
-        stockDataKeys.forEach(key => {
-          if (stockNames.includes(key)) {
-            if (stockNames.length === 1) {
-              const stockPriceValues = stockData[key];
-              assetData.stocks[key] = [];
-              stockPriceValues.forEach(price => {
-                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * Number(price.close);
-                price.high = currencyConversion.CAD * Number(price.high);
-                price.low = currencyConversion.CAD * Number(price.low);
-                price.open = currencyConversion.CAD * Number(price.open);
-                assetData.stocks[key].push(price);
-              });
-            } else {
-              const stockPriceValues = stockData[key].values;
-              assetData.stocks[key] = [];
-              stockPriceValues.forEach(price => {
-                price.datetime = new Date(new Date(price.datetime).setHours(0, 0, 0, 0))
-                price.close = currencyConversion.CAD * price.close;
-                price.high = currencyConversion.CAD * price.high;
-                price.low = currencyConversion.CAD * price.low;
-                price.open = currencyConversion.CAD * price.open;
-                assetData.stocks[key].push(price);
-              });
-
-            }
-          }
-        });
-      })
-      .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
-      cryptoAssets.forEach(asset => {
-      axios.post('api/cryptoHistorical', {id: asset.name}).then(res => {
-        if (assetData.crypto === undefined) {
-          assetData['crypto'] = {};
-        }
-        const cryptoData = res.data.reverse();
-        assetData.crypto[asset.name] = [];
-        cryptoData.forEach((day, index) => {
-          const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
-          if (currentDay.getTime() >= oldestDate.getTime()) {
-            assetData.crypto[asset.name].push({date: new Date(new Date(day[0]).setHours(0, 0, 0, 0)), data: day[1]});
-          }
-        });
-        console.log(assetData)
-      }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
-
-    })
-    };
-
+  }, [dashboardState]);
+  
 
   
   // /auth endpoint returns {success: true, token}
@@ -243,7 +152,7 @@ const Dashboard = () => {
 
           if (response) {
 
-            console.log('why dont u work');
+            // console.log('why dont u work');
             // START OF GET + / - DATA
             const cryptoAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Cryptocurrency")).flat();
             const stockAssets = Object.values(response).map(p => p.assets.filter(a => a.type === "Stocks")).flat();
@@ -263,7 +172,7 @@ const Dashboard = () => {
             // console.log('plus minus: ', cryptoAssets, stockAssets, Object.keys(cryptoReduce));
 
             if (Object.keys(cryptoReduce).length > 0) {
-              console.log("SHOULD FAKE THE DATA here");
+              // console.log("SHOULD FAKE THE DATA here");
               Object.keys(cryptoReduce).forEach(id => {
                 // axios.post('/api/crypto-plus-minus', {id}).
                 // then(res => setPlusMinus(prev => {
@@ -315,7 +224,6 @@ const Dashboard = () => {
 
     refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
-
 
   const createAssetGraphData = (data, name, exitPoint) => {
     let nameLabel = 'Asset';
@@ -400,7 +308,7 @@ const Dashboard = () => {
 
 
     if (exitPoint && exitPoint > 0) {
-      console.log('there is an exit point');
+      // console.log('there is an exit point');
       seriesOptions.options['annotations'] = {
         yaxis: [
           {
@@ -462,7 +370,7 @@ const Dashboard = () => {
               portfolios={
                 Object.values(dashboardState).map(portfolio => portfolio.portfolioInfo)
               }
-              {...{activePortfolio, setActivePortfolio, getAssetPerformanceData}}
+              {...{activePortfolio, setActivePortfolio}}
               />
           </Container>
 

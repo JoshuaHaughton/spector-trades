@@ -100,7 +100,7 @@ function getPlusMinus(asset, plusMinus) {
 }
 
 export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
-  console.log('the assets', assets);
+  // console.log('the assets', assets);
   const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a, plusMinus), a.sold, a.exit_point));
   const handleClick = (row) => {
     if (row.type === "Cryptocurrency") {
