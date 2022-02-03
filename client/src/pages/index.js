@@ -16,7 +16,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import axios from 'axios';
 import { parseCryptoStats } from '../components/helpers/graphDataProfit'
-import { getCryptoData } from '../components/helpers/assetData';
+import { getCryptoData, getStocksData } from '../components/helpers/assetData';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
   const router = useRouter();
@@ -115,7 +115,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (Object.keys(dashboardState).length !== 0) {
-      getCryptoData(dashboardState)
+      // getCryptoData(dashboardState).then((result) => {console.log(result)})
     }
   }, [dashboardState]);
   

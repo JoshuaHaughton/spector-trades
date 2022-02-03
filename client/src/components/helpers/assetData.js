@@ -1,8 +1,14 @@
 import axios from 'axios';
+import { resolveHref } from 'next/dist/shared/lib/router/router';
 
 const getCryptoData = (dashboardState) => {
 
-  const portfolioData = Object.values(dashboardState);
+  if (Object.keys(dashboardState).length === 0) {
+    return;
+  }
+
+  return new Promise(function(res, rej) {
+    const portfolioData = Object.values(dashboardState);
   const allAssets = new Set();
   const assetData = {};
   const portfolioCreationDates = [];
@@ -18,17 +24,19 @@ const getCryptoData = (dashboardState) => {
       }
     });
   });
-  console.log("assets: ", Array.from(allAssets))
+
 
   portfolioCreationDates.sort(function(a, b) {
     return Date.parse(a) - Date.parse(b);
   });
-  console.log("portfolio creation dates: ", portfolioCreationDates)
+
   const oldestDate = new Date(new Date(portfolioCreationDates[0]).setHours(0, 0, 0, 0));
-  console.log("oldest date: ", oldestDate)
 
   Array.from(allAssets).forEach(asset => {
     axios.post('api/cryptoHistorical', {id: asset}).then(res => {
+      if (!res.data) {
+        rej();
+      }
       const cryptoData = res.data.reverse();
       assetData[asset] = [];
       cryptoData.forEach((day, index) => {
@@ -39,10 +47,15 @@ const getCryptoData = (dashboardState) => {
       });
     }).catch(err => console.log("ERROR in getHistoricalCrypto: ", err));
   })
-  console.log("completed Data: ", assetData)
+
+  res(assetData);
+  })
 };
 
+const getStocksData = (dashboardState) => {
+
+};
 
 module.exports = {
-  getCryptoData
+  getCryptoData, getStocksData
 };
