@@ -111,14 +111,6 @@ const Dashboard = () => {
     };
     fetchData();
   };
-  const assetData = {};
-
-  useEffect(() => {
-    if (Object.keys(dashboardState).length !== 0) {
-      // getCryptoData(dashboardState).then((result) => {console.log(result)})
-      getStocksData(dashboardState, currencyConversion)
-    }
-  }, [dashboardState]);
   
 
   
@@ -135,7 +127,17 @@ const Dashboard = () => {
         api.get('/dashboard', config).then(response => {
           if (response.status === 200) {
 
-
+            if (Object.keys(response.data).length !== 0) {
+              const promises = [
+                getCryptoData(response.data),
+                getStocksData(dashboardState, currencyConversion)
+              ];
+        
+              Promise.all(promises)
+                .then(result => {
+                  console.log("result: ", result);
+                })
+            }
 
             setDashboardState(response.data);
             setIsAuthorized(true);
