@@ -62,6 +62,8 @@ const getCryptoData = (dashboardState) => {
  */
 
 const getStocksData = (dashboardState, currencyConversion) => {
+  console.log("getStocksData arguments: ", dashboardState, currencyConversion)
+
   if (Object.keys(dashboardState).length === 0) {
     return;
   }
@@ -93,7 +95,6 @@ const getStocksData = (dashboardState, currencyConversion) => {
     axios.post('api/stockHistorical', {id: stockNames})
     .then(result => {
       adjustedtoCDN = convertStocksPerformanceToX(currencyConversion, result.data, stockNames);
-
       res(adjustedtoCDN)
     })
     .catch(err => {
