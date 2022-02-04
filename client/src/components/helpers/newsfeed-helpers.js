@@ -55,17 +55,27 @@ const fetchPosts = async (setNewsFeed) => {
 
 const cleanResponses = async function (newsParams, setNewsFeed, cookies) {
   for (let i = 0; i < newsParams.length; i++) {
-    const options = {
+    let options = {
       method: "GET",
       url: `https://newsapi.org/v2/everything?q=${newsParams[i].name}&apiKey=bfb58d5c22df4f449db6799742aa03b0`,
-      // url: `https://newsapi.org/v2/everything?q=${newsParams[i].name}&apiKey=159e795495ec48febee3724f82d82ceb`,
     };
 
-    const res = await axios.request(options);
+    let res;
+    res = await axios.request(options)
+    .catch(async err => {
+      // if api limit reached, use another api key
+      if (err)
+
+      options = {
+        method: "GET",
+        url: `https://newsapi.org/v2/everything?q=${newsParams[i].name}&apiKey=159e795495ec48febee3724f82d82ceb`,
+      }
+
+      res = await axios.request(options)
+
+    });
 
     const cleaned = cleanFetchQuery(res.data.articles);
-
-    console.log("THE ARTICLES", cleaned);
 
     for (let article of cleaned) {
       let formattedObject = {
