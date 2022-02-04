@@ -96,16 +96,16 @@ const Dashboard = () => {
 
           }
 
-          if (stockDifference.length > 0) {
-            axios.post('/api/stock-plus-minus', {id: stockDifference}).
-            then(res => setPlusMinus(prev => {
-              const newCopy = {...prev};
-              for (const symbol in res.data) {
-                newCopy.stock[symbol] = res.data[symbol];
-              }
-              return newCopy;
-            }));
-          }
+          // if (stockDifference.length > 0) {
+          //   axios.post('/api/stock-plus-minus', {id: stockDifference}).
+          //   then(res => setPlusMinus(prev => {
+          //     const newCopy = {...prev};
+          //     for (const symbol in res.data) {
+          //       newCopy.stock[symbol] = res.data[symbol];
+          //     }
+          //     return newCopy;
+          //   }));
+          // }
 
         });
     };
@@ -125,31 +125,41 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}`}
         };
         api.get('/dashboard', config).then(response => {
+
           if (response.status === 200) {
 
-            if (Object.keys(response.data).length !== 0) {
-              const promises = [
-                getCryptoData(response.data),
-                getStocksData(dashboardState, currencyConversion)
-              ];
-        
-              Promise.all(promises)
-                .then(result => {
-                  console.log("result: ", result);
-                })
-            }
+            const userPortfolioData = response.data
 
-            setDashboardState(response.data);
+            axios.get('/api/currencyConversion')
+              .then((currencyDataResponse) => {
+
+                const currencyExchangeData = currencyDataResponse.data;
+
+                setCurrencyConversion(currencyExchangeData);
+                
+                if (Object.keys(currencyExchangeData).length !== 0) {
+                  const promises = [
+                    getCryptoData(userPortfolioData),
+                    getStocksData(userPortfolioData, currencyExchangeData)
+                  ];
+            
+                  Promise.all(promises)
+                    .then(result => {
+                      console.log("result: ", result);
+                    })
+                }
+              })
+            .catch(err => {
+              console.log("ERROR in currencyConversion call: ", err)
+            });
+            setDashboardState(userPortfolioData);
             setIsAuthorized(true);
             // get id of first portfolio
-            setActivePortfolio(Object.values(response.data).map(p => p.portfolioInfo)[0].id);
+            setActivePortfolio(Object.values(userPortfolioData).map(p => p.portfolioInfo)[0].id);
 
             setLoading(false);
 
-
-
-
-            return response.data;
+            return userPortfolioData;
           }
         }).then(response => {
 
@@ -215,15 +225,7 @@ const Dashboard = () => {
       }
     };
 
-    fetchData().then(res => {
-      axios.get('/api/currencyConversion')
-      .then((resp) => {
-        setCurrencyConversion(resp.data);
-      })
-      .catch(err => {
-        console.log("ERROR in currencyConversion call: ", err)
-      });
-    });
+    fetchData();
 
     refreshDashboardState(); // THIS IS FOR PLUS MINUS DEMO, WILL REMOVE LATER
   }, []);
