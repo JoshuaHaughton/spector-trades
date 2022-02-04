@@ -94,17 +94,17 @@ app.get('/', async (req, res) => {
   } catch(err) {
 
     res.status(500).send;
-    console.log(res)
+    // console.log(res)
   }
 })
 
 //Returns all orders for an individual user
 app.get('/me', authenticateToken, async(req, res) => {
 
-  console.log('ASSET ORDER BODY', req.body)
+  // console.log('ASSET ORDER BODY', req.body)
 
   const { user } = req.body
-  console.log('USER IN NEW ASSET ORDER CALL', user)
+  // console.log('USER IN NEW ASSET ORDER CALL', user)
 
   try {
     const assetOrders = await db.query(`
@@ -124,7 +124,7 @@ app.get('/me', authenticateToken, async(req, res) => {
   } catch(err) {
 
     res.status(500).send;
-    console.log(res)
+    // console.log(res)
   }
 })
 

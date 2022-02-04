@@ -109,6 +109,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
 
         }
 
+        console.log("going to post comment")
 
         //Post comment and link it to media, then close modal
         await api({

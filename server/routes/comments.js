@@ -35,7 +35,7 @@ module.exports = (db) => {
       res.send(comments.rows);
     } catch (err) {
       res.status(500).send;
-      console.log(res);
+      // console.log(res);
     }
   });
 
@@ -54,7 +54,7 @@ module.exports = (db) => {
         });
       })
       .catch((err) => {
-        console.log("ERROR IN getCommentsByUser: ", err);
+        // console.log("ERROR IN getCommentsByUser: ", err);
       });
   });
 
@@ -80,7 +80,7 @@ module.exports = (db) => {
         });
       })
       .catch((err) => {
-        console.log("ERROR IN getCommentsByUser: ", err);
+        // console.log("ERROR IN getCommentsByUser: ", err);
       });
   });
 
@@ -88,6 +88,9 @@ module.exports = (db) => {
   app.get("/:type/:media_id", (req, res) => {
     const { media_id } = req.params;
     const { type } = req.params;
+
+    
+
  
 
     getCommentsByMediaId(media_id, type, db)
@@ -103,10 +106,10 @@ module.exports = (db) => {
             comments: resp,
           },
         });
-        console.log("ARRAY RESP", resp);
+        // console.log("ARRAY RESP", resp);
       })
       .catch((err) => {
-        console.log("ERROR IN getCommentsByUser: ", err);
+        // console.log("ERROR IN getCommentsByUser: ", err);
       });
   });
 
@@ -117,6 +120,8 @@ module.exports = (db) => {
       console.log("FAILED POST TO COMMENTS, req.body: ", req.body);
       return res.sendStatus(422);
     }
+
+    console.log("POSTING COMMENTS...", req.body)
 
     const media = req.body;
     const user = req.body.user;
@@ -130,7 +135,7 @@ module.exports = (db) => {
       type = "post_id";
       idType = "posts";
     } else {
-      type = "article_id";
+      type = "article_title";
       idType = "articles";
     }
 
@@ -140,6 +145,7 @@ module.exports = (db) => {
         media_id,
         type,
         body,
+        title: media.id ? media.id : ''
       },
       db,
     )
@@ -150,11 +156,11 @@ module.exports = (db) => {
         ) {
           res.send({ status: 500, error: "article_id does not exist" });
         }
-        console.log("addMediaComment result: ", result);
+        // console.log("addMediaComment result: ", result);
         res.send({ status: 200, result });
       })
       .catch((err) => {
-        console.log("ERROR in addArticleComment: ", err);
+        // console.log("ERROR in addArticleComment: ", err);
         res.send({ status: 500, error: err });
       });
   });

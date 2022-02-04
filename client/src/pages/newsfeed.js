@@ -45,11 +45,11 @@ const Newsfeed = () => {
 
 
 
-  useEffect(() => {
-    // loadCard()
-    setTabValue(tabValue);
+  // useEffect(() => {
+  //   // loadCard()
+  //   // setTabValue(tabValue);
 
-  }, [newsFeed])
+  // }, [newsFeed])
 
 
   return (
@@ -82,10 +82,10 @@ const Newsfeed = () => {
             <Grid container spacing={3}>
               {/* {currentFeed} */}
               {newsFeed[tabValue] && newsFeed[tabValue].map((article) => {
-                if (article._id) {
+                if (article.title) {
                   return (
-                    <Grid item key={article._id} lg={12} md={12} xs={12}>
-                      <NewsfeedCard key={article._id} media={article} />
+                    <Grid item key={article.title} lg={12} md={12} xs={12}>
+                      <NewsfeedCard key={article.title} media={article} />
                     </Grid>
                   );
                 }

@@ -38,21 +38,21 @@ export const NewsfeedCard = ({ media, ...rest }) => {
     // they come in, they can be processed by the newsfeed card
 
     //Articles here have an id key of "_id"
-    if (media._id && !media.id) {
+    if (media.title && !media.id) {
       console.log('ARTICLE', media)
 
       return {
 
         mediaTitle: media.title.length > 55 ? media.title.substring(0, 55) + "..." : media.title,
-        mediaPublish: media.published_date,
-        mediaBody: media.summary.length > 150 ? media.summary.substring(0, 150) + "..." : media.summary,
-        id: media._id,
+        mediaPublish: media.publishedAt,
+        mediaBody: media.description.length > 150 ? media.description.substring(0, 150) + "..." : media.description,
+        id: media.title.split(" ").join("").split("%").join("").split(`’`).join("").split(`'`).join("").split(",").join("").split(".").join(""),
         media,
-        type: `original_article_id`
+        type: `original_article_title`
       }
 
     //Posts here have an id key of "id"
-  } else if (media.id && !media._id) {
+  } else if (media.id && !media.title) {
 
     return {
       mediaPublish: media.created_at,
@@ -71,13 +71,16 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   //ON FIRST MOUNT ONLY
   useEffect(() => {
 
-    if (media._id && !media.id) {
+    if (media.title && !media.id) {
+
+      console.log('JBO GON TRY TO CREATE ARTICLE', state)
+
 
         createArticle(state, cookies);
         checkIfLiked(state, cookies, setLiked);
         fetchTotalLikes(state, cookies, setTotalLikes);
 
-    } else if (media.id && !media._id) {
+    } else if (media.id && !media.title) {
 
         checkIfLiked(state, cookies, setLiked);
         fetchTotalLikes(state, cookies, setTotalLikes);
@@ -106,11 +109,11 @@ export const NewsfeedCard = ({ media, ...rest }) => {
               display: "flex",
             }}
           >
-            { ( media.avatar_url ? <Avatar alt={media.username} src={'http://localhost:3001/public/avatars/' + media.avatar_url } variant="rounded" />
-            : <Avatar alt="Article Image" src={state.media.media} variant="rounded" /> ) }
+            { ( media.urlToImage ? <Avatar alt="Article Image" src={ media.urlToImage } variant="rounded" />
+            : <Avatar alt={media.username} src={state.profileSrc} variant="rounded" /> ) }
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com), and for posts it displays the username */}
-              <strong>{media._id ? (media.author || media.clean_url) :`- @${media.username}`}</strong>{" "}
+              <strong>{media.title ? (media.author || media.source.name) :`- @${media.username}`}</strong>{" "}
               {state.mediaTitle}
             </Typography>
           </Grid>

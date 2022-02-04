@@ -4,6 +4,8 @@ import api from "src/apis/api";
 
 
 const setBackendLike = async (state, cookies) => {
+  console.log("will; set like")
+  console.log(state.id)
 
   try {
 
@@ -33,7 +35,7 @@ const checkIfLiked = async (state, cookies, setLiked) => {
     await api({
       method: "put",
       url: `/likes/${state.id}`,
-      data: state.media,
+      data: state,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.spector_jwt}`,
@@ -94,12 +96,17 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
 
   const createArticle = async (state, cookies) => {
 
+
+    let id = state.id.split(" ").join("").split("%").join("").split(`’`).join("").split(`'`).join("").split(",").join("").split(".").join("");
+    console.log('goin in', id)
+    console.log(state)
+
     try {
 
       //Retrieve article
       let media = await api({
         method: "get",
-        url: `/media/${state.type}/${state.id}`,
+        url: `/media/${state.type}/${id}`,
         data: state,
         headers: {
           "Content-Type": "application/json",
@@ -112,22 +119,26 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
 
         //save retrieved article
         const savedArticle = media.data.data.article;
-        console.log('EXISTS!!!!!!')
+        console.log('EXISTS!!!!!!', savedArticle)
 
       } else {
         console.log('CREATING!!!!!!')
+        console.log('CREATING!!!!!!')
+        console.log('CREATING!!!!!!', state)
 
         //create article
         await api({
           method: "post",
           url: "/articles",
-          data: media,
+          data: state,
           headers: {
             "Content-Type": "application/json",
             Authorization: cookies.spector_jwt,
           },
         })
       }
+
+      console.log('now what')
 
     } catch (err) {
       console.log(err)

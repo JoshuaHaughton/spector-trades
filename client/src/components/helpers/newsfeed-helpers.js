@@ -14,7 +14,7 @@ const cleanFetchQuery = (articles) => {
 
   //Fixes bug where posts from the future were showing (e.g. "in 5 hours")
   const filteredArticles = noDuplicateArticles.filter(
-    (article) => Date.parse(article.published_date) < Date.parse(today)
+    (article) => Date.parse(article.publishedAt) < Date.parse(today)
   );
 
   return filteredArticles;
@@ -29,10 +29,10 @@ const organizeForState = (arr, symbol, setNewsFeed) => {
     let a_date;
     let b_date;
 
-    if (a.published_date) a_date = Date.parse(a.published_date);
+    if (a.publishedAt) a_date = Date.parse(a.publishedAt);
     if (a.created_at) a_date = Date.parse(a.created_at);
 
-    if (b.published_date) b_date = Date.parse(b.published_date);
+    if (b.publishedAt) b_date = Date.parse(b.publishedAt);
     if (b.created_at) b_date = Date.parse(b.created_at);
 
     return b_date - a_date;
@@ -61,20 +61,17 @@ const fetchPosts = async (setNewsFeed) => {
 // In order to maximize User Experience, Posts tabs is showed first,
 // while other symbol tabs are fetching api and seting state
 const cleanResponses = async function (newsParams, setNewsFeed) {
-  const delay = (ms = 1250) => new Promise((r) => setTimeout(r, ms));
 
   for (let i = 0; i < newsParams.length; i++) {
     const options = {
       method: "GET",
-      url: "https://free-news.p.rapidapi.com/v1/search",
-      params: { q: newsParams[i].name, lang: "en" },
-      headers: {
-        "x-rapidapi-host": "free-news.p.rapidapi.com",
-        "x-rapidapi-key": "f539cc1d29msh63171028d7f006ep13a356jsn42c6f4e0afe0",
-      },
+      url: `https://newsapi.org/v2/everything?q=${newsParams[i].name}&apiKey=bfb58d5c22df4f449db6799742aa03b0`,
+      // url: `https://newsapi.org/v2/everything?q=${newsParams[i].name}&apiKey=159e795495ec48febee3724f82d82ceb`,
     };
-    await delay();
+
     const res = await axios.request(options);
+
+    console.log(res.data.articles)
 
     const cleaned = cleanFetchQuery(res.data.articles);
 

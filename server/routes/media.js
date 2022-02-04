@@ -10,8 +10,8 @@ module.exports = (db) => {
 
     const { media_id } = req.params;
     const { type } = req.params;
-    console.log("OLD ID", media_id)
-    console.log("TYPE", type)
+    // console.log("OLD ID", media_id)
+    // console.log("TYPE", type)
 
     let columnType;
     let idType;
@@ -20,7 +20,7 @@ module.exports = (db) => {
       columnType = "id"
       idType = "posts"
     } else {
-      columnType = "original_id"
+      columnType = "original_title"
       idType = "articles"
     }
 
@@ -33,13 +33,13 @@ module.exports = (db) => {
         media: resp
       }
     })
-    console.log('ALREADY EXISTS', resp)
+    // console.log('ALREADY EXISTS', resp)
 
     return resp;
 
   }).catch(err => {
 
-    console.log("ERROR IN getCommentsByUser: ", err)
+    console.log("ERROR IN media: ", err)
   });
   })
 

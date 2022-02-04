@@ -9,7 +9,7 @@ const {getUserByColumn} = require('./helpers/user-helpers');
 module.exports = (db) => {
   app.post('/', (req, res) => {
 
-    console.log(req.body);
+    // console.log(req.body);
 
     const { password, email } = req.body;
     getUserByColumn('email', email, db)
