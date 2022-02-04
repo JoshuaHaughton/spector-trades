@@ -109,8 +109,8 @@ export const NewsfeedCard = ({ media, ...rest }) => {
               display: "flex",
             }}
           >
-            { ( media.urlToImage ? <Avatar alt="Article Image" src={ media.urlToImage } variant="rounded" />
-            : <Avatar alt={media.username} src={state.profileSrc} variant="rounded" /> ) }
+            { ( media.avatar_url ? <Avatar alt={media.username} src={'http://localhost:3001/public/avatars/' + media.avatar_url } variant="rounded" />
+            : <Avatar alt="Article Image" src={media.urlToImage} variant="rounded" /> ) }
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
               {/* displays author, or clean_url if author isnt there (e.g. google.com), and for posts it displays the username */}
               <strong>{media.title ? (media.author || media.source.name) :`- @${media.username}`}</strong>{" "}
