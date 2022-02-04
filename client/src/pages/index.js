@@ -116,6 +116,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (Object.keys(dashboardState).length !== 0) {
       // getCryptoData(dashboardState).then((result) => {console.log(result)})
+      getStocksData(dashboardState, currencyConversion)
     }
   }, [dashboardState]);
   
