@@ -20,7 +20,6 @@ export default async (req, res) => {
 
   const plusMinus = {};
   const response = await axios.request(options).then();
-  console.log('the response', response.data);
 
   if (req.body.id.length < 2) {
     plusMinus[response.data.symbol] = response.data.percent_change;
