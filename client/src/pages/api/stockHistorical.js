@@ -35,10 +35,11 @@ export default async (req, res) => {
   let stockHistory;
   let storedData;
   readFile('src/pages/api/stockHistorical.json').then((data) => {
+
     stockHistory = JSON.parse(data); //now it an object
+
     storedData = findStocks(id, stockHistory)[0];
     needsSearch = findStocks(id, stockHistory)[1];
-    console.log("needsSearch: ", needsSearch);
 
     const options = {
       method: 'GET',
@@ -99,12 +100,12 @@ export default async (req, res) => {
   }).catch(err => console.log("promise error happened!", err.message));
 
   function findStocks(stocksArray, data) {
-    // const searchArray = JSON.parse(JSON.stringify(stocksArray));
     let needsSearch = [];
     const output = {};
     const keys = Object.keys(data);
 
     const now = new Date(new Date().setHours(-6, 0, 0, 0));
+    let day;
     if (moment(new Date()).format('dddd') === 'Saturday') {
       now.setDate(now.getDate() - 1);
     }
@@ -115,7 +116,10 @@ export default async (req, res) => {
     if (month < 10) {
       month = '0' + month;
     }
-    const today = `${now.getFullYear()}-${month}-${now.getDate() + 1}`
+    if (now.getDate() + 1 < 10) {
+      day = `0${now.getDate() + 1}`;
+    }
+    const today = `${now.getFullYear()}-${month}-${day}`
     stocksArray.forEach((key, i) => {
       needsSearch.push(true);
       if (keys.includes(key)) {
