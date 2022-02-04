@@ -18,7 +18,7 @@ import TimeAgo from "timeago-react";
 import { useCookies } from "react-cookie";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { fetchTotalLikes, pressLike, setBackendLike, checkIfLiked, createArticle } from "../helpers/newsfeed-card-helper";
+import { fetchTotalLikes, pressLike, setBackendLike, checkIfLiked } from "../helpers/newsfeed-card-helper";
 import { userSetter } from "../helpers/user-helper";
 
 
@@ -31,15 +31,14 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
   const [cookies, setCookie] = useCookies();
   const [liked, setLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(0);
+  const [totalLikes, setTotalLikes] = useState('');
   const [state, setState] = useState(() => {
 
     //First conditional sets up variables so that regardless of the name of the variables
     // they come in, they can be processed by the newsfeed card
 
-    //Articles here have an id key of "_id"
+    //Articles here have a key of title that posts don't. This is how we identify them
     if (media.title && !media.id) {
-      console.log('ARTICLE', media)
 
       return {
 
@@ -72,11 +71,6 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   useEffect(() => {
 
     if (media.title && !media.id) {
-
-      console.log('JBO GON TRY TO CREATE ARTICLE', state)
-
-
-        createArticle(state, cookies);
         checkIfLiked(state, cookies, setLiked);
         fetchTotalLikes(state, cookies, setTotalLikes);
 
@@ -92,7 +86,8 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
 
   return (
-    <Card
+    <>
+    {(totalLikes === 0 || totalLikes) && <Card
       sx={{
         display: "flex",
         flexDirection: "column",
@@ -112,7 +107,7 @@ export const NewsfeedCard = ({ media, ...rest }) => {
             { ( media.avatar_url ? <Avatar alt={media.username} src={'http://localhost:3001/public/avatars/' + media.avatar_url } variant="rounded" />
             : <Avatar alt="Article Image" src={media.urlToImage} variant="rounded" /> ) }
             <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
-              {/* displays author, or clean_url if author isnt there (e.g. google.com), and for posts it displays the username */}
+              {/* displays author, or source name if author isnt there (e.g. google), and for posts it displays the username */}
               <strong>{media.title ? (media.author || media.source.name) :`- @${media.username}`}</strong>{" "}
               {state.mediaTitle}
             </Typography>
@@ -140,13 +135,13 @@ export const NewsfeedCard = ({ media, ...rest }) => {
             pb: 3,
           }}
         ></Box>
-        {media._id ?
+        {media.title ?
           <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '14px' }}>
           {state.mediaBody}
           <br />
           <br />
-          {media._id &&
-          <Link href={media.link} target="_blank" color="inherit">
+          {media.title &&
+          <Link href={media.url} target="_blank" color="inherit">
             Click here to learn more
           </Link>
           }
@@ -242,7 +237,8 @@ export const NewsfeedCard = ({ media, ...rest }) => {
           </Grid>
         </Grid>
       </Box>
-    </Card>
+    </Card>}
+    </>
   );
 
 };

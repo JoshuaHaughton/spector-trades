@@ -1,7 +1,6 @@
 const axios = require("axios");
 import api from "../../apis/api";
 
-
 // Formats incoming news api response to have no duplicates and to
 // only include articles posted in the past 24 hours in order of most recent
 const cleanFetchQuery = (articles) => {
@@ -20,8 +19,6 @@ const cleanFetchQuery = (articles) => {
   return filteredArticles;
 };
 
-
-
 //Sorts incoming post or article arrays and sets it to state
 const organizeForState = (arr, symbol, setNewsFeed) => {
   //shows array in order of most recent
@@ -38,7 +35,7 @@ const organizeForState = (arr, symbol, setNewsFeed) => {
     return b_date - a_date;
   });
 
-  console.log("ORGANIZED COMPLETE", sortedArray);
+
   setNewsFeed((prev) => {
     const newNewsFeed = prev;
 
@@ -48,7 +45,6 @@ const organizeForState = (arr, symbol, setNewsFeed) => {
   });
 };
 
-
 //Retrieves all posts
 const fetchPosts = async (setNewsFeed) => {
   const posts = await api.get(`/posts`);
@@ -57,11 +53,7 @@ const fetchPosts = async (setNewsFeed) => {
 };
 
 
-// api won't allow anything faster right now (free)..
-// In order to maximize User Experience, Posts tabs is showed first,
-// while other symbol tabs are fetching api and seting state
-const cleanResponses = async function (newsParams, setNewsFeed) {
-
+const cleanResponses = async function (newsParams, setNewsFeed, cookies) {
   for (let i = 0; i < newsParams.length; i++) {
     const options = {
       method: "GET",
@@ -71,16 +63,97 @@ const cleanResponses = async function (newsParams, setNewsFeed) {
 
     const res = await axios.request(options);
 
-    console.log(res.data.articles)
-
     const cleaned = cleanFetchQuery(res.data.articles);
+
+    console.log("THE ARTICLES", cleaned);
+
+    for (let article of cleaned) {
+      let formattedObject = {
+        mediaTitle:
+          article.title.length > 55 ? article.title.substring(0, 55) + "..." : article.title,
+        mediaPublish: article.publishedAt,
+        mediaBody:
+          article.description.length > 150
+            ? article.description.substring(0, 150) + "..."
+            : article.description,
+        id: article.title
+          .split(" ")
+          .join("")
+          .split("%")
+          .join("")
+          .split(`’`)
+          .join("")
+          .split(`'`)
+          .join("")
+          .split(",")
+          .join("")
+          .split(".")
+          .join(""),
+        media: article,
+        type: `original_article_title`,
+      };
+
+      try {
+        createArticle(formattedObject, cookies);
+      } catch (err) {
+        console.log(err);
+      }
+    }
 
     console.log("this is the symbol:", newsParams[i].symbol);
     organizeForState(cleaned, newsParams[i].symbol, setNewsFeed);
   }
 };
 
+const createArticle = async (state, cookies) => {
+  let id = state.id
+    .split(" ")
+    .join("")
+    .split("%")
+    .join("")
+    .split(`’`)
+    .join("")
+    .split(`'`)
+    .join("")
+    .split(",")
+    .join("")
+    .split(".")
+    .join("");
 
+  try {
+    //Retrieve article
+    let media = await api({
+      method: "get",
+      url: `/media/${state.type}/${id}`,
+      data: state,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: cookies.spector_jwt,
+      },
+    });
+
+    //If it exists
+    if (Object.keys(media.data.data).length > 0) {
+      //save retrieved article
+      const savedArticle = media.data.data.article;
+    } else {
+
+
+      //create article
+      await api({
+        method: "post",
+        url: "/articles",
+        data: state,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: cookies.spector_jwt,
+        },
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const fetchFeedData = async (setSymbols, setNewsFeed, cookies) => {
   let newsParams = [];
@@ -134,14 +207,12 @@ const fetchFeedData = async (setSymbols, setNewsFeed, cookies) => {
     }
     console.log("QUERY LIST", newsParams);
 
-    await cleanResponses(newsParams, setNewsFeed);
+    await cleanResponses(newsParams, setNewsFeed, cookies);
     return;
   } catch (error) {
     //fail
     console.error(error);
   }
 };
-
-
 
 module.exports = { fetchFeedData };
