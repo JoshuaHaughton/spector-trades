@@ -60,7 +60,6 @@ const getStocksData = (dashboardState, currencyConversion) => {
     const allAssets = new Set();
     const assetData = {};
     const portfolioCreationDates = [];
-    console.log(portfolioData)
 
     portfolioData.forEach(portfolio => {
       portfolioCreationDates.push(portfolio.portfolioInfo.created_at)
@@ -114,8 +113,11 @@ const getStocksData = (dashboardState, currencyConversion) => {
       });
 
     })
-    .catch(err => {console.log("ERR IN STOCKS HISTORICAL: ", err)})
-    console.log(assetData)
+    .catch(err => {
+      console.log("ERR IN STOCKS HISTORICAL: ", err)
+      rej("ERR IN STOCKS HISTORICAL: ", err)
+    });
+    res(assetData)
   });
 };
 
