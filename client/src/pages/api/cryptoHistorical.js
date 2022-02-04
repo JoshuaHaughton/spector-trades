@@ -29,6 +29,9 @@ export default async (req, res) => {
     // console.log(options)
     console.log("MAKING REQUEST TO COINGECKO for: ", id)
     axios.request(options).then(function (response) {
+      if (!response.data) {
+        return res.status(500).send(error);
+      }
       cryptoHistory[id] = response.data.prices
       const json = JSON.stringify(cryptoHistory)
       fs.writeFile('src/pages/api/cryptoHistorical.json', json, 'utf8', function writeFileCallback(err, data) {
