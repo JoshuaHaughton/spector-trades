@@ -16,7 +16,7 @@ import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import axios from 'axios';
 import { parseCryptoStats } from '../components/helpers/graphDataProfit'
-import { getCryptoData, getStocksData } from '../components/helpers/assetData';
+import { getCryptoData, getStocksData } from '../components/helpers/getAssetDataProfit';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
   const router = useRouter();
