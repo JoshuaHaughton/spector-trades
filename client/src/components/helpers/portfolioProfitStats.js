@@ -1,5 +1,12 @@
 import { centsToDollars } from "src/utils/toHumanDollars";
 
+/**
+ * 
+ * @param {*} assetPerformanceStocks Historical performance of stocks, symbol as key performance as values
+ * @param {*} assetPerformanceCrypto Historical performance of crypto, symbol as key performance as values
+ * @param {*} portfolios All portfolios of the current user
+ * @returns 
+ */
 const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfolios) => {
   const dashboardWithStats = {};
   const monthAgo = new Date(new Date().setHours(0, 0, 0, 0))
@@ -8,21 +15,18 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
 
   const dashboards = Object.values(portfolios);
   dashboards.forEach(dashboard => {
+
     const assetOrdersStocks = [];
     const assetOrdersCrypto = [];
-
-
-    let totalInvestedStocks = 0;
+    let totalInvestedStocks = centsToDollars(dashboard.total_stock_assets);
     let currentValueStocks = 0;
     let lastMonthValueStocks = 0;
     let lastMonthSpentStocks = 0;
     let currentValueCrypto = 0;
     let lastMonthValueCrypto = 0;
     let lastMonthSpentCrypto = 0;
-    totalInvestedStocks = centsToDollars(dashboard.total_stock_assets)
     dashboardWithStats[dashboard.portfolioInfo.id] = dashboard;
     dashboard.assets.forEach(asset => {
-      
       if (asset.type === 'Stocks' && Object.keys(assetPerformanceStocks).length > 0) {
         
         assetOrdersStocks.push({
@@ -42,7 +46,7 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
           currentValueStocks += (assetPerformanceStocks[asset.symbol][0].close) * asset.units;
         }
       }
-      if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto[asset.name] !== undefined) {
+      if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto[asset.name]) {
         assetOrdersCrypto.push({
           ...asset,
           initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
