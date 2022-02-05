@@ -147,8 +147,8 @@ const Dashboard = () => {
                     .then(result => {
                       const [ cryptoData, stocksData ] = result;
                       console.log("result: ", cryptoData, stocksData);
-                      // const portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
-                      console.log("Portfolio with stats: ", parseProfitStats(stocksData, cryptoData, userPortfolioData));
+                      const portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                      console.log("Portfolio with stats: ", portfolioDataWithStats);
                     })
                     .catch(err => {
                       console.log(
