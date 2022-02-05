@@ -146,9 +146,13 @@ const Dashboard = () => {
                   Promise.all(promises)
                     .then(result => {
                       const [ cryptoData, stocksData ] = result;
-                      console.log("result: ", cryptoData, stocksData);
+
+                      console.log("result of Promise.all(): ", cryptoData, stocksData);
+
                       const portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
                       console.log("Portfolio with stats: ", portfolioDataWithStats);
+
+                      setStatsData(portfolioDataWithStats);
                     })
                     .catch(err => {
                       console.log(
