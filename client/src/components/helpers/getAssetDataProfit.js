@@ -62,7 +62,6 @@ const getCryptoData = (dashboardState) => {
  */
 
 const getStocksData = (dashboardState, currencyConversion) => {
-  console.log("getStocksData arguments: ", dashboardState, currencyConversion)
 
   if (Object.keys(dashboardState).length === 0) {
     return;
@@ -104,6 +103,13 @@ const getStocksData = (dashboardState, currencyConversion) => {
   });
 };
 
+/**
+ * 
+ * @param {*} currencyConversion Object with keys as country codes values as conversion to CDN dollars
+ * @param {*} stockData Data to be converted in object with key as symbol values as performance in USD
+ * @param {*} stockNames list of stock names that were searched
+ * @returns stockData converted to CDN dollars
+ */
 const convertStocksPerformanceToX = (currencyConversion, stockData, stockNames) => {
   const output = JSON.parse(JSON.stringify(stockData))
   const stockDataKeys = Object.keys(stockData);

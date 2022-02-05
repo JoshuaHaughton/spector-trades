@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react';
 import LinearProgress from '@mui/material/LinearProgress';
 import api from "../apis/api";
 import axios from 'axios';
-import { parseCryptoStats } from '../components/helpers/graphDataProfit'
+import { parseProfitStats } from '../components/helpers/portfolioProfitStats'
 import { getCryptoData, getStocksData } from '../components/helpers/getAssetDataProfit';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
@@ -145,7 +145,15 @@ const Dashboard = () => {
             
                   Promise.all(promises)
                     .then(result => {
-                      console.log("result: ", result);
+                      const [ cryptoData, stocksData ] = result;
+                      console.log("result: ", cryptoData, stocksData);
+                      // const portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                      console.log("Portfolio with stats: ", parseProfitStats(stocksData, cryptoData, userPortfolioData));
+                    })
+                    .catch(err => {
+                      console.log(
+                        "Error in Promise.all() for getCrypto/getStocks under currencyConversion.get: "
+                        , err);
                     })
                 }
               })
