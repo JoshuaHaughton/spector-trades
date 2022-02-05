@@ -17,6 +17,7 @@ import api from "../apis/api";
 import axios from 'axios';
 import { parseProfitStats } from '../components/helpers/portfolioProfitStats'
 import { getCryptoData, getStocksData } from '../components/helpers/getAssetDataProfit';
+import { useBadgeGraphDataHook } from '../components/hooks/useBadgeGrapgData';
 import { SpectorSpeedDial } from 'src/components/spector-dashboard/speed-dial';
 const Dashboard = () => {
   const router = useRouter();
@@ -39,6 +40,8 @@ const Dashboard = () => {
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
   const [plusMinus, setPlusMinus] = useState({stock: {}, crypto: {}});
+
+  useBadgeGraphDataHook(activeStat);
 
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
