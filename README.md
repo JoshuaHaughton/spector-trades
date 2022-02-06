@@ -1,4 +1,5 @@
 # Spector Trades
+<p align="center"><img width=60% src="https://github.com/JoshuaHaughton/spector-trades/blob/update/readme/docs/logo.png"></p>
 
 ## Table of Contents
 * [Client](/client)
