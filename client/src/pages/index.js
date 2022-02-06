@@ -43,6 +43,7 @@ const Dashboard = () => {
 
   useBadgeGraphDataHook(activeStat);
 
+
   // TODO: REFACTOR!
   const refreshDashboardState = () => {
     const fetchData = async () => {
@@ -119,7 +120,7 @@ const Dashboard = () => {
   
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
-
+    const start = Date.now()
     //originally async
     const fetchData = async () => {
       try {
@@ -151,11 +152,23 @@ const Dashboard = () => {
                       const [ cryptoData, stocksData ] = result;
 
                       console.log("result of Promise.all(): ", cryptoData, stocksData);
-
-                      const portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
-                      console.log("Portfolio with stats: ", portfolioDataWithStats);
-
-                      setStatsData(portfolioDataWithStats);
+                      console.log("userPortfolioData: ", userPortfolioData)
+                      let portfolioDataWithStats;
+                      try {
+                        portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                        console.log("Portfolio with stats: ", portfolioDataWithStats);
+                        setStatsData(portfolioDataWithStats);
+                        const stop = Date.now()
+                        console.log(`Time Taken to execute = ${(stop - start)/1000} seconds`);
+                      } catch(err) {
+                        setTimeout((portfolioDataWithStats) => {
+                          portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData)
+                          console.log("Portfolio with stats: ", portfolioDataWithStats);
+                          setStatsData(portfolioDataWithStats);
+                          const stop = Date.now()
+                          console.log(`Time Taken to get portfolio with profit stats ([start] page load useEffect /[stop] setStatsData()) => ${(stop - start)/1000}s`);
+                        }, 100)
+                      }
                     })
                     .catch(err => {
                       console.log(
@@ -218,14 +231,14 @@ const Dashboard = () => {
 
             }
 
-            if (Object.keys(stockReduce).length > 0) {
-              axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
-              then(res => setPlusMinus(prev => {
-                const newCopy = {...prev};
-                newCopy.stock = res.data;
-                return newCopy;
-              }));
-            }
+            // if (Object.keys(stockReduce).length > 0) {
+            //   axios.post('/api/stock-plus-minus', {id: Object.keys(stockReduce)}).
+            //   then(res => setPlusMinus(prev => {
+            //     const newCopy = {...prev};
+            //     newCopy.stock = res.data;
+            //     return newCopy;
+            //   }));
+            // }
             // END OF GET + / - DATA
 
           }

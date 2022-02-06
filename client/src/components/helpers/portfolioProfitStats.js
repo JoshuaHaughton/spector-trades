@@ -27,7 +27,7 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
     let lastMonthSpentCrypto = 0;
     dashboardWithStats[dashboard.portfolioInfo.id] = dashboard;
     dashboard.assets.forEach(asset => {
-      if (asset.type === 'Stocks' && Object.keys(assetPerformanceStocks).length > 0) {
+      if (asset.type === 'Stocks') {
         
         assetOrdersStocks.push({
           ...asset,
@@ -46,7 +46,10 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
           currentValueStocks += (assetPerformanceStocks[asset.symbol][0].close) * asset.units;
         }
       }
-      if (asset.type === 'Cryptocurrency' && assetPerformanceCrypto[asset.name]) {
+      if (asset.type === 'Cryptocurrency') {
+        // console.log("TROUBLE: ", assetPerformanceCrypto[asset.name])
+        // console.log("TROUBLE ASSETDATA: ", assetPerformanceCrypto)
+        // console.log("TROUBLE ASSET NAME: ", asset.name)
         assetOrdersCrypto.push({
           ...asset,
           initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
