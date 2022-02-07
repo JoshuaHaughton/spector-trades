@@ -19,10 +19,10 @@ export default async (req, res) => {
   fs.readFile('src/pages/api/cryptoHistorical.json', 'utf8', function readFileCallback(err, data){
     if (err){
       return res.status(200).send(err);
-    } else {
-    let cryptoHistory = JSON.parse(data); //now it an object
+    }
+    let cryptoHistory = JSON.parse(data);
     let historicalData = Object.keys(cryptoHistory);
-    if (historicalData.includes(id) && isCurrent(cryptoHistory, id)) {
+    if (historicalData.includes(id) && isCurrent(cryptoHistory, id) && cryptoHistory[id].length !== 0) {
       console.log(`FOUND DATA IN API FOR ${id}`)
       return res.status(200).json(cryptoHistory[id]);
     }
@@ -37,16 +37,16 @@ export default async (req, res) => {
       fs.writeFile('src/pages/api/cryptoHistorical.json', json, 'utf8', function writeFileCallback(err, data) {
         if (err) {
           console.log("error writing back to json, cryptoHistorical", err)
-          // console.log(json);
         }
       });
-      return res.status(200).json(response.data);
+      console.log(id, response.data)
+      return res.status(200).json(response.data.prices);
     }).catch(function (error) {
       console.log("RESPONSE FROM COINGECKO:", error)
 
       return res.status(500).send(error);
     });
-}});
+  });
 
 }
 
