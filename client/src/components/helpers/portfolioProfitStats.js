@@ -15,7 +15,6 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
 
   const dashboards = Object.values(portfolios);
   dashboards.forEach(dashboard => {
-
     const assetOrdersStocks = [];
     const assetOrdersCrypto = [];
     let totalInvestedStocks = centsToDollars(dashboard.total_stock_assets);
@@ -52,7 +51,6 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
         if (!assetPerformanceCrypto[asset.name]) {
           return false;
         }
-        // console.log("start asset currentValueCrypto: ", currentValueCrypto)
         assetOrdersCrypto.push({
           ...asset,
           initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
