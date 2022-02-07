@@ -36,10 +36,11 @@ const getCryptoData = (dashboardState) => {
 
     Array.from(allAssets).forEach(asset => {
       axios.post('api/cryptoHistorical', {id: asset}).then(res => {
-        if (!res.data) {
-          rej();
-        }
         const cryptoData = res.data.reverse();
+        if (cryptoData.length === 0) {
+          rej("Error in receiving data from cryptoHistorical")
+          return;
+        }
         assetData[asset] = [];
         cryptoData.forEach((day, index) => {
           const currentDay = new Date(new Date(day[0]).setHours(0, 0, 0, 0));
