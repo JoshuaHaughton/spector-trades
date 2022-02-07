@@ -28,7 +28,9 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
     dashboardWithStats[dashboard.portfolioInfo.id] = dashboard;
     dashboard.assets.forEach(asset => {
       if (asset.type === 'Stocks') {
-        
+        if (!assetPerformanceStocks[asset.symbol]) {
+          return false;
+        }
         assetOrdersStocks.push({
           ...asset,
           initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
@@ -47,6 +49,9 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
         }
       }
       if (asset.type === 'Cryptocurrency') {
+        if (!assetPerformanceCrypto[asset.name]) {
+          return false;
+        }
         // console.log("TROUBLE: ", assetPerformanceCrypto[asset.name])
         // console.log("TROUBLE ASSETDATA: ", assetPerformanceCrypto)
         // console.log("TROUBLE ASSET NAME: ", asset.name)
