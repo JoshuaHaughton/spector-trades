@@ -39,7 +39,6 @@ export default async (req, res) => {
           console.log("error writing back to json, cryptoHistorical", err)
         }
       });
-      console.log(id, response.data)
       return res.status(200).json(response.data.prices);
     }).catch(function (error) {
       console.log("RESPONSE FROM COINGECKO:", error)
