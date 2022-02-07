@@ -52,9 +52,7 @@ const parseProfitStats = (assetPerformanceStocks, assetPerformanceCrypto, portfo
         if (!assetPerformanceCrypto[asset.name]) {
           return false;
         }
-        // console.log("TROUBLE: ", assetPerformanceCrypto[asset.name])
-        // console.log("TROUBLE ASSETDATA: ", assetPerformanceCrypto)
-        // console.log("TROUBLE ASSET NAME: ", asset.name)
+        // console.log("start asset currentValueCrypto: ", currentValueCrypto)
         assetOrdersCrypto.push({
           ...asset,
           initialCostDollars: centsToDollars((asset.price_at_purchase) * asset.units),
