@@ -28,20 +28,25 @@ const Dashboard = () => {
 
   const [dashboardState, setDashboardState] = useState({});
   const [activePortfolio, setActivePortfolio] = useState(0);
-  const [activeGraphData, setActiveGraphData] = useState({
-    options: {},
-    series: []
-  });
+
   const [activeStat, setActiveStat] = useState("crypto_profit");
-  const [assetPerformanceCrypto, setAssetPerformanceCrypto] = useState({
-  });
-  const [assetPerformanceStocks, setAssetPerformanceStocks] = useState({
+  const [assetPerformance, setAssetPerformance] = useState({
+    stocks: {},
+    crypto: {}
   });
   const [currencyConversion, setCurrencyConversion] = useState({});
   const [statsData, setStatsData] = useState({});
   const [plusMinus, setPlusMinus] = useState({stock: {}, crypto: {}});
 
-  useBadgeGraphDataHook(activeStat);
+  const {activeGraphData, setActiveGraphData} = useBadgeGraphDataHook(
+    activeStat,
+    setStatsLoading,
+    dashboardState,
+    activePortfolio,
+    statsData,
+    assetPerformance,
+    loading
+    );
 
 
   // TODO: REFACTOR!
@@ -116,7 +121,11 @@ const Dashboard = () => {
     fetchData();
   };
   
-
+  // useEffect(() => {
+  //   if (!loading) {
+  //     setActiveStat('crypto_profit')
+  //   }
+  // }, [loading])
   
   // /auth endpoint returns {success: true, token}
   useEffect(() => {
@@ -150,7 +159,9 @@ const Dashboard = () => {
                   Promise.all(promises)
                     .then(result => {
                       const [ cryptoData, stocksData ] = result;
-
+                      setAssetPerformance(prev => {
+                        return {...prev, stocks: stocksData, crypto: cryptoData}
+                      });
                       console.log("result of Promise.all(): ", cryptoData, stocksData);
                       console.log("userPortfolioData: ", userPortfolioData)
                       let portfolioDataWithStats;
