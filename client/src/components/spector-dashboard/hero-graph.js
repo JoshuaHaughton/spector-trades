@@ -34,6 +34,9 @@ export const HeroGraph = (props) => {
       height = 30;
       width = 30;
       typeOfGraph = 'area';
+      props.series.length !== 0 && props.series[0].data.sort(function(a, b) {
+        return Date.parse(a.x) - Date.parse(b.x);
+      });
       break;
     case "crypto_profit":
       statName = "Cryptocurrency profit";
@@ -41,6 +44,9 @@ export const HeroGraph = (props) => {
       height = 30;
       width = 30;
       typeOfGraph = 'area';
+      props.series.length !== 0 && props.series[0].data.sort(function(a, b) {
+        return Date.parse(a.x) - Date.parse(b.x);
+      });
       break;
     default:
       statName = "Cryptocurrency profit";
@@ -55,7 +61,6 @@ export const HeroGraph = (props) => {
     e.preventDefault();
     props.setActiveStat("stock_profit")
   };
-
 
   return (
     <Card {...props}>
