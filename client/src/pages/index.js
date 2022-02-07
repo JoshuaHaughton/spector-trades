@@ -156,13 +156,19 @@ const Dashboard = () => {
                       let portfolioDataWithStats;
                       try {
                         portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                        if (portfolioDataWithStats === false) {
+                          portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                        }
                         console.log("Portfolio with stats: ", portfolioDataWithStats);
                         setStatsData(portfolioDataWithStats);
                         const stop = Date.now()
                         console.log(`Time Taken to execute = ${(stop - start)/1000} seconds`);
                       } catch(err) {
                         setTimeout((portfolioDataWithStats) => {
-                          portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData)
+                          portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                          if (portfolioDataWithStats === false) {
+                            portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
+                          }
                           console.log("Portfolio with stats: ", portfolioDataWithStats);
                           setStatsData(portfolioDataWithStats);
                           const stop = Date.now()
