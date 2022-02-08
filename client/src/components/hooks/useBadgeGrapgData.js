@@ -16,8 +16,10 @@ const useBadgeGraphDataHook = (activeStat, setStatsLoading, dashboardState, acti
       graphType = 'area';
       graphName = "Speculative money"
       yMin = 0;
-      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100
+      yMax = (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) + (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) * 0.1)) / 100;
+
       data.push((Number(dashboardState[activePortfolio].portfolioInfo.spec_money)) / 100)
+
       xData.push(dashboardState[activePortfolio].portfolioInfo.created_at)
       const purchasedAssets = dashboardState[activePortfolio].assets;
       purchasedAssets.sort(function(a, b) {
@@ -33,6 +35,16 @@ const useBadgeGraphDataHook = (activeStat, setStatsLoading, dashboardState, acti
         }
         xData.push(item.created_at)
       });
+  
+      const startIndex = data.find(value => {
+        value === (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) / 100);
+      })
+      console.log("FIRST: ", data)
+      if (startIndex !== 0) {
+        data.reverse()
+      }
+      console.log("FIRST: ", data)
+
       xData.sort(function(a, b) {
         return Date.parse(a) - Date.parse(b);
       });

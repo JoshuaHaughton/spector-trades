@@ -61,7 +61,6 @@ export const HeroGraph = (props) => {
     e.preventDefault();
     props.setActiveStat("stock_profit")
   };
-
   return (
     <Card {...props}>
       <CardHeader
