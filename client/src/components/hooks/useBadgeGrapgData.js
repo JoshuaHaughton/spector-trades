@@ -39,7 +39,6 @@ const useBadgeGraphDataHook = (activeStat, setStatsLoading, dashboardState, acti
       const startIndex = data.find(value => {
         value === (Number(dashboardState[activePortfolio].portfolioInfo.spec_money) / 100);
       })
-      console.log("FIRST: ", data)
       if (startIndex !== 0) {
         data.reverse()
       }

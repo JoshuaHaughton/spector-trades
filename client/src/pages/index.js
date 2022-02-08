@@ -161,28 +161,22 @@ const Dashboard = () => {
                       setAssetPerformance(prev => {
                         return {...prev, stocks: stocksData, crypto: cryptoData}
                       });
-                      console.log("result of Promise.all(): ", cryptoData, stocksData);
-                      console.log("userPortfolioData: ", userPortfolioData)
                       let portfolioDataWithStats;
                       try {
                         portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
                         if (portfolioDataWithStats === false) {
                           portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
                         }
-                        console.log("Portfolio with stats: ", portfolioDataWithStats);
                         setStatsData(portfolioDataWithStats);
                         const stop = Date.now()
-                        console.log(`Time Taken to execute = ${(stop - start)/1000} seconds`);
                       } catch(err) {
                         setTimeout((portfolioDataWithStats) => {
                           portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
                           if (portfolioDataWithStats === false) {
                             portfolioDataWithStats = parseProfitStats(stocksData, cryptoData, userPortfolioData);
                           }
-                          console.log("Portfolio with stats: ", portfolioDataWithStats);
                           setStatsData(portfolioDataWithStats);
                           const stop = Date.now()
-                          console.log(`Time Taken to get portfolio with profit stats ([start] page load useEffect /[stop] setStatsData()) => ${(stop - start)/1000}s`);
                         }, 100)
                       }
                     })
