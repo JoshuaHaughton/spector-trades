@@ -42,7 +42,6 @@ const useBadgeGraphDataHook = (activeStat, setStatsLoading, dashboardState, acti
       if (startIndex !== 0) {
         data.reverse()
       }
-      console.log("FIRST: ", data)
 
       xData.sort(function(a, b) {
         return Date.parse(a) - Date.parse(b);
