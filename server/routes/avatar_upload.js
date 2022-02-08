@@ -1,12 +1,5 @@
-/*
-To trigger error
-  curl --form "fileupload=@my-file.txt" http://localhost:3001
-proper upload of image - Ensure image.png is in the same directory terminal 
-working in
-  curl --form 'avatar=@image.png' http://localhost:3001/api/avatars
-*/
-let express = require('express');
-let app = express.Router();
+const express = require('express');
+const app = express.Router();
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: './public/avatars',
@@ -15,7 +8,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage});
-//Default route is /api/avatars
 
 
 module.exports = (db) => {
@@ -44,9 +36,6 @@ module.exports = (db) => {
       console.log("ERROR - Failed File Upload");
       console.log(req.body);
       return res.sendStatus(422)
-      // 422 request payload is valid but
-      // it cannot be processed due to invalid data
-  
     }
       console.log('file received');
       console.log(req.body)

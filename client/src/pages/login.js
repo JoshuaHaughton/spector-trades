@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
-import axios from 'axios';
 import api from 'src/apis/api';
 import { useRouter } from 'next/router';
 import { useFormik } from 'formik';
@@ -45,7 +44,6 @@ const Login = () => {
 
 
 
-      console.log(values)
 
 
 
@@ -80,7 +78,6 @@ const Login = () => {
         setOpen(true);
         return;
         console.log(err)
-        //response.status(500);
       }
     }
   });
@@ -143,38 +140,6 @@ const Login = () => {
               container
               spacing={3}
             >
-              {/* <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  color="info"
-                  fullWidth
-                  startIcon={<FacebookIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
-                >
-                  Login with Facebook
-                </Button>
-              </Grid> */}
-              {/* <Grid
-                item
-                xs={12}
-                md={6}
-              >
-                <Button
-                  fullWidth
-                  color="error"
-                  startIcon={<GoogleIcon />}
-                  onClick={formik.handleSubmit}
-                  size="large"
-                  variant="contained"
-                >
-                  Login with Google
-                </Button>
-              </Grid> */}
             </Grid>
             <Box
               sx={{
@@ -229,7 +194,6 @@ const Login = () => {
               </Button>
               <Button onClick={() => {
 
-                console.log(cookies.spector_jwt)
 
                 api.post('/auth', {jwt_token: cookies.spector_jwt})
 

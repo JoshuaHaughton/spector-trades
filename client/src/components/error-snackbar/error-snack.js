@@ -31,7 +31,7 @@ function ErrorSnackbar(props) {
     <Stack spacing={2} sx={{ width: '100%' }}>
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity={severity} sx={{ width: '95vw' }}>
-          {message === "OK" && "Congratulations on joining Spector👻👻👻!"}
+          {message === "OK" && "👻👻👻 Congratulations on joining Spector! 👻👻👻"}
           {message === "DUPLICATE_BOTH" && "The email and username provided are already in use, please choose again"}
           {message === "DUPLICATE_EMAIL" && "The email provided is already in use, please pick a different one"}
           {message === "DUPLICATE_USERNAME" && "The username provided is already in use, please choose again"}

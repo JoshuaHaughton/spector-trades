@@ -23,7 +23,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   '&:nth-of-type(odd)': {
     backgroundColor: theme.palette.action.hover,
   },
-  
+
   // hide last border
   '&:last-child td, &:last-child th': {
     border: 0,
@@ -38,14 +38,14 @@ const columns = [
     minWidth: 90,
     align: 'right',
   },
-  { id: 'totalValue', 
-    label: 'Total\u00a0Value', 
+  { id: 'totalValue',
+    label: 'Total\u00a0Value',
     minWidth: 90,
-    align: 'right', 
+    align: 'right',
     format: (value) => (value / 100).toFixed(2),
   },
-  { id: 'quantity', 
-    label: 'Quantity', 
+  { id: 'quantity',
+    label: 'Quantity',
     minWidth: 100,
     align: 'right',
     format: (value) => value.toLocaleString('en-US'),
@@ -95,16 +95,14 @@ function getPlusMinus(asset, plusMinus) {
   if (asset.type === 'Stocks' && plusMinus.stock[asset.symbol]) {
     plusMinusToday = plusMinus.stock[asset.symbol];
   }
- 
+
   return plusMinusToday === '-' ? plusMinusToday : Number(plusMinusToday).toFixed(2);
 }
 
 export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
-  // console.log('the assets', assets);
   const rows = assets.map(a => createData(a.name, a.symbol, a.type, a.price_at_purchase, a.units, a.created_at, getPlusMinus(a, plusMinus), a.sold, a.exit_point));
   const handleClick = (row) => {
     if (row.type === "Cryptocurrency") {
-      console.log(row);
 
       axios.post('/api/crypto-history', {id: row.name.toLowerCase()}).then(res => {
         if (res.data['prices']) {
@@ -115,7 +113,6 @@ export const IndividualAssets = ({assets, createAssetGraphData, plusMinus}) => {
     }
 
     if (row.type === "Stocks") {
-      console.log(row);
 
       axios.post('/api/stock-history', {symbol: row.symbol}).then(res => {
         if (res.data['values']) {

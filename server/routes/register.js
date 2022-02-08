@@ -1,20 +1,11 @@
-// REGISTRATION ROUTE (POST)
-// ON SUCCESS SENDS
-// {status: 200, user_id: x}
-// user_id is the id of the new entry
-// ON ERROR sends 422 (Unprocessable Entity) if missing fields (username, email, password are req'd)
-// ON ERROR sends 500 (Internal server error) Internal process error)
-// ON ERROR sends 409 (conflict server error) username or email is not unique
-
 const express = require('express');
 const app = express.Router();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const saltRounds = 8; // SaltRounds should be over 10 in production
+const saltRounds = 8;
 
 const { verifyUniqueColumns, addUser } = require('./helpers/user-helpers');
 
-// File upload dependencies
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: './public/avatars',
@@ -24,9 +15,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage});
 
-//Default route is /api/register
-// form fields are username, email, password, avatar
-// curl -X POST -F 'username=linuxize' -F 'email=linuxize@example.com' -F 'password=password' -F 'avatar=@image.png' http://localhost:3001/api/register
 module.exports = (db) => {
   app.post('/', upload.single('avatar'), (req, res) => {
     console.log("Incoming to server...")

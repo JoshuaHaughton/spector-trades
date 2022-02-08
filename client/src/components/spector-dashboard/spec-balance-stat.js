@@ -26,7 +26,6 @@ export const SpecBalanceStat = (props) => {
         container
         spacing={3}
         sx={{ justifyContent: 'space-between' }}
-
       >
         <Grid item>
           <Typography

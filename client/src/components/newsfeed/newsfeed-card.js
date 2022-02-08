@@ -39,8 +39,6 @@ export const NewsfeedCard = ({ media, ...rest }) => {
 
     //Articles here have an id key of "_id"
     if (media._id && !media.id) {
-      console.log('ARTICLE', media)
-
       return {
 
         mediaTitle: media.title.length > 55 ? media.title.substring(0, 55) + "..." : media.title,

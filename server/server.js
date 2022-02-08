@@ -18,7 +18,6 @@ app.get('/', function (req, res) {
 })
 
 
-// user routes import
 const userRoutes = require("./routes/users")
 app.use("/api/users", userRoutes(db));
 
@@ -30,7 +29,6 @@ app.use("/api/portfolios", portfolioRoutes(db));
 const assetOrderRoutes = require("./routes/asset_orders")
 app.use("/api/orders", assetOrderRoutes(db));
 
-// post routes import
 const postRoutes = require("./routes/posts")
 app.use("/api/posts", postRoutes(db));
 

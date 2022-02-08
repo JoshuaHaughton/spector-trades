@@ -38,7 +38,6 @@ const Newsfeed = () => {
 
 
     return () => {
-      console.log("unmounts");
     };
 
   }, [reloadFeed]);

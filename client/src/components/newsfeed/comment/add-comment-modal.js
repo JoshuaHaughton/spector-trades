@@ -61,8 +61,6 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
       body: Yup.string().max(140).required("Your post can't be empty!"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
-      console.log('parent', parentState)
 
       //set as falsey
       let savedMedia = false;
@@ -80,14 +78,11 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
           },
         })
 
-        console.log('MEDIA EXISTS?', media.data.data.media)
-
         //media exist check
         if (Object.keys(media.data.data).length > 0) {
 
            //save media to original variable to post
           savedMedia = media.data.data.media;
-          console.log("MEDIA RETRIEVED", savedMedia)
         }
 
 

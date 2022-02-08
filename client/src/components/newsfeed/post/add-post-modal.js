@@ -62,7 +62,6 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
       body: Yup.string().max(140).required("Your post can't be empty!"),
     }),
     onSubmit: async (values) => {
-      console.log(values);
 
 
       try {
@@ -85,7 +84,6 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
             username
           }
 
-          console.log('TIME TO POST')
 
 
         //Post the Post, then close modal
@@ -98,7 +96,6 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
               "Authorization": cookies.spector_jwt
             },
           }).then(resp => {
-            console.log(resp.data)
             if(resp.data.status === 200 || resp.data.status === 304) {
               handleSnackbarMessage('Successfully created a post!', 'success');
               handleClose();

@@ -3,9 +3,7 @@ const app = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {getUserByColumn} = require('./helpers/user-helpers');
-// curl -X POST -d 'password=password' -d 'email=test@example.com' http://localhost:3002/api/login
 
-//Default route is /api/login
 module.exports = (db) => {
   app.post('/', (req, res) => {
 
