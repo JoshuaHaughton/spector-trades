@@ -5,8 +5,8 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "psql -f bin/create_db.sql && node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
-    "db:reset-production": "node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
+    "db:reset": "psql -f bin/create_db.sql && node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
+    "heroku-postbuild": "node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
     "local": "./node_modules/.bin/nodemon --delay 500ms -L --ignore public/"
   },
   "author": "Lighthouse Labs",
