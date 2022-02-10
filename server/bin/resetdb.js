@@ -1,5 +1,7 @@
 // load .env data into process.env
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+  require("dotenv").config();
+}
 
 // other dependencies
 const fs = require("fs");
