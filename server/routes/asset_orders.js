@@ -122,7 +122,7 @@ app.get('/me', authenticateToken, async(req, res) => {
 
   } catch(err) {
 
-    res.status(500).send;
+    res.status(500).send(err.message);
     console.log(res)
   }
 })
