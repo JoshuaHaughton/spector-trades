@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:reset": "psql -f bin/create_db.sql && node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
-    "heroku-postbuild": "node bin/resetdb.js && psql -d spector -f bin/fix_seeded_hashes.sql",
+    "heroku-postbuild": "node bin/resetdb.js && psql -d $PGDATABASE -f bin/fix_seeded_hashes.sql",
     "local": "./node_modules/.bin/nodemon --delay 500ms -L --ignore public/"
   },
   "author": "Lighthouse Labs",
