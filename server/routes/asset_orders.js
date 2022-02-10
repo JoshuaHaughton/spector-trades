@@ -82,19 +82,18 @@ app.get('/', async (req, res) => {
     SELECT * FROM asset_orders;
     `);
 
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       results: assetOrders.rows.length,
       data: {
         assetOrders: assetOrders.rows
       }
     })
-    res.send(assetOrders.rows);
 
   } catch(err) {
-
-    res.status(500).send;
-    console.log(res)
+    console.log(err.message);
+    return res.status(500).send;
+    
   }
 })
 
