@@ -12,4 +12,10 @@ if (process.env.DATABASE_URL) {
   };
 }
 
+if (process.env.NODE_ENV === 'production') {
+  dbParams['ssl'] = {
+    rejectUnauthorized: false,
+  }
+}
+
 module.exports = dbParams;
