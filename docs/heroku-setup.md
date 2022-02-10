@@ -8,8 +8,9 @@
 6. Add the `heroku/nodejs` buildpack as second for your application.
 7. Goto Config vars -> Add the Config Vars `PROJECT_PATH` with the value `server`.
 8. Add the Config Vars `PORT` with the value `8080`.
-9. Goto Resources tab, click on Heroku Postgres -> Settings -> Reveal credentials 
-10. Copy the credientials to Config Vars as followed:
+9. Add the Config Vars `JWT_SECRET` with a value of a string of your choice.  For example: `somesecretphrase`.
+10. Goto Resources tab, click on Heroku Postgres -> Settings -> Reveal credentials 
+11. Copy the credientials to Config Vars as followed:
 ```
 PGHOST Host
 PGUSER User
