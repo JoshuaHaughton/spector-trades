@@ -18,4 +18,4 @@ PGPASSWORD Password
 PGDATABASE Database
 DB_PORT Port
 ```
-11. In the deploy tab, choose automatic or manual deploy and pick the branch to deploy with.
+12. In the deploy tab, choose automatic or manual deploy and pick the branch to deploy with.
