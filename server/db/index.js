@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const promise = require('bluebird');
 const dbParams = require("../lib/db.js"); 
 
-const pool = new Pool();
+const pool = new Pool(dbParams);
 
 const initOptions = {
   promiseLib: promise // overriding the default (ES6 Promise);
