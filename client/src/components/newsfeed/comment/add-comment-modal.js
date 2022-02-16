@@ -12,7 +12,7 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -35,18 +35,18 @@ const style = {
 export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
-  const [charColour, setCharColour] = useState('textSecondary')
+  const [charColour, setCharColour] = useState("textSecondary");
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
     setSnackbarOpen(false);
-  }
+  };
   const handleSnackbarMessage = (message, severity) => {
     setSnackbarOpen(true);
     setSnackbarMessage(message);
@@ -62,13 +62,12 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
     }),
     onSubmit: async (values) => {
       console.log(values);
-      console.log('parent', parentState)
+      console.log("parent", parentState);
 
       //set as falsey
       let savedMedia = false;
 
       try {
-
         //check if media exists / retrieve media
         let media = await api({
           method: "get",
@@ -78,64 +77,55 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
             "Content-Type": "application/json",
             Authorization: `Bearer ${cookies.spector_jwt}`,
           },
-        })
+        });
 
-        console.log('MEDIA EXISTS?', media.data.data.media)
+        console.log("MEDIA EXISTS?", media.data.data.media);
 
         //media exist check
         if (Object.keys(media.data.data).length > 0) {
-
-           //save media to original variable to post
+          //save media to original variable to post
           savedMedia = media.data.data.media;
-          console.log("MEDIA RETRIEVED", savedMedia)
+          console.log("MEDIA RETRIEVED", savedMedia);
         }
 
-
-
         let formData;
-        if(savedMedia.original_id) {
+        if (savedMedia.original_id) {
           formData = {
             body: values.body,
             media_id: savedMedia.original_id,
-            ...parentState
+            ...parentState,
           };
         } else {
-
           formData = {
             body: values.body,
             media_id: savedMedia.id,
-            ...parentState
+            ...parentState,
           };
-
         }
 
-        console.log("going to post comment")
+        console.log("going to post comment");
 
         //Post comment and link it to media, then close modal
         await api({
-            method: "post",
-            url: "/comments/media",
-            data: formData,
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": cookies.spector_jwt
-            },
-          }).then(resp => {
-
-            if(resp.data.status === 200 || resp.data.status === 304) {
-              handleSnackbarMessage('Successfully posted a comment!', 'success');
-              handleClose();
-              setCharLeft(140);
-            }
-          })
-
+          method: "post",
+          url: "/comments/media",
+          data: formData,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: cookies.spector_jwt,
+          },
+        }).then((resp) => {
+          if (resp.data.status === 200 || resp.data.status === 304) {
+            handleSnackbarMessage("Successfully posted a comment!", "success");
+            handleClose();
+            setCharLeft(140);
+          }
+        });
       } catch (err) {
         console.log(err);
-
       }
     },
   });
-
 
   return (
     <>
@@ -166,7 +156,12 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
                     }}
                   >
                     <Avatar alt="Product" variant="square" />
-                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <Typography
+                      color="textSecondary"
+                      display="inline"
+                      sx={{ pl: 1 }}
+                      variant="body2"
+                    >
                       You
                     </Typography>
                   </Grid>
@@ -176,7 +171,7 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
                   aria-label="close"
                   onClick={handleClose}
                   sx={{
-                    position: 'absolute',
+                    position: "absolute",
                     right: 8,
                     top: 8,
                     color: (theme) => theme.palette.grey[500],
@@ -186,11 +181,18 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
                 </IconButton>
               </Box>
               <Divider />
-              <TextField sx={{ p: 2 }} fullWidth={true} name="body" onChange={(e) => {
-                formik.handleChange(e);
-                setCharLeft(140 - e.target.value.length);
-                ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
-              }} />
+              <TextField
+                sx={{ p: 2 }}
+                fullWidth={true}
+                name="body"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setCharLeft(140 - e.target.value.length);
+                  140 - e.target.value.length < 0
+                    ? setCharColour("red")
+                    : setCharColour("textSecondary");
+                }}
+              />
               <Divider />
               <Box sx={{ p: 2 }}>
                 <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
@@ -201,7 +203,12 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
                       display: "flex",
                     }}
                   >
-                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <Typography
+                      color="textSecondary"
+                      display="inline"
+                      sx={{ pl: 1 }}
+                      variant="body2"
+                    >
                       <Button variant="outlined" type="submit">
                         Post Comment
                       </Button>
@@ -224,9 +231,14 @@ export const AddCommentModal = ({ open, handleClose, parentPost, parentState }) 
           </form>
         </Card>
       </Modal>
-      <Snackbar open={snackbarOpen} autoHideDuration={5000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          { snackbarMessage }
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>

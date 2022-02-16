@@ -26,12 +26,15 @@ const Newsfeed = () => {
     console.log("TAB", newValue);
   };
 
-  useEffect(async () => {
-    await fetchFeedData(setSymbols, setNewsFeed, cookies);
+  useEffect(() => {
+    const fetchFeedDataCaller = async () => {
+      await fetchFeedData(setSymbols, setNewsFeed, cookies);
+    };
+    fetchFeedDataCaller();
     return () => {
       console.log("unmounts");
     };
-  }, [reloadFeed]);
+  }, [reloadFeed, cookies]);
 
   return (
     <>

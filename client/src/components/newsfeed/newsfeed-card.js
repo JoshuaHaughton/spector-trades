@@ -18,9 +18,13 @@ import TimeAgo from "timeago-react";
 import { useCookies } from "react-cookie";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import { fetchTotalLikes, pressLike, setBackendLike, checkIfLiked } from "../helpers/newsfeed-card-helper";
+import {
+  fetchTotalLikes,
+  pressLike,
+  setBackendLike,
+  checkIfLiked,
+} from "../helpers/newsfeed-card-helper";
 import { userSetter } from "../helpers/user-helper";
-
 
 export const NewsfeedCard = ({ media, ...rest }) => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
@@ -31,216 +35,270 @@ export const NewsfeedCard = ({ media, ...rest }) => {
   const handleCommentFeedClose = () => setCommentFeedOpen(false);
   const [cookies, setCookie] = useCookies();
   const [liked, setLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState('');
+  const [totalLikes, setTotalLikes] = useState("");
   const [state, setState] = useState(() => {
-
     //First conditional sets up variables so that regardless of the name of the variables
     // they come in, they can be processed by the newsfeed card
 
     //Articles here have a key of title that posts don't. This is how we identify them
     if (media.title && !media.id) {
-
       return {
-
         mediaTitle: media.title.length > 55 ? media.title.substring(0, 55) + "..." : media.title,
         mediaPublish: media.publishedAt,
-        mediaBody: media.description.length > 150 ? media.description.substring(0, 150) + "..." : media.description,
-        id: media.title.split(" ").join("").split("%").join("").split(`’`).join("").split(`'`).join("").split(",").join("").split(".").join(""),
+        mediaBody:
+          media.description.length > 150
+            ? media.description.substring(0, 150) + "..."
+            : media.description,
+        id: media.title
+          .split(" ")
+          .join("")
+          .split("%")
+          .join("")
+          .split(`’`)
+          .join("")
+          .split(`'`)
+          .join("")
+          .split(",")
+          .join("")
+          .split(".")
+          .join(""),
         media,
-        type: `original_article_title`
-      }
+        type: `original_article_title`,
+      };
 
-    //Posts here have an id key of "id"
-  } else if (media.id && !media.title) {
-
-    return {
-      mediaPublish: media.created_at,
-      mediaBody: media.description,
-      id: media.id,
-      media,
-      type: `post_id`,
-      username: media.username,
-      profileSrc: 'http://localhost:3001/public/avatars/' + media.avatar_url
+      //Posts here have an id key of "id"
+    } else if (media.id && !media.title) {
+      return {
+        mediaPublish: media.created_at,
+        mediaBody: media.description,
+        id: media.id,
+        media,
+        type: `post_id`,
+        username: media.username,
+        profileSrc: "http://localhost:3001/public/avatars/" + media.avatar_url,
+      };
     }
-  }
-
-})
-
+  });
 
   //ON FIRST MOUNT ONLY
   useEffect(() => {
-
     if (media.title && !media.id) {
-        checkIfLiked(state, cookies, setLiked);
-        fetchTotalLikes(state, cookies, setTotalLikes);
-
+      checkIfLiked(state, cookies, setLiked);
+      fetchTotalLikes(state, cookies, setTotalLikes);
     } else if (media.id && !media.title) {
-
-        checkIfLiked(state, cookies, setLiked);
-        fetchTotalLikes(state, cookies, setTotalLikes);
-        userSetter(state, setState, cookies);
-
+      checkIfLiked(state, cookies, setLiked);
+      fetchTotalLikes(state, cookies, setTotalLikes);
+      userSetter(state, setState, cookies);
     }
-
-  }, []);
-
+  }, [cookies, media.id, state]);
 
   return (
     <>
-    {(totalLikes === 0 || totalLikes) && <Card
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-      }}
-      {...rest}
-    >
-      <Box sx={{ p: 2 }}>
-        <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            { ( media.avatar_url ? <Avatar alt={media.username} src={'http://localhost:3001/public/avatars/' + media.avatar_url } variant="rounded" />
-            : <Avatar alt="Article Image" src={media.urlToImage} variant="rounded" /> ) }
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "14px" }} variant="body2">
-              {/* displays author, or source name if author isnt there (e.g. google), and for posts it displays the username */}
-              <strong>{media.title ? (media.author || media.source.name) :`- @${media.username}`}</strong>{" "}
-              {state.mediaTitle}
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <ClockIcon color="action" />
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1, fontSize: "16px" }} variant="body2">
-              <TimeAgo datetime={state.mediaPublish} locale="en" />
-            </Typography>
-          </Grid>
-        </Grid>
-      </Box>
-      <Divider />
-      <CardContent>
-        <Box
+      {(totalLikes === 0 || totalLikes) && (
+        <Card
           sx={{
             display: "flex",
-            justifyContent: "center",
-            pb: 3,
+            flexDirection: "column",
+            height: "100%",
           }}
-        ></Box>
-        {media.title ?
-          <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '14px' }}>
-          {state.mediaBody}
-          <br />
-          <br />
-          {media.title &&
-          <Link href={media.url} target="_blank" color="inherit">
-            Click here to learn more
-          </Link>
-          }
-        </Typography> :
-
-        <Typography align="center" color="textPrimary" variant="body1" sx={{fontSize: '16px' }}>
-        {state.mediaBody}
-        {/* <br />
+          {...rest}
+        >
+          <Box sx={{ p: 2 }}>
+            <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                {media.avatar_url ? (
+                  <Avatar
+                    alt={media.username}
+                    src={"http://localhost:3001/public/avatars/" + media.avatar_url}
+                    variant="rounded"
+                  />
+                ) : (
+                  <Avatar alt="Article Image" src={media.urlToImage} variant="rounded" />
+                )}
+                <Typography
+                  color="textSecondary"
+                  display="inline"
+                  sx={{ pl: 1, fontSize: "14px" }}
+                  variant="body2"
+                >
+                  {/* displays author, or source name if author isnt there (e.g. google), and for posts it displays the username */}
+                  <strong>
+                    {media.title ? media.author || media.source.name : `- @${media.username}`}
+                  </strong>{" "}
+                  {state.mediaTitle}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <ClockIcon color="action" />
+                <Typography
+                  color="textSecondary"
+                  display="inline"
+                  sx={{ pl: 1, fontSize: "16px" }}
+                  variant="body2"
+                >
+                  <TimeAgo datetime={state.mediaPublish} locale="en" />
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+          <Divider />
+          <CardContent>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                pb: 3,
+              }}
+            ></Box>
+            {media.title ? (
+              <Typography
+                align="center"
+                color="textPrimary"
+                variant="body1"
+                sx={{ fontSize: "14px" }}
+              >
+                {state.mediaBody}
+                <br />
+                <br />
+                {media.title && (
+                  <Link href={media.url} target="_blank" color="inherit">
+                    Click here to learn more
+                  </Link>
+                )}
+              </Typography>
+            ) : (
+              <Typography
+                align="center"
+                color="textPrimary"
+                variant="body1"
+                sx={{ fontSize: "16px" }}
+              >
+                {state.mediaBody}
+                {/* <br />
         <br /> */}
-      </Typography>
-        }
-      </CardContent>
-      <Box sx={{ flexGrow: 1 }} />
-      <Divider />
-      <Box sx={{ p: 1, display: "flex", justifyContent: "space-between" }}>
-        <Grid container sx={{ justifyContent: "flex-start", width: "50%" }}>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-              <Button onClick={() => pressLike(liked, setLiked, totalLikes, setBackendLike, setTotalLikes, state, cookies)} >
-              {liked ? <FavoriteIcon sx={{ fontSize: "35px", color: "red" }} /> : <FavoriteBorderIcon sx={{ fontSize: "35px" }}/>}
-              </Button>
-              <CommentFeedModal
-                open={commentFeedOpen}
-                handleClose={handleCommentFeedClose}
-                media={state.media}
-              />
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <Typography color="textSecondary" display="inline" sx={{ fontSize: "22px" }} variant="body2">
-              {totalLikes != 1 ?  `${totalLikes} likes` : `1 like`}
-              <AddCommentModal
-                open={addCommentOpen}
-                handleClose={handleAddCommentClose}
-                //PASSES media TO ADD COMMENT MODAL
-                parentPost={media}
-              />
-            </Typography>
-          </Grid>
-        </Grid>
+              </Typography>
+            )}
+          </CardContent>
+          <Box sx={{ flexGrow: 1 }} />
+          <Divider />
+          <Box sx={{ p: 1, display: "flex", justifyContent: "space-between" }}>
+            <Grid container sx={{ justifyContent: "flex-start", width: "50%" }}>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                  <Button
+                    onClick={() =>
+                      pressLike(
+                        liked,
+                        setLiked,
+                        totalLikes,
+                        setBackendLike,
+                        setTotalLikes,
+                        state,
+                        cookies
+                      )
+                    }
+                  >
+                    {liked ? (
+                      <FavoriteIcon sx={{ fontSize: "35px", color: "red" }} />
+                    ) : (
+                      <FavoriteBorderIcon sx={{ fontSize: "35px" }} />
+                    )}
+                  </Button>
+                  <CommentFeedModal
+                    open={commentFeedOpen}
+                    handleClose={handleCommentFeedClose}
+                    media={state.media}
+                  />
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <Typography
+                  color="textSecondary"
+                  display="inline"
+                  sx={{ fontSize: "22px" }}
+                  variant="body2"
+                >
+                  {totalLikes != 1 ? `${totalLikes} likes` : `1 like`}
+                  <AddCommentModal
+                    open={addCommentOpen}
+                    handleClose={handleAddCommentClose}
+                    //PASSES media TO ADD COMMENT MODAL
+                    parentPost={media}
+                  />
+                </Typography>
+              </Grid>
+            </Grid>
 
-        <Grid container spacing={2} sx={{ justifyContent: "flex-end", width: "50%" }}>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-              <Button onClick={handleCommentFeedOpen} variant="text" sx={{fontSize: '16px' }}>
-                All comments
-              </Button>
-              <CommentFeedModal
-                open={commentFeedOpen}
-                handleClose={handleCommentFeedClose}
-                media={state.media}
-                parentState={state}
-              />
-            </Typography>
-          </Grid>
-          <Grid
-            item
-            sx={{
-              alignItems: "center",
-              display: "flex",
-            }}
-          >
-            <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-              <Button onClick={handleAddCommentOpen} variant="text" sx={{fontSize: '16px' }}>
-                Add comment
-              </Button>
-              <AddCommentModal
-                open={addCommentOpen}
-                handleClose={handleAddCommentClose}
-                //PASSES ARTICLE TO ADD COMMENT MODAL
-                parentPost={media}
-                parentState={state}
-              />
-            </Typography>
-          </Grid>
-        </Grid>
-      </Box>
-    </Card>}
+            <Grid container spacing={2} sx={{ justifyContent: "flex-end", width: "50%" }}>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                  <Button onClick={handleCommentFeedOpen} variant="text" sx={{ fontSize: "16px" }}>
+                    All comments
+                  </Button>
+                  <CommentFeedModal
+                    open={commentFeedOpen}
+                    handleClose={handleCommentFeedClose}
+                    media={state.media}
+                    parentState={state}
+                  />
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                sx={{
+                  alignItems: "center",
+                  display: "flex",
+                }}
+              >
+                <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                  <Button onClick={handleAddCommentOpen} variant="text" sx={{ fontSize: "16px" }}>
+                    Add comment
+                  </Button>
+                  <AddCommentModal
+                    open={addCommentOpen}
+                    handleClose={handleAddCommentClose}
+                    //PASSES ARTICLE TO ADD COMMENT MODAL
+                    parentPost={media}
+                    parentState={state}
+                  />
+                </Typography>
+              </Grid>
+            </Grid>
+          </Box>
+        </Card>
+      )}
     </>
   );
-
 };
 
 //article /post is required
