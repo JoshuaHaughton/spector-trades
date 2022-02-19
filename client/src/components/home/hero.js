@@ -42,10 +42,10 @@ export default function Hero() {
       />
       <Box
         sx={{
-          width: "40%",
+          width: { md: "40%", xs: "80%" },
           display: "flex",
-          flexWrap: "wrap",
           justifyContent: "center",
+          flexDirection: "column",
           textAlign: "left",
           alignItems: "center",
         }}
@@ -59,7 +59,8 @@ export default function Hero() {
           variant="h5"
           sx={{ mb: 6, mt: { sx: 4, sm: 10 } }}
         >
-          At Spector Trades, <span className={classes.label}>you're</span> in the big leagues!
+          At Spector Trades, <span className={classes.label}>you're</span> in
+          the big leagues!
         </Typography>
         {/* <ThemeProvider theme={theme}> */}
         <Link to="features" spy={true} smooth={true} duration={1000}>
@@ -76,6 +77,7 @@ export default function Hero() {
       </Box>
       <Box
         sx={{
+          display: { md: "initial", xs: "none" },
           width: "45%",
           justifyContent: "center",
           textAlign: "left",
