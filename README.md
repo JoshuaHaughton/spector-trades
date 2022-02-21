@@ -42,7 +42,7 @@
 
 ### Client
 0. You'll need to be subscribed to Twelve API, CoinGecko API, and Exchange Rate API from Rapid API.
-1. Use the `client/.env.example` to create an .env file with relevant settings in your system.
+1. Use the `client/.env.local.example` to create an .env file with relevant settings in your system.
 2. Install dependencies: `npm i`
 3. Reset database: `npm run db:reset`
 4. Run the server: `npm run dev`
