@@ -12,7 +12,7 @@ import {
   IconButton,
   Snackbar,
 } from "@mui/material";
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from "@mui/icons-material/Close";
 import { useCookies } from "react-cookie";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -35,24 +35,23 @@ const style = {
 export const AddPostModal = ({ open, handleClose, triggerReload }) => {
   const [cookies, setCookie] = useCookies();
   const [charLeft, setCharLeft] = useState(140);
-  const [charColour, setCharColour] = useState('textSecondary')
+  const [charColour, setCharColour] = useState("textSecondary");
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('info');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("info");
   const handleSnackbarClose = (event, reason) => {
-    if (reason === 'clickaway') {
+    if (reason === "clickaway") {
       return;
     }
 
     setSnackbarOpen(false);
-  }
+  };
   const handleSnackbarMessage = (message, severity) => {
     setSnackbarOpen(true);
     setSnackbarMessage(message);
     setSnackbarSeverity(severity);
   };
-
 
   const formik = useFormik({
     initialValues: {
@@ -63,9 +62,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
     }),
     onSubmit: async (values) => {
 
-
       try {
-
         const fetchUserName = await api({
           method: "get",
           url: `/users/id/me`,
@@ -73,11 +70,9 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
             "Content-Type": "application/json",
             Authorization: cookies.spector_jwt,
           },
-        })
+        });
 
-
-        let username = fetchUserName.data.data.user.username
-
+        let username = fetchUserName.data.data.user.username;
 
         let formData = {
             body: values.body,
@@ -85,6 +80,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
           }
 
 
+        console.log("TIME TO POST");
 
         //Post the Post, then close modal
         await api({
@@ -105,11 +101,9 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
 
       } catch (err) {
         console.log(err);
-
       }
     },
   });
-
 
   return (
     <>
@@ -137,7 +131,12 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                     }}
                   >
                     <Avatar alt="Product" variant="square" />
-                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <Typography
+                      color="textSecondary"
+                      display="inline"
+                      sx={{ pl: 1 }}
+                      variant="body2"
+                    >
                       You
                     </Typography>
                   </Grid>
@@ -146,7 +145,7 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                   aria-label="close"
                   onClick={handleClose}
                   sx={{
-                    position: 'absolute',
+                    position: "absolute",
                     right: 8,
                     top: 8,
                     color: (theme) => theme.palette.grey[500],
@@ -156,11 +155,18 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                 </IconButton>
               </Box>
               <Divider />
-              <TextField sx={{ p: 4 }} fullWidth={true} name="body" onChange={(e) => {
-                formik.handleChange(e);
-                setCharLeft(140 - e.target.value.length);
-                ((140 - e.target.value.length < 0) ? setCharColour('red') : setCharColour('textSecondary'))
-              }} />
+              <TextField
+                sx={{ p: 4 }}
+                fullWidth={true}
+                name="body"
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  setCharLeft(140 - e.target.value.length);
+                  140 - e.target.value.length < 0
+                    ? setCharColour("red")
+                    : setCharColour("textSecondary");
+                }}
+              />
               <Divider />
               <Box sx={{ p: 2 }}>
                 <Grid container spacing={2} sx={{ justifyContent: "space-between" }}>
@@ -171,7 +177,12 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
                       display: "flex",
                     }}
                   >
-                    <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
+                    <Typography
+                      color="textSecondary"
+                      display="inline"
+                      sx={{ pl: 1 }}
+                      variant="body2"
+                    >
                       <Button variant="outlined" type="submit">
                         Add Post
                       </Button>
@@ -194,9 +205,14 @@ export const AddPostModal = ({ open, handleClose, triggerReload }) => {
           </form>
         </Card>
       </Modal>
-      <Snackbar open={snackbarOpen} autoHideDuration={5000} anchorOrigin={{vertical: 'top', horizontal: 'center' }} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
-          { snackbarMessage }
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: "100%" }}>
+          {snackbarMessage}
         </Alert>
       </Snackbar>
     </>

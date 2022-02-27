@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Box,
-  Card,
-  CardContent,
-  Divider,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, CardContent, Divider, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import api from "src/apis/api";
 import { Clock as ClockIcon } from "../../../icons/clock";
@@ -19,10 +11,8 @@ const style = {
 export const CommentCard = ({ comment }) => {
   const [user, setUser] = useState("");
 
-
   const fetchUserForComment = async () => {
     try {
-
       //Checks to see if user_id is set to the default value set in comment-feed-modal
       if (comment.user_id === 0) {
         return;
@@ -32,12 +22,9 @@ export const CommentCard = ({ comment }) => {
       const response = await api.get(`/users/id/${comment.user_id}`);
 
       setUser(response.data.data.user);
-
     } catch (err) {
-
       console.log(err);
       console.log("Fetch User failed");
-
     }
   };
 
@@ -65,7 +52,7 @@ export const CommentCard = ({ comment }) => {
             >
               <Avatar alt="Product" variant="square" />
               <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
-                {user.username || ''}
+                {user.username || ""}
               </Typography>
             </Grid>
             <Grid
@@ -75,23 +62,21 @@ export const CommentCard = ({ comment }) => {
                 display: "flex",
               }}
             >
-                {
-                comment.created_at
-                ?
+              {comment.created_at ? (
                 <>
                   <ClockIcon color="action" />
                   <Typography color="textSecondary" display="inline" sx={{ pl: 1 }} variant="body2">
                     <TimeAgo datetime={comment.created_at} locale="en" />
                   </Typography>
                 </>
-                :
-                ''
-                  }
+              ) : (
+                ""
+              )}
             </Grid>
           </Grid>
         </Box>
         <Divider />
-        <CardContent>{comment.body || ''}</CardContent>
+        <CardContent>{comment.body || ""}</CardContent>
       </Box>
     </Card>
   );

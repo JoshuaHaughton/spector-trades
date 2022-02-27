@@ -1,3 +1,3 @@
-INSERT INTO articles (url, original_id) VALUES ('wwwgooglecom', 'SEFJN3');
-INSERT INTO articles (url, original_id) VALUES ('wwwlighthouselabsca', '23RF');
-INSERT INTO articles (url, original_id) VALUES ('wwwyahooca', '123');
+INSERT INTO articles (url, original_title) VALUES ('wwwgooglecom', 'google had fun');
+INSERT INTO articles (url, original_title) VALUES ('wwwlighthouselabsca', 'lighthouse labs is great');
+INSERT INTO articles (url, original_title) VALUES ('wwwyahooca', 'yahoo said hello today');

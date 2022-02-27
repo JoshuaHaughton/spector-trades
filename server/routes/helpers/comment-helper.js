@@ -51,6 +51,15 @@ const getCommentsByPost = (id, db) => {
  */
 const addMediaComment = (values, db) => {
   console.log("ADD COMMENT VALUES", values)
+
+  let id;
+
+  if (values.title) {
+    id = values.title
+  } else {
+    id = values.media_id
+  }
+
   let queryString = 
                     `
                     INSERT INTO 
@@ -59,7 +68,7 @@ const addMediaComment = (values, db) => {
                     RETURNING *;
                     `;
 
-  const queryParams = [ values.user_id, values.media_id, values.body ];
+  const queryParams = [ values.user_id, id, values.body ];
 
   return db.query(queryString, queryParams)
   .then((result) => {
@@ -74,11 +83,15 @@ const addMediaComment = (values, db) => {
 const getCommentsByMediaId = (values, type, db) => {
 
   let column;
+  let value;
 
-  if (type === 'original_article_id') {
-    column = 'article_id'
+  if (type === 'original_article_title') {
+    column = 'article_title'
+    value = values.split(" ").join("").split("%").join("").split(`’`).join("").split(`'`).join("").split(",").join("").split(".").join("");
+    // console.log("ARTICLE VALUE", value);
   } else {
     column = 'post_id';
+    value = values;
   }
 
   let queryString = 
@@ -88,7 +101,7 @@ const getCommentsByMediaId = (values, type, db) => {
                     WHERE ${column} = $1;
                     `;
 
-  const queryParams = [values];
+  const queryParams = [value];
 
   return db.query(queryString, queryParams)
   .then((result) => {

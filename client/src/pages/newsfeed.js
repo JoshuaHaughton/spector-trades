@@ -11,7 +11,6 @@ import { fetchFeedData } from "src/components/helpers/newsfeed-helpers";
 
 const Newsfeed = () => {
   const [newsFeed, setNewsFeed] = useState({ posts: [] });
-  const [currentFeed, setCurrentFeed] = useState([]);
   const [cookies, setCookie] = useCookies();
   const [reloadFeed, setReloadFeed] = useState(false);
 
@@ -19,37 +18,22 @@ const Newsfeed = () => {
     reloadFeed ? setReloadFeed(false) : setReloadFeed(true);
   };
 
-
   // TAB STATE
   const [tabValue, setTabValue] = useState("posts");
   const [symbols, setSymbols] = useState([]);
   const handleTabChange = (_event, newValue) => {
     setTabValue(newValue);
-    console.log('TAB', newValue)
+    console.log("TAB", newValue);
   };
 
-
-
-  useEffect(async () => {
-
-      await fetchFeedData(setSymbols, setNewsFeed, cookies)
-
-      console.log('WHY', tabValue)
-
-
+  useEffect(() => {
+    const fetchFeedDataCaller = async () => {
+      await fetchFeedData(setSymbols, setNewsFeed, cookies);
+    };
+    fetchFeedDataCaller();
     return () => {
     };
-
-  }, [reloadFeed]);
-
-
-
-  useEffect(() => {
-    // loadCard()
-    setTabValue(tabValue);
-
-  }, [newsFeed])
-
+  }, [reloadFeed, cookies]);
 
   return (
     <>
@@ -80,20 +64,21 @@ const Newsfeed = () => {
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3}>
               {/* {currentFeed} */}
-              {newsFeed[tabValue] && newsFeed[tabValue].map((article) => {
-                if (article._id) {
+              {newsFeed[tabValue] &&
+                newsFeed[tabValue].map((article) => {
+                  if (article.title) {
+                    return (
+                      <Grid item key={article.title} lg={12} md={12} xs={12}>
+                        <NewsfeedCard key={article.title} media={article} />
+                      </Grid>
+                    );
+                  }
                   return (
-                    <Grid item key={article._id} lg={12} md={12} xs={12}>
-                      <NewsfeedCard key={article._id} media={article} />
-                    </Grid>
-                  );
-                }
-                return (
                     <Grid item key={article.id} lg={12} md={12} xs={12}>
                       <NewsfeedCard key={article.id} media={article} />
                     </Grid>
-                );
-              })}
+                  );
+                })}
             </Grid>
           </Box>
           <Box

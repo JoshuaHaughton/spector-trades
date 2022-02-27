@@ -2,11 +2,9 @@ import api from "src/apis/api";
 
 //LIKES
 
-
 const setBackendLike = async (state, cookies) => {
 
   try {
-
     await api({
       method: "post",
       url: `/likes/${state.id}`,
@@ -15,47 +13,33 @@ const setBackendLike = async (state, cookies) => {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.spector_jwt}`,
       },
-    })
-
+    });
   } catch (err) {
-
     console.log(err);
     console.log("setting backend like failed");
-
   }
 };
 
-
 const checkIfLiked = async (state, cookies, setLiked) => {
-
   try {
-
     await api({
       method: "put",
       url: `/likes/${state.id}`,
-      data: state.media,
+      data: state,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.spector_jwt}`,
       },
     }).then((resp) => {
-
       setLiked(resp.data.data.exists);
-
     });
 
     return response;
-
   } catch (err) {}
-
 };
 
-
 const fetchTotalLikes = async (state, cookies, setTotalLikes) => {
-
-
   try {
-
     await api({
       method: "get",
       url: `/likes/count/${state.type}/${state.id}`,
@@ -63,17 +47,12 @@ const fetchTotalLikes = async (state, cookies, setTotalLikes) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${cookies.spector_jwt}`,
-      }
+      },
     }).then((resp) => {
-
       setTotalLikes(Number(resp.data.data.count));
-
     });
-
   } catch (err) {}
-
 };
-
 
 const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, state, cookies) => {
   if (liked) {
@@ -87,9 +66,20 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
   }
 };
 
+// OTHER HELPERS
 
+const fetchUser = async (cookies) => {
+  const userReturned = await api({
+    method: "get",
+    url: "/users/id/me",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${cookies.spector_jwt}`,
+    },
+  });
 
-//OTHER HELPERS
+  return userReturned.data.data.user;
+};
 
 
   const createArticle = async (state, cookies) => {
@@ -145,21 +135,23 @@ const pressLike = (liked, setLiked, totalLikes, setBackendLike, setTotalLikes, s
     })
 
     return userReturned.data.data.user;
+const userSetter = async (state, setState, cookies) => {
+  try {
+    await fetchUser(cookies).then((data) => {
+      data.avatar_url
+        ? setState({ ...state, profileSrc: data.avatar_url })
+        : console.log("no profile pic");
+    });
+  } catch (err) {
+    console.log(err);
   }
+};
 
-  const userSetter = async (state, setState, cookies) => {
-
-    try {
-
-      await fetchUser(cookies)
-      .then(data => {
-        data.avatar_url ? setState({...state, profileSrc: data.avatar_url}) : console.log("no profile pic")
-      })
-
-    } catch(err) {
-      console.log(err)
-    }
-
-  }
-
-module.exports = { fetchTotalLikes, pressLike, setBackendLike, checkIfLiked, createArticle, fetchUser, userSetter};
+module.exports = {
+  fetchTotalLikes,
+  pressLike,
+  setBackendLike,
+  checkIfLiked,
+  fetchUser,
+  userSetter,
+};

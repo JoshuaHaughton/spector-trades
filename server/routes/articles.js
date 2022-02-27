@@ -9,7 +9,10 @@ module.exports = (db) => {
   //Create article using full retrieved article object from News api
   app.post("/", authenticateToken, (req, res) => {
 
-    const article = JSON.parse(req.body.config.data).media;
+    console.log('make this article', req.body)
+
+    const article = req.body;
+    // const article = JSON.parse(req.body.config.data).media;
     console.log("CREATE ARTICLE", article);
 
 
@@ -24,7 +27,7 @@ module.exports = (db) => {
             article: resp.rows[0],
           },
         });
-        console.log("FIXED!!!")
+        console.log("FIXED!!!", resp.rows[0])
         return resp.rows;
       })
 

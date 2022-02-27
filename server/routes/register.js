@@ -28,7 +28,7 @@ module.exports = (db) => {
     
     verifyUniqueColumns({email, username}, db)
     .then(result => {
-      console.log(result)
+      // console.log(result)
       if (result.unique === false) {
         if (result.dup_username && result.dup_email) {
           console.log("DUPLICATE EMAIL AND USERNAME")

@@ -13,18 +13,19 @@ module.exports = (db) => {
 app.post('/:media_id', authenticateToken, async (req, res) => {
 
   const mediaId = req.params.media_id;
+  console.log('DA ID', mediaId)
 
   let idType;
 
-  if (req.body._id) {
-    idType = `original_article_id`
+  if (req.body.title) {
+    idType = `original_article_title`
   } else if (req.body.id){
     idType = `post_id`
   }
 
   
   const user_id = req.body.user.id;
-  console.log(user_id)
+  // console.log(user_id)
 
   try {
 
@@ -52,7 +53,7 @@ app.post('/:media_id', authenticateToken, async (req, res) => {
           AND ${idType} = $2
           RETURNING *;
         `, [user_id, mediaId])
-        console.log('DELETED LIKE RESULT FROM BACKEND: ', like.rows)
+        // console.log('DELETED LIKE RESULT FROM BACKEND: ', like.rows)
 
         //If like doesn't exist...
     } else {
@@ -63,7 +64,7 @@ app.post('/:media_id', authenticateToken, async (req, res) => {
         VALUES ($1, $2) 
         RETURNING *;
       `, [mediaId, user_id]);
-      console.log('CREATED LIKE RESULT FROM BACKEND: ', like.rows)
+      // console.log('CREATED LIKE RESULT FROM BACKEND: ', like.rows)
     }
 
     //return response
@@ -74,37 +75,39 @@ app.post('/:media_id', authenticateToken, async (req, res) => {
       }
     })
 
-    console.log(like.rows);
+    // console.log(like.rows);
 
   } catch(err) {
 
     res.status(500).send;
-    console.log('like backend failed')
-    console.log(err)
+    // console.log('like backend failed')
+    // console.log(err)
   }
 })
 
 //Checks if you've liked a specific post (When you refresh it will automatically appear)
 app.put('/:media_id', authenticateToken, async (req, res) => {
 
+  console.log("LIKES ERROE", req.body)
     const mediaId = req.params.media_id;
-    console.log("LIKES ERROE", req.body)
+    console.log("LIKES ERROE", mediaId)
 
     let idType
-    console.log('LIKE ALREADY!!!!!!!!!!', )
+    // console.log('LIKE ALREADY!!!!!!!!!!', )
 
-  if (req.body._id) {
-    idType = `original_article_id`
-  } else if (req.body.id){
+
+  if (req.body.media.title) {
+    idType = `original_article_title`
+  } else {
     idType = `post_id`
   }
 
-    console.log('ARRIVAL likes route old article id', mediaId)
-    console.log('ID TYPE OFFFFFF', idType)
+    // console.log('ARRIVAL likes route old article id', mediaId)
+    // console.log('ID TYPE OFFFFFF', idType)
     // console.log('ARRIVAL likes route old article id', req.body)
     
     const user_id = req.body.user.id;
-    console.log(user_id)
+    // console.log(user_id)
   
     try {
   
@@ -117,7 +120,7 @@ app.put('/:media_id', authenticateToken, async (req, res) => {
         `, [mediaId, user_id]
       );
   
-      console.log('YOU LIKED THIS ALREADY FROM LIKES.JS BACKEND', exist.rows)
+      // console.log('YOU LIKED THIS ALREADY FROM LIKES.JS BACKEND', exist.rows)
       console.log('YOU LIKED THIS ALREADY FROM LIKES.JS BACKEND', exist.rows.length > 0)
   
   
@@ -129,12 +132,13 @@ app.put('/:media_id', authenticateToken, async (req, res) => {
       })
   
       console.log(exist.rows);
+      console.log("DONE");
   
     } catch(err) {
   
       res.status(500).send;
-      console.log('like backend failed')
-      console.log(err)
+      // console.log('like backend failed')
+      // console.log(err)
     }
 
 
@@ -157,7 +161,7 @@ app.get('/count/:type/:media_id', async (req, res) => {
       `, [mediaId]
     );
 
-    console.log('LIKE COUNT FROM LIKES.JS BACKEND', count.rows[0].count)
+    // console.log('LIKE COUNT FROM LIKES.JS BACKEND', count.rows[0].count)
 
     res.status(200).json({
       status: "count returned",
@@ -166,13 +170,13 @@ app.get('/count/:type/:media_id', async (req, res) => {
       }
     })
 
-    console.log(count.rows[0].count);
+    // console.log(count.rows[0].count);
 
   } catch(err) {
 
     res.status(500).send;
-    console.log('count backend failed')
-    console.log(err)
+    // console.log('count backend failed')
+    // console.log(err)
   }
 })
 

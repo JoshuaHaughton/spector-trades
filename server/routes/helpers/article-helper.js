@@ -18,6 +18,10 @@ const getArticleByOldId = (values, type, idType, db) => {
 };
 
 const insertArticle = async (article, db) => {
+  console.log('PPRE COMPRESS', article.media.title)
+  let compressedArticle = article.media.title.split(" ").join("").split("%").join("").split(`’`).join("").split(`'`).join("").split(",").join("").split(".").join("");
+  console.log('COMPRESSED', compressedArticle)
+
   //exist check
   
   let test = await db.query(
@@ -26,7 +30,7 @@ const insertArticle = async (article, db) => {
       FROM articles
       WHERE url = $1; 
       `,
-    [article.link],
+    [article.media.url],
   );
   
   if (test.rows.length > 0) {
@@ -39,12 +43,13 @@ const insertArticle = async (article, db) => {
    let response = await db
     .query(
       `
-    INSERT INTO articles (url, original_id, created_at) 
+    INSERT INTO articles (url, original_title, created_at) 
     VALUES ($1, $2, $3)
     RETURNING *;
     `,
-      [article.link, article._id, article.published_date],
+      [article.media.url, compressedArticle, article.mediaPublish],
     )
+    console.log('CREATED', response)
     return response;
     
 };
