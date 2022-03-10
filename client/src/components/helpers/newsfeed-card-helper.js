@@ -123,18 +123,6 @@ const fetchUser = async (cookies) => {
 
   };
 
-  const fetchUser = async (cookies) => {
-
-    const userReturned = await api({
-      method: "get",
-      url: "/users/id/me",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${cookies.spector_jwt}`
-      }
-    })
-
-    return userReturned.data.data.user;
 const userSetter = async (state, setState, cookies) => {
   try {
     await fetchUser(cookies).then((data) => {
